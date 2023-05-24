@@ -5,6 +5,8 @@ VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USca-Server", "USca-Server\USca-Server.csproj", "{51E69E79-B720-4410-A83C-1E5655400965}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbManager", "DbManager\DbManager.csproj", "{3AC74432-DFEA-494A-B929-CA381885980F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{51E69E79-B720-4410-A83C-1E5655400965}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51E69E79-B720-4410-A83C-1E5655400965}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51E69E79-B720-4410-A83C-1E5655400965}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AC74432-DFEA-494A-B929-CA381885980F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AC74432-DFEA-494A-B929-CA381885980F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AC74432-DFEA-494A-B929-CA381885980F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AC74432-DFEA-494A-B929-CA381885980F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
