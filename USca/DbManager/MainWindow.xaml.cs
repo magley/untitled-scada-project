@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
 using System.Windows;
+using System.Windows.Input;
 
 namespace DbManager
 {
@@ -22,7 +23,7 @@ namespace DbManager
 			DoLogin(username, password);
 		}
 
-		private void DoLogin(string username, string password)
+		private async void DoLogin(string username, string password)
 		{
 			var dto = new
 			{
@@ -37,7 +38,12 @@ namespace DbManager
 			req.AddBody(dto);
 			Console.WriteLine(dto);
 
-			RestResponse response = cli.Execute(req);
+			btnLogin.IsEnabled = false;
+			Mouse.OverrideCursor = Cursors.Wait;
+			RestResponse response = await cli.ExecuteAsync(req);
+			Mouse.OverrideCursor = null;
+			btnLogin.IsEnabled = true;
+
 			Console.WriteLine(response.Content);
 
 			if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
