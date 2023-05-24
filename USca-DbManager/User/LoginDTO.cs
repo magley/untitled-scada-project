@@ -1,4 +1,4 @@
-﻿namespace USca_DbManager.User
+﻿namespace USCa_Server.User
 {
     public class LoginDTO
     {

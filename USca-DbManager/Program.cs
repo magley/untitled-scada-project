@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using USca_DbManager.User;
+using USCa_Server.User;
 
-namespace USca_DbManager
+namespace USCa_Server
 {
     public class Program
 	{

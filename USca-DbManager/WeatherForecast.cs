@@ -1,4 +1,4 @@
-namespace USca_DbManager
+namespace USCa_Server
 {
 	public class WeatherForecast
 	{

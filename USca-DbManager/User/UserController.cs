@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace USca_DbManager.User
+namespace USCa_Server.User
 {
     [Route("api/[controller]")]
     [ApiController]
