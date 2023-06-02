@@ -1,0 +1,19 @@
+﻿<Window x:Class="USca_RTU.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:USca_RTU"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+		<StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+			<CheckBox x:Name="CbSineEnabled" Content="Sine" IsChecked="{Binding IsSineEnabled}" Click="CbSineEnabled_Checked"/>
+			
+			<!-- Simulation Runnign-->
+			<CheckBox x:Name="CbSimulationEnabled" Margin="0 16 0 0" IsChecked="{Binding IsSimulationEnabled}" Click="CbSimulationEnabled_Checked">
+				<Label FontWeight="Bold" Padding="0">Read Data</Label>
+			</CheckBox>
+		</StackPanel>
+    </Grid>
+</Window>
