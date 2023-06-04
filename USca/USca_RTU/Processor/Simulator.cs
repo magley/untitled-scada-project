@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Xml.Linq;
+using System.ComponentModel;
 
 namespace USca_RTU.Processor
 {
@@ -10,14 +10,14 @@ namespace USca_RTU.Processor
 		public string Name { get; set; }
 	}
 	
-	public class Thermometer : Item
+	public partial class Thermometer : Item, INotifyPropertyChanged
 	{
 		public int Id { get; set; } = -1;
 		public string Name { get; set; }
 		public double Value { get; set; } = 0;
 	}
 
-	public class Tank
+	public partial class Tank : Item, INotifyPropertyChanged
 	{
 		public int Id { get; set; } = -1;
 		public string Name { get; set; }
@@ -31,7 +31,7 @@ namespace USca_RTU.Processor
 		}
 	}
 
-	public class Valve
+	public partial class Valve : Item, INotifyPropertyChanged
 	{
 		public int Id { get; set; } = -1;
 		public string Name { get; set; }
@@ -88,7 +88,7 @@ namespace USca_RTU.Processor
 		}
     }
 
-    public class Simulator
+    public partial class Simulator : INotifyPropertyChanged
 	{
 		public List<Thermometer> Thermometers { get; set; } = new();
 		public List<Tank> Tanks { get; set; } = new();

@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Text.Json;
+using System.ComponentModel;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
-using System.Xml;
 using USca_RTU.Processor;
 
 namespace USca_RTU
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private Simulator _simulator;
+        public Simulator Simulator { get { return _simulator; } private set { _simulator = value; } }
         private Reader _reader;
         private Thread _loopThread;
 
@@ -31,7 +30,7 @@ namespace USca_RTU
         {
             while (true)
             {
-                Thread.Sleep(1000);
+                Thread.Sleep(500);
 
                 _simulator.Update();
                 _reader.Update();
@@ -40,17 +39,5 @@ namespace USca_RTU
 				Console.WriteLine(output);
 			}
         }
-
-        private void CbSineEnabled_Checked(object sender, RoutedEventArgs e)
-        {
-            CheckBox cb = (CheckBox)sender;
-            //simulator.IsSineEnabled = cb.IsChecked == true;
-        }
-
-        private void CbSimulationEnabled_Checked(object sender, RoutedEventArgs e)
-        {
-            CheckBox cb = (CheckBox)sender;
-            //simulator.IsSimulationEnabled = cb.IsChecked == true;
-        }
-    }
+	}
 }
