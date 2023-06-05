@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace USCa_Server.User
+namespace USca_Server.Users
 {
     public class User
     {

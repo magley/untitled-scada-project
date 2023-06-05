@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using USCa_Server.User;
+using USca_Server.Shared;
+using USca_Server.Users;
 
-namespace USCa_Server
+namespace USca_Server
 {
     public class Program
 	{
@@ -11,7 +12,7 @@ namespace USCa_Server
 			builder.Services.AddControllers();
 
 			builder.Services.AddScoped(typeof(IUserService), typeof(UserService));
-			builder.Services.AddDbContext<UserContext>(opt => opt.UseSqlite("Data Source=Data/app.db"));
+			builder.Services.AddDbContext<ServerDbContext>(opt => opt.UseSqlite("Data Source=Data/app.db"));
 
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen();

@@ -1,13 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using USca_Server.Measures;
+using USca_Server.Users;
 
-namespace USCa_Server.User
+namespace USca_Server.Shared
 {
-    public class UserContext : DbContext
+    public class ServerDbContext : DbContext
     {
         public DbSet<User> Users { get; set; }
+        public DbSet<Measure> Measures { get; set; }
 
         private static bool _created = false;
-        public UserContext(DbContextOptions<UserContext> options)
+        public ServerDbContext(DbContextOptions<ServerDbContext> options)
         : base(options)
         {
             if (!_created)

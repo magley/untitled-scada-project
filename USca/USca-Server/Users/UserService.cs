@@ -1,9 +1,11 @@
-﻿namespace USCa_Server.User
+﻿using USca_Server.Shared;
+
+namespace USca_Server.Users
 {
     public class UserService : IUserService
     {
-        private readonly UserContext _context;
-        public UserService(UserContext context)
+        private readonly ServerDbContext _context;
+        public UserService(ServerDbContext context)
         {
             _context = context;
         }

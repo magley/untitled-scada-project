@@ -1,6 +1,5 @@
 ﻿using RestSharp;
 using System.Text.Json;
-using System;
 using System.Threading.Tasks;
 
 namespace USca_DbManager.User
@@ -19,7 +18,7 @@ namespace USca_DbManager.User
 			
 			using var cli = new RestClient(new RestClientOptions(URL));
 
-			var req = new RestRequest("User", Method.Put);
+			var req = new RestRequest("user", Method.Put);
 			req.AddBody(dto);
 
 			RestResponse response = await cli.ExecuteAsync(req);

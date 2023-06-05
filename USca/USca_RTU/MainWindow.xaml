@@ -32,10 +32,13 @@
 		<Label
 			Canvas.Left="185" Canvas.Top="247" 
 			Content="{Binding Simulator.Tanks[0].Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			d:Content="Tank123"
 			/>
 		<Label
-			Canvas.Left="185" Canvas.Top="262" 
+			Canvas.Left="187" Canvas.Top="262" 
 			Content="{Binding Simulator.Tanks[0].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			ContentStringFormat="N4"
+			d:Content="12.3456" HorizontalAlignment="Left" VerticalAlignment="Center"
 			/>
 		<CheckBox 
 			Canvas.Left="359" Canvas.Top="272" 

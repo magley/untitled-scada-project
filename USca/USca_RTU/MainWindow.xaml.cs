@@ -12,6 +12,7 @@ namespace USca_RTU
         public Simulator Simulator { get { return _simulator; } private set { _simulator = value; } }
         private Reader _reader;
         private Thread _loopThread;
+        private Thread _sendThread;
 
         public MainWindow()
         {
@@ -24,6 +25,10 @@ namespace USca_RTU
 			_loopThread = new(new ThreadStart(MainLoop));
 			_loopThread.IsBackground = true;
 			_loopThread.Start();
+
+            _sendThread = new(new ThreadStart(SendData));
+            _sendThread.IsBackground = true;
+            _sendThread.Start();
 		}
 
         private void MainLoop()
@@ -38,6 +43,16 @@ namespace USca_RTU
                 string output = $"[\n\t{string.Join(",\n\t", _reader.Signals)}\n]";
 				Console.WriteLine(output);
 			}
+        }
+
+        private async void SendData()
+        {
+            while (true)
+            {
+                Thread.Sleep(2000);
+
+                await CommService.SendSignalsBatch(_reader.Signals);
+            }
         }
 	}
 }

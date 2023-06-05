@@ -108,9 +108,9 @@ namespace USca_RTU.Processor
 		{
 			Tanks.Add(new(NextId(), "Tank01"));
 
-			Valves.Add(new(NextId(), "Tank01_ValveIn", 3, true));
-			Valves.Add(new(NextId(), "Tank01_ValveIn_Reserve", 1.5, false));
-			Valves.Add(new(NextId(), "Tank01_ValveOut", 3, true));
+			Valves.Add(new(NextId(), "Tank01_ValveIn", 0.1, true));
+			Valves.Add(new(NextId(), "Tank01_ValveIn_Reserve", 0.05, false));
+			Valves.Add(new(NextId(), "Tank01_ValveOut", 0.11, true));
 
 			TankValves.Add(new(Tanks[0], Valves.GetRange(0, 2), Valves.GetRange(2, 1)));
 		}
@@ -119,7 +119,7 @@ namespace USca_RTU.Processor
 		{
 			foreach (var o in Valves)
 			{
-				o.Value += r.NextDouble() * 0.2;
+				o.Value += r.NextDouble() * Math.Sin(DateTime.Now.Ticks / 5.0 + r.NextDouble() * 0.0001) * 0.0001;
 			}
 
 			foreach (var o in TankValves)
