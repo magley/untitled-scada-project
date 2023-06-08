@@ -1,0 +1,16 @@
+﻿<util:MyPage  
+	xmlns:util="clr-namespace:USca_DbManager.Util"
+	x:Class="USca_DbManager.Tags.TagsDashboard"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:USca_DbManager.Tags"
+      mc:Ignorable="d" 
+      d:Width="640" d:Height="480"
+      Title="TagsDashboard">
+
+    <Grid>
+		<Label>Tags</Label>
+    </Grid>
+</util:MyPage>
