@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+using USca_Server.Measures;
 using USca_Server.Shared;
 using USca_Server.Users;
 
@@ -14,7 +14,8 @@ namespace USca_Server
 			builder.Services.AddControllers();
 
 			builder.Services.AddScoped(typeof(IUserService), typeof(UserService));
-			builder.Services.AddDbContext<ServerDbContext>(opt => opt.UseSqlite("Data Source=Data/app.db"));
+			builder.Services.AddScoped(typeof(IMeasureService), typeof(MeasureService));
+			builder.Services.AddDbContext<ServerDbContext>();
 
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen();

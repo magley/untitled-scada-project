@@ -7,6 +7,13 @@ namespace USca_Server.Measures
 	[ApiController]
 	public class MeasureController : ControllerBase
 	{
+		private readonly IMeasureService _measureService;
+
+		public MeasureController(IMeasureService measureService)
+		{
+			_measureService = measureService;
+		}
+
 		[HttpPost]
 		public ActionResult<string> PutDataBatch(SignedDTO<List<MeasureFromRtuDTO>> data)
 		{
@@ -15,6 +22,8 @@ namespace USca_Server.Measures
 			{
 				return StatusCode(400, "Invalid signature");
 			}
+
+			_measureService.PutBatch(data.Payload);
 
 			return StatusCode(204);
 		}
