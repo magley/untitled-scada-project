@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using USca_RTU.Util;
 
 namespace USca_RTU.Processor
 {
@@ -13,13 +14,20 @@ namespace USca_RTU.Processor
 
 		public static async Task<object> SendSignalsBatch(List<Signal> signals)
 		{
-			var dto = signals.Select(s => new SignalDTO
+			var dtoPayload = signals.Select(s => new SignalDTO
 			{
 				Address = s.Address,
 				Name = s.Name,
 				Timestamp = s.Timestamp,
 				Value = s.Value
 			}).ToList();
+
+			var dto = new
+			{
+				payload = dtoPayload,
+				signature = CryptoUtil.SignMessage(dtoPayload, out byte[] hashValue),
+				hash = hashValue
+			};
 
 			using var cli = new RestClient(new RestClientOptions(URL));
 
