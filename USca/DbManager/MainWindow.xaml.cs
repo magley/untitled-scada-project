@@ -7,6 +7,8 @@ using System.Text.Json;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using USca_DbManager.Tags;
+using System.Linq;
 
 namespace USca_DbManager
 {
@@ -33,6 +35,9 @@ namespace USca_DbManager
 			{
 				var res = await UserService.Login(username, password);
 				MessageBox.Show($"Logged in as {res.username}", "Alert.", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+
+				var res2 = await TagService.GetAllTags();
+				Console.WriteLine(res2);
 			}
 			catch (BadCredentialsException)
 			{
