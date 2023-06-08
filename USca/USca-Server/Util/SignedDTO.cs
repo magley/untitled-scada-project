@@ -8,7 +8,5 @@ namespace USca_Server.Util
 		public T Payload { get; set; }
 		[JsonProperty("signature")]
 		public byte[] Signature { get; set; }
-		[JsonProperty("hash")]
-		public byte[] Hash { get; set; }
 	}
 }

@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using USca_Server.Shared;
 using USca_Server.Users;
-using USca_Server.Util;
 
 namespace USca_Server
 {

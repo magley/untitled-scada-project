@@ -25,8 +25,7 @@ namespace USca_RTU.Processor
 			var dto = new
 			{
 				payload = dtoPayload,
-				signature = CryptoUtil.SignMessage(dtoPayload, out byte[] hashValue),
-				hash = hashValue
+				signature = CryptoUtil.SignMessage(dtoPayload, out byte[] hashValue)
 			};
 
 			using var cli = new RestClient(new RestClientOptions(URL));

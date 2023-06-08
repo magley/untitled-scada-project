@@ -10,7 +10,7 @@ namespace USca_Server.Measures
 		[HttpPost]
 		public ActionResult<string> PutDataBatch(SignedDTO<List<MeasureFromRtuDTO>> data)
 		{
-			Console.WriteLine(CryptoUtil.VerifySignedMessage(data.Hash, data.Signature));
+			Console.WriteLine(CryptoUtil.VerifySignedMessage(data.Payload, data.Signature));
 			return StatusCode(204);
 		}
 	}

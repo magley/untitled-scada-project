@@ -1,18 +1,26 @@
 ﻿using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
 
 namespace USca_Server.Util
 {
 	public class CryptoUtil
 	{
-		public static bool VerifySignedMessage(byte[] hash, byte[] signature)
+		public static bool VerifySignedMessage(object o, byte[] signature)
 		{
-			CspParameters csp = new CspParameters();
-			csp.KeyContainerName = "USca_RTU_Key";
-			using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(csp))
+			using (SHA256 sha = SHA256.Create())
 			{
-				var deformatter = new RSAPKCS1SignatureDeformatter(rsa);
-				deformatter.SetHashAlgorithm("SHA256");
-				return deformatter.VerifySignature(hash, signature);
+				string message = JsonSerializer.Serialize(o);
+				byte[] hash = sha.ComputeHash(Encoding.UTF8.GetBytes(message));
+
+				CspParameters csp = new CspParameters();
+				csp.KeyContainerName = "USca_RTU_Key";
+				using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(csp))
+				{
+					var deformatter = new RSAPKCS1SignatureDeformatter(rsa);
+					deformatter.SetHashAlgorithm("SHA256");
+					return deformatter.VerifySignature(hash, signature);
+				}
 			}
 		}
 
