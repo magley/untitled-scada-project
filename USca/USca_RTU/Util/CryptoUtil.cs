@@ -1,10 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.IO.Packaging;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace USca_RTU.Util
 {
@@ -23,7 +21,6 @@ namespace USca_RTU.Util
 				csp.KeyContainerName = ContainerName;
 				RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(csp);
 
-				Console.WriteLine(rsa.ToXmlString(false));
 				var formatter = new RSAPKCS1SignatureFormatter(rsa);
 				formatter.SetHashAlgorithm("SHA256");
 				return formatter.CreateSignature(hashValue);

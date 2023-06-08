@@ -10,7 +10,12 @@ namespace USca_Server.Measures
 		[HttpPost]
 		public ActionResult<string> PutDataBatch(SignedDTO<List<MeasureFromRtuDTO>> data)
 		{
-			Console.WriteLine(CryptoUtil.VerifySignedMessage(data.Payload, data.Signature));
+			bool isValid = CryptoUtil.VerifySignedMessage(data.Payload, data.Signature);
+			if (!isValid)
+			{
+				return StatusCode(400, "Invalid signature");
+			}
+
 			return StatusCode(204);
 		}
 	}

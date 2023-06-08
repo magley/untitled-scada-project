@@ -26,19 +26,15 @@ namespace USca_Server.Util
 
 		public static void ImportPublicKey(string path, string keyStoreName)
 		{
-			FileInfo fi = new FileInfo(path);
-			if (fi.Exists)
+			using (StreamReader reader = new StreamReader(path))
 			{
-				using (StreamReader reader = new StreamReader(path))
-				{
-					var csp = new CspParameters();
-					csp.KeyContainerName = keyStoreName;
-					var rsa = new RSACryptoServiceProvider(csp);
-					string publicKeyText = reader.ReadToEnd();
-					rsa.FromXmlString(publicKeyText);
-					rsa.PersistKeyInCsp = true;
-				}
-			}
+				var csp = new CspParameters();
+				csp.KeyContainerName = keyStoreName;
+				var rsa = new RSACryptoServiceProvider(csp);
+				string publicKeyText = reader.ReadToEnd();
+				rsa.FromXmlString(publicKeyText);
+				rsa.PersistKeyInCsp = true;
+			}	
 		}
 	}
 }
