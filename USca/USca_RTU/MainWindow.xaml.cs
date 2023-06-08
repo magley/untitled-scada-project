@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Threading;
 using System.Windows;
 using USca_RTU.Processor;
@@ -16,7 +15,9 @@ namespace USca_RTU
 
         public MainWindow()
         {
-            InitializeComponent();
+            //CryptoUtil.SavePublicKey("C:/Users/aaa/Desktop/USca_RTU_Key.pub");
+
+			InitializeComponent();
             DataContext = this;
 
 			_simulator = new();
@@ -41,7 +42,6 @@ namespace USca_RTU
                 _reader.Update();
 
                 string output = $"[\n\t{string.Join(",\n\t", _reader.Signals)}\n]";
-				Console.WriteLine(output);
 			}
         }
 

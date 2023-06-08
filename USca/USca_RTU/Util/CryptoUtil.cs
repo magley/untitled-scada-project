@@ -1,4 +1,7 @@
-﻿using System.Security.Cryptography;
+﻿using System;
+using System.IO;
+using System.IO.Packaging;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -19,10 +22,23 @@ namespace USca_RTU.Util
 				CspParameters csp = new CspParameters();
 				csp.KeyContainerName = ContainerName;
 				RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(csp);
+
+				Console.WriteLine(rsa.ToXmlString(false));
 				var formatter = new RSAPKCS1SignatureFormatter(rsa);
 				formatter.SetHashAlgorithm("SHA256");
 				return formatter.CreateSignature(hashValue);
 			}
+		}
+
+		public static void SavePublicKey(string path)
+		{
+			CspParameters csp = new CspParameters();
+			csp.KeyContainerName = ContainerName;
+			RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(csp);
+
+			string pubKeyStr = rsa.ToXmlString(false);
+
+			File.WriteAllText(path, pubKeyStr);
 		}
 	}
 }

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using USca_Server.Shared;
 using USca_Server.Users;
+using USca_Server.Util;
 
 namespace USca_Server
 {
@@ -8,6 +9,8 @@ namespace USca_Server
 	{
 		public static void Main(string[] args)
 		{
+			//CryptoUtil.ImportPublicKey("C:/Users/aaa/USca_RTU_Key.pub", "USca_RTU_Key");
+
 			var builder = WebApplication.CreateBuilder(args);
 			builder.Services.AddControllers();
 
