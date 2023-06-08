@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using USca_Server.Measures;
+using USca_Server.Tags;
 using USca_Server.Users;
 
 namespace USca_Server.Shared
@@ -8,10 +9,10 @@ namespace USca_Server.Shared
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Measure> Measures { get; set; }
+		public DbSet<Tag> Tags { get; set; }
 
-        private static bool _created = false;
-        public ServerDbContext(DbContextOptions<ServerDbContext> options)
-        : base(options)
+		private static bool _created = false;
+        public ServerDbContext()
         {
             if (!_created)
             {
@@ -25,5 +26,10 @@ namespace USca_Server.Shared
             Users.Add(new() { Name = "Bib", Surname = "Jines", Username = "user3", Password = "1234" });
             SaveChanges();
         }
-    }
+
+		protected override void OnConfiguring(DbContextOptionsBuilder options)
+		{
+			options.UseSqlite("Data Source=Data/app.db");
+		}
+	}
 }
