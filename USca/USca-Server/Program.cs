@@ -8,7 +8,7 @@ namespace USca_Server
 	{
 		public static void Main(string[] args)
 		{
-			//CryptoUtil.ImportPublicKey("C:/Users/aaa/USca_RTU_Key.pub", "USca_RTU_Key");
+			//CryptoUtil.ImportPublicKey("C:/Users/aaa/Desktop/USca_RTU_Key.pub", "USca_RTU_Key");
 
 			var builder = WebApplication.CreateBuilder(args);
 			builder.Services.AddControllers();
@@ -29,6 +29,7 @@ namespace USca_Server
 
 			app.UseHttpsRedirection();
 			app.UseAuthorization();
+			app.UseWebSockets();
 			app.MapControllers();
 			app.Run();
 		}
