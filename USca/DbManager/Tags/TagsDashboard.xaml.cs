@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json;
 using USca_DbManager.Util;
 
 namespace USca_DbManager.Tags
@@ -10,13 +11,13 @@ namespace USca_DbManager.Tags
 			InitializeComponent();
 		}
 
-        private void BtnAddTag_Click(object sender, System.Windows.RoutedEventArgs e)
+        private async void BtnAddTag_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             var dialog = new AddTag();
-            dialog.Owner = this.Owner;
+            dialog.Owner = Owner;
             if (dialog.ShowDialog() == true)
             {
-                Console.WriteLine(dialog.TagName);
+                await TagService.AddTag(dialog.TagData);
             }
         }
     }

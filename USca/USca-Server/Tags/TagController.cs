@@ -20,5 +20,11 @@ namespace USca_Server.Tags
 				return StatusCode(200, db.Tags.ToList());
 			}
 		}
-	}
+
+		[HttpPost]
+        public ActionResult<object> AddTag()
+        {
+			return StatusCode(204);
+        }
+    }
 }

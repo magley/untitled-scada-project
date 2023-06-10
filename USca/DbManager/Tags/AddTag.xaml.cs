@@ -19,16 +19,7 @@ namespace USca_DbManager.Tags
     public partial class AddTag : Window, INotifyPropertyChanged
     {
         public List<string> TagUnits { get; set; } = new();
-
-        public string TagName { get; set; } = "";
-        public string TagDesc { get; set; } = "";
-        public TagMode TagMode { get; set; }
-        public TagType TagType { get; set; }
-        public int TagAddress { get; set; }
-        public double TagMin { get; set; } = 0;
-        public double TagMax { get; set; } = 10.0;
-        public string TagUnit { get; set; } = "";
-        public int TagScanTime { get; set; } = 1000;
+        public TagAddDTO TagData { get; set; } = new();
 
         public AddTag()
         {
@@ -41,7 +32,7 @@ namespace USca_DbManager.Tags
             TagUnits.Add("litre");
             TagUnits.Add("kg");
             TagUnits.Add("g");
-            TagUnit = TagUnits[0];
+            TagData.Unit = TagUnits[0];
         }
 
         private void BtnCancel_Click(object sender, RoutedEventArgs e)
