@@ -4,12 +4,18 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:USca_DbManager.Tags"
+		xmlns:util="clr-namespace:USca_DbManager.Util"
 		mc:Ignorable="d"
 		Title="Create a new tag"
-		Height="240"
-		Width="320"
+		Width="450"
+		Height="360"
 		WindowStartupLocation="CenterOwner"
 		DataContext="{Binding RelativeSource={RelativeSource Self}}">
+
+	<Window.Resources>
+		<util:EnumToBooleanConverter x:Key="EnumToBoolConv" />
+	</Window.Resources>
+
 	<Grid Margin="10">
 		<Grid.RowDefinitions>
 			<RowDefinition />
@@ -20,24 +26,134 @@
 
 		<Grid Grid.Row="0">
 			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
 				<RowDefinition />
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition />
+				<ColumnDefinition />
 			</Grid.ColumnDefinitions>
 
-			<Label Grid.Row="0"
-				   Grid.Column="0"
-				   Content="Name" />
-			<TextBox Grid.Row="1"
-					 Grid.Column="0"
-					 Width="200"
-					 HorizontalAlignment="Left"
-					 x:Name="TxtTagName"
-					 Text="{Binding TagName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+			<StackPanel Grid.Row="0"
+						Grid.Column="0"
+						Margin="5">
+				<Label Content="Name" />
+				<TextBox x:Name="TxtTagName"
+						 Text="{Binding TagName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				<Label Content="Description" />
+				<TextBox x:Name="TxtTagDesc"
+						 TextWrapping="Wrap"
+						 AcceptsReturn="True"
+						 VerticalScrollBarVisibility="Auto"
+						 Height="48"
+						 Text="{Binding TagDesc, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
+				<GroupBox Padding="10"
+						  Header="Mode">
+					<StackPanel>
+						<RadioButton GroupName="Mode"
+									 Content="Input"
+									 IsChecked="{Binding TagMode, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumToBoolConv},
+												ConverterParameter={x:Static local:TagMode.Input}}" />
+						<RadioButton GroupName="Mode"
+									 Content="Output"
+									 IsChecked="{Binding TagMode, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumToBoolConv},
+												ConverterParameter={x:Static local:TagMode.Output}}" />
+					</StackPanel>
+				</GroupBox>
+
+				<GroupBox Header="Scan Time (ms)"
+						  Padding="10">
+					<GroupBox.Style>
+						<Style TargetType="{x:Type GroupBox}">
+							<Setter Property="IsEnabled"
+									Value="True" />
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding TagMode}"
+											 Value="{x:Static local:TagMode.Output}">
+									<Setter Property="IsEnabled"
+											Value="False" />
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</GroupBox.Style>
+
+					<TextBox Text="{Binding TagScanTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat='#0'}"
+							 HorizontalContentAlignment="Right" />
+				</GroupBox>
+			</StackPanel>
+
+			<StackPanel Grid.Row="0"
+						Grid.Column="1"
+						Margin="5">
+				<Label Content="I/O Address" />
+				<TextBox Text="{Binding TagAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+				<GroupBox Padding="10"
+						  Header="Type">
+					<StackPanel>
+						<RadioButton GroupName="Type"
+									 Content="Digital"
+									 IsChecked="{Binding TagType, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumToBoolConv},
+												ConverterParameter={x:Static local:TagType.Digital}}" />
+						<RadioButton GroupName="Type"
+									 Content="Analog"
+									 IsChecked="{Binding TagType, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumToBoolConv},
+												ConverterParameter={x:Static local:TagType.Analog}}" />
+					</StackPanel>
+				</GroupBox>
+
+				<GroupBox Padding="10"
+						  Header="Advanced">
+					<GroupBox.Style>
+						<Style TargetType="{x:Type GroupBox}">
+							<Setter Property="IsEnabled"
+									Value="True" />
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding TagType}"
+											 Value="{x:Static local:TagType.Digital}">
+									<Setter Property="IsEnabled"
+											Value="False" />
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</GroupBox.Style>
+
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition />
+							<RowDefinition />
+							<RowDefinition />
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition />
+						</Grid.ColumnDefinitions>
+						<Label Grid.Row="0"
+							   Grid.Column="0"
+							   Content="Min:" />
+						<Label Grid.Row="1"
+							   Grid.Column="0"
+							   Content="Max:" />
+						<Label Grid.Row="2"
+							   Grid.Column="0"
+							   Content="Unit:" />
+
+						<TextBox Grid.Row="0"
+								 Grid.Column="1"
+								 Margin="0 4 0 0"
+								 Text="{Binding TagMin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat='#0.00'}" />
+						<TextBox Grid.Row="1"
+								 Grid.Column="1"
+								 Margin="0 4 0 0"
+								 Text="{Binding TagMax, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat='#0.00'}" />
+						<ComboBox Grid.Row="2"
+								  Grid.Column="1"
+								  Margin="0 4 0 0"
+								  ItemsSource="{Binding TagUnits, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+								  SelectedItem="{Binding TagUnit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+					</Grid>
+				</GroupBox>
+			</StackPanel>
 		</Grid>
 
 		<!-- Bottom panels -->
