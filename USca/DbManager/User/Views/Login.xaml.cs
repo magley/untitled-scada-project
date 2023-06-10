@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using USca_DbManager.Tags;
 using USca_DbManager.Util;

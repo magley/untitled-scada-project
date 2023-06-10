@@ -5,7 +5,7 @@ namespace USca_Server.Measures
 {
 	public class MeasureService : IMeasureService
 	{
-		public void PutBatch(List<MeasureFromRtuDTO> batch)
+        public void PutBatch(List<MeasureFromRtuDTO> batch)
 		{
 			var data = batch.Select(b => new Measure()
 			{
@@ -32,5 +32,18 @@ namespace USca_Server.Measures
 				db.SaveChanges();
 			}
 		}
-	}
+
+        public List<Measure> Get()
+        {
+			using (var db = new ServerDbContext())
+			{
+				return db.Measures.ToList();
+			}
+        }
+
+        public List<int> GetAddresses()
+        {
+			return (from m in Get() select m.Id).ToList();
+        }
+    }
 }
