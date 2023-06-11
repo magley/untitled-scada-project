@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text.Json;
 using System.Windows;
 
 namespace USca_DbManager.Tags
@@ -13,7 +14,7 @@ namespace USca_DbManager.Tags
         {
             InitializeComponent();
             OnCtor();
-            TagData = original;
+            TagData = JsonSerializer.Deserialize<TagDTO>(JsonSerializer.Serialize(original));
         }
 
         public AddTag()
