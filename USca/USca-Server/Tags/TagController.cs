@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using USca_Server.Shared;
 
 namespace USca_Server.Tags
 {
@@ -19,10 +17,6 @@ namespace USca_Server.Tags
 		public ActionResult<List<Tag>> GetAllTags()
 		{
 			var res = _tagService.GetAll();
-			foreach (var t in res)
-			{
-				Console.WriteLine(t.Name);
-			}
 			return StatusCode(200, res);
 		}
 
@@ -30,6 +24,21 @@ namespace USca_Server.Tags
         public ActionResult<object> AddTag(TagAddDTO dto)
         {
 			_tagService.Add(dto);
+			return StatusCode(204);
+        }
+
+        [HttpPut]
+        public ActionResult<object> UpdateTag(TagDTO dto)
+        {
+            _tagService.Update(dto);
+            return StatusCode(204);
+        }
+
+		[HttpDelete("{id}")]
+        public ActionResult<object> DeleteTag(int id)
+        {
+			Console.WriteLine(id);
+            _tagService.Delete(id);
             return StatusCode(204);
         }
     }

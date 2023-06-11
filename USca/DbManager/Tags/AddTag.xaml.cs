@@ -7,11 +7,25 @@ namespace USca_DbManager.Tags
     public partial class AddTag : Window, INotifyPropertyChanged
     {
         public List<string> TagUnits { get; set; } = new();
-        public TagAddDTO TagData { get; set; } = new();
+        public TagDTO TagData { get; set; } = new();
+
+        public AddTag(TagDTO original)
+        {
+            InitializeComponent();
+            TagData = original;
+
+            OnCtor();
+        }
 
         public AddTag()
         {
             InitializeComponent();
+
+            OnCtor();
+        }
+
+        private void OnCtor()
+        {
             TxtTagName.Focus();
 
             TagUnits.Add("mm");

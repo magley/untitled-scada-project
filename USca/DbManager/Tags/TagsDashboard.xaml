@@ -22,7 +22,9 @@
 				  Grid.Row="0"
 				  AutoGenerateColumns="False"
 				  IsReadOnly="True"
-				  ItemsSource="{Binding Tags}">
+				  ItemsSource="{Binding Tags}"
+				  MouseDoubleClick="TbTags_MouseDoubleClick"
+				  SelectedItem="{Binding SelectedTag, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 			<DataGrid.Columns>
 				<DataGridTextColumn Header="Name"
 									Binding="{Binding Name}" />
@@ -33,7 +35,8 @@
 				<DataGridTemplateColumn Header="ScanTime">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
-							<TextBlock x:Name="TextHolder" Text="{Binding ScanTime}" />
+							<TextBlock x:Name="TextHolder"
+									   Text="{Binding ScanTime}" />
 							<DataTemplate.Triggers>
 								<DataTrigger Binding="{Binding Mode}"
 											 Value="{x:Static local:TagMode.Output}">
@@ -97,10 +100,17 @@
 				</DataGridTemplateColumn>
 			</DataGrid.Columns>
 		</DataGrid>
-		<Button Content="Add"
-				Width="100"
-				Grid.Row="1"
-				x:Name="BtnAddTag"
-				Click="BtnAddTag_Click" />
+
+		<StackPanel Orientation="Horizontal"
+					Grid.Row="1">
+			<Button Content="Delete"
+					Width="100"
+					x:Name="BtnDelTag"
+					Click="BtnDelTag_Click" />
+			<Button Content="Add"
+					Width="100"
+					x:Name="BtnAddTag"
+					Click="BtnAddTag_Click" />
+		</StackPanel>
 	</Grid>
 </util:MyPage>

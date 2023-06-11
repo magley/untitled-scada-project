@@ -10,7 +10,7 @@ namespace USca_DbManager.Tags
 	{
 		private static readonly string URL = "http://localhost:5274/api";
 
-		public static async Task<List<TagAddDTO>> GetAllTags()
+		public static async Task<List<TagDTO>> GetAllTags()
 		{
 			using var cli = new RestClient(new RestClientOptions(URL));
 			var req = new RestRequest("tag", Method.Get);
@@ -18,7 +18,7 @@ namespace USca_DbManager.Tags
 
 			if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-				var li = JsonSerializer.Deserialize<List<TagAddDTO>>(response.Content);
+				var li = JsonSerializer.Deserialize<List<TagDTO>>(response.Content);
 				return li;
 			}
 			else
@@ -27,7 +27,7 @@ namespace USca_DbManager.Tags
 			}
 		}
 
-		public static async Task<RestResponse> AddTag(TagAddDTO tag)
+		public static async Task<RestResponse> AddTag(TagDTO tag)
 		{
             using var cli = new RestClient(new RestClientOptions(URL));
             var req = new RestRequest("tag", Method.Post);
@@ -36,5 +36,24 @@ namespace USca_DbManager.Tags
 
 			return response;
         }
-	}
+
+        public static async Task<RestResponse> UpdateTag(TagDTO tag)
+        {
+            using var cli = new RestClient(new RestClientOptions(URL));
+            var req = new RestRequest("tag", Method.Put);
+            req.AddBody(tag);
+            RestResponse response = await cli.ExecuteAsync(req);
+
+            return response;
+        }
+
+        public static async Task<RestResponse> DeleteTag(TagDTO tag)
+        {
+            using var cli = new RestClient(new RestClientOptions(URL));
+            var req = new RestRequest($"tag/{tag.Id}", Method.Delete);
+            RestResponse response = await cli.ExecuteAsync(req);
+
+            return response;
+        }
+    }
 }
