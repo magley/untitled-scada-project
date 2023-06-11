@@ -41,5 +41,21 @@ namespace USca_Server.Tags
             _tagService.Delete(id);
             return StatusCode(204);
         }
+
+        [HttpGet("ws")]
+        public async Task OpenTagWebSocket()
+        {
+            if (HttpContext.WebSockets.IsWebSocketRequest)
+            {
+                using (var ws = await HttpContext.WebSockets.AcceptWebSocketAsync())
+                {
+                    await _tagService.SendTagValues(ws);
+                }
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 400;
+            }
+        }
     }
 }

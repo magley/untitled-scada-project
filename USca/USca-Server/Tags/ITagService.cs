@@ -1,4 +1,6 @@
-﻿namespace USca_Server.Tags
+﻿using System.Net.WebSockets;
+
+namespace USca_Server.Tags
 {
     public interface ITagService
     {
@@ -6,5 +8,7 @@
         public List<Tag> GetAll();
         public void Update(TagDTO dto);
         public void Delete(int id);
+
+        public Task SendTagValues(WebSocket ws);
     }
 }
