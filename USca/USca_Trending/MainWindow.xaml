@@ -1,0 +1,22 @@
+﻿<Window x:Class="USca_Trending.MainWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:USca_Trending"
+		xmlns:tags="clr-namespace:USca_Trending.Tags"
+		mc:Ignorable="d"
+		Title="USca Trending"
+		Height="450"
+		Width="800">
+	<Grid>
+		<TabControl>
+			<TabItem Header="System state">
+				<tags:TagValues />
+			</TabItem>
+			<TabItem Header="Alarms">
+				
+			</TabItem>
+		</TabControl>
+	</Grid>
+</Window>
