@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using USca_Server.Shared;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace USca_Server.Tags
 {
@@ -11,7 +12,6 @@ namespace USca_Server.Tags
 
             using (var db = new ServerDbContext())
             {
-                db.Tags.Load();
                 db.Tags.Add(t);
                 db.SaveChanges();
             }
@@ -21,14 +21,13 @@ namespace USca_Server.Tags
         {
             using (var db = new ServerDbContext())
             {
-                db.Tags.Load();
                 var tag = db.Tags.Find(id);
 
                 if (tag != null)
                 {
                     db.Tags.Remove(tag);
+                    db.SaveChanges();
                 }
-                db.SaveChanges();
             }
         }
 
@@ -36,14 +35,21 @@ namespace USca_Server.Tags
         {
             using (var db = new ServerDbContext())
             {
-                db.Tags.Load();
                 return db.Tags.ToList();
             }
         }
 
         public void Update(TagDTO dto)
         {
-            throw new NotImplementedException();
+            using (var db = new ServerDbContext())
+            {
+                var tag = db.Tags.Find(dto.Id);
+                if (tag != null)
+                {
+                    db.Tags.Entry(tag).CurrentValues.SetValues(dto);
+                    db.SaveChanges();
+                }
+            }
         }
     }
 }

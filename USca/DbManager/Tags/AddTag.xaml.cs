@@ -12,16 +12,15 @@ namespace USca_DbManager.Tags
         public AddTag(TagDTO original)
         {
             InitializeComponent();
-            TagData = original;
-
             OnCtor();
+            TagData = original;
         }
 
         public AddTag()
         {
             InitializeComponent();
-
             OnCtor();
+            TagData.Unit = TagUnits[0];
         }
 
         private void OnCtor()
@@ -33,8 +32,7 @@ namespace USca_DbManager.Tags
             TagUnits.Add("°C");
             TagUnits.Add("litre");
             TagUnits.Add("kg");
-            TagUnits.Add("g");
-            TagData.Unit = TagUnits[0];
+            TagUnits.Add("g");   
         }
 
         private void BtnCancel_Click(object sender, RoutedEventArgs e)
