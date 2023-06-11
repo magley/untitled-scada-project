@@ -4,18 +4,6 @@ using System.Windows;
 
 namespace USca_DbManager.Tags
 {
-    public enum TagMode
-    {
-        Input,
-        Output
-    }
-
-    public enum TagType
-    {
-        Digital,
-        Analog
-    }
-
     public partial class AddTag : Window, INotifyPropertyChanged
     {
         public List<string> TagUnits { get; set; } = new();

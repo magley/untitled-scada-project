@@ -1,15 +1,19 @@
 ﻿using System;
-using System.Text.Json;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using USca_DbManager.Util;
 
 namespace USca_DbManager.Tags
 {
 	public partial class TagsDashboard : MyPage
     {
+        public ObservableCollection<TagAddDTO> Tags { get; set; } = new();
+
 		public TagsDashboard()
 		{
 			InitializeComponent();
-		}
+            LoadAllTags();
+        }
 
         private async void BtnAddTag_Click(object sender, System.Windows.RoutedEventArgs e)
         {
@@ -18,6 +22,17 @@ namespace USca_DbManager.Tags
             if (dialog.ShowDialog() == true)
             {
                 await TagService.AddTag(dialog.TagData);
+                LoadAllTags();
+            }
+        }
+
+        private async void LoadAllTags()
+        {
+            List<TagAddDTO> tags = await TagService.GetAllTags();
+            Tags.Clear();
+            foreach (var t in tags)
+            {
+                Tags.Add(t);
             }
         }
     }

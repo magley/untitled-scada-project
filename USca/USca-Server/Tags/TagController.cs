@@ -8,23 +8,29 @@ namespace USca_Server.Tags
 	[ApiController]
 	public class TagController : ControllerBase
 	{
+		private ITagService _tagService;
+
+		public TagController(ITagService tagService)
+		{
+			_tagService = tagService;
+		}
+
 		[HttpGet]
 		public ActionResult<List<Tag>> GetAllTags()
 		{
-			using (var db = new ServerDbContext())
+			var res = _tagService.GetAll();
+			foreach (var t in res)
 			{
-				db.Tags.Load();
-
-				Console.WriteLine(db.Tags.Count());
-
-				return StatusCode(200, db.Tags.ToList());
+				Console.WriteLine(t.Name);
 			}
+			return StatusCode(200, res);
 		}
 
 		[HttpPost]
-        public ActionResult<object> AddTag()
+        public ActionResult<object> AddTag(TagAddDTO dto)
         {
-			return StatusCode(204);
+			_tagService.Add(dto);
+            return StatusCode(204);
         }
     }
 }

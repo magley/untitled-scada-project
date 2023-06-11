@@ -1,20 +1,6 @@
-﻿using System.ComponentModel;
-
-namespace USca_DbManager.Tags
+﻿namespace USca_Server.Tags
 {
-    public enum TagMode
-    {
-        Input,
-        Output
-    }
-
-    public enum TagType
-    {
-        Digital,
-        Analog
-    }
-
-    public partial class TagAddDTO : INotifyPropertyChanged
+    public partial class TagAddDTO
     {
         public string Name { get; set; } = "";
         public string Desc { get; set; } = "";

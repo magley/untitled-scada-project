@@ -1,5 +1,7 @@
 ﻿using RestSharp;
 using System;
+using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace USca_DbManager.Tags
@@ -8,16 +10,16 @@ namespace USca_DbManager.Tags
 	{
 		private static readonly string URL = "http://localhost:5274/api";
 
-		public static async Task<string> GetAllTags()
+		public static async Task<List<TagAddDTO>> GetAllTags()
 		{
 			using var cli = new RestClient(new RestClientOptions(URL));
 			var req = new RestRequest("tag", Method.Get);
 			RestResponse response = await cli.ExecuteAsync(req);
 
 			if (response.StatusCode == System.Net.HttpStatusCode.OK)
-			{
-				var res = response.Content!;
-				return res;
+            {
+				var li = JsonSerializer.Deserialize<List<TagAddDTO>>(response.Content);
+				return li;
 			}
 			else
 			{
@@ -31,8 +33,6 @@ namespace USca_DbManager.Tags
             var req = new RestRequest("tag", Method.Post);
 			req.AddBody(tag);
             RestResponse response = await cli.ExecuteAsync(req);
-
-			Console.WriteLine(response.StatusCode);
 
 			return response;
         }

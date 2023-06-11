@@ -1,5 +1,6 @@
 using USca_Server.Measures;
 using USca_Server.Shared;
+using USca_Server.Tags;
 using USca_Server.Users;
 
 namespace USca_Server
@@ -15,9 +16,11 @@ namespace USca_Server
 
 			builder.Services.AddScoped(typeof(IUserService), typeof(UserService));
 			builder.Services.AddScoped(typeof(IMeasureService), typeof(MeasureService));
-			builder.Services.AddDbContext<ServerDbContext>();
+            builder.Services.AddScoped(typeof(ITagService), typeof(TagService));
+            builder.Services.AddDbContext<ServerDbContext>();
+            builder.Services.AddControllers().AddJsonOptions(options =>options.JsonSerializerOptions.PropertyNamingPolicy = null);
 
-			builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen();
 			var app = builder.Build();
 
