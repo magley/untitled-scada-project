@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.Json;
 using USca_Server.Shared;
+using USca_Server.Util;
 
 namespace USca_Server.Tags
 {
@@ -15,6 +16,14 @@ namespace USca_Server.Tags
             {
                 db.Tags.Add(t);
                 db.SaveChanges();
+            }
+        }
+
+        public Tag? Get(int id)
+        {
+            using (var db = new ServerDbContext())
+            {
+                return db.Tags.Find(id);
             }
         }
 
@@ -55,37 +64,98 @@ namespace USca_Server.Tags
 
         public async Task SendTagValues(WebSocket ws)
         {
-            var inputTags = GetAll().Where(t => t.Mode == TagMode.Input).ToList();
-            var threads = new List<Thread>();
+            Console.WriteLine("Established connection to web socket.");
+            var tagThreads = new Dictionary<int, RunningThread>();
+            bool isRunning = true;
 
-            foreach (var tag in inputTags)
-            {
-                Thread t = new(new ThreadStart(() => SendTagThread(tag, ws)))
-                {
-                    IsBackground = false
-                };
-                t.Start();
-                threads.Add(t);
-            }
+            Thread syncThread = new(new ThreadStart(() => SyncTagThreadsWithTagsInSystem(tagThreads, ws, ref isRunning)));
+            syncThread.IsBackground = true;
+            syncThread.Start();
 
-            var buffer = new byte[1024 * 4];
             while (ws.State == WebSocketState.Open)
             {
-                var result = await ws.ReceiveAsync(buffer, CancellationToken.None);
-                if (result.MessageType == WebSocketMessageType.Close)
+                var buffer = new byte[1024 * 4];
+
+                try
                 {
-                    await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
+                    var result = await ws.ReceiveAsync(buffer, CancellationToken.None);
+
+                    if (result.MessageType == WebSocketMessageType.Close)
+                    {
+                        await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
+                    }
+                    else
+                    {
+                        Console.WriteLine(Encoding.ASCII.GetString(buffer, 0, result.Count));
+                    }
                 }
-                else
+                catch (WebSocketException)
                 {
-                    Console.WriteLine(Encoding.ASCII.GetString(buffer, 0, result.Count));
+                    break;
                 }
             }
+
+            isRunning = false;
+            Console.WriteLine("Ended connection to web socket.");
         }
 
-        private void SendTagThread(Tag t, WebSocket ws)
+        private void SyncTagThreadsWithTagsInSystem(Dictionary<int, RunningThread> tagThreads, WebSocket ws, ref bool isRunning)
         {
-            while (true)
+            const int syncTimeMs = 1000;
+
+            while (isRunning)
+            {
+                Thread.Sleep(syncTimeMs);
+                Console.WriteLine("Sync tag threads...");
+
+                var currentTags = GetAll()
+                    .Where(t => t.Mode == TagMode.Input)
+                    .Select(t => t.Id)
+                    .ToList();
+                var staleTags = tagThreads.Keys.ToList().Except(currentTags);
+
+                // Remove threads for tags that don't exist anymore.
+
+                foreach (var tagId in staleTags)
+                {
+                    tagThreads[tagId].IsRunning = false;
+                    tagThreads.Remove(tagId);
+                    Console.WriteLine($"Removed thread for tag {tagId}.");
+                }
+
+                // Create threads for new tags.
+
+                foreach (var tagId in currentTags)
+                {
+                    if (!tagThreads.ContainsKey(tagId))
+                    {
+                        Tag? tag = Get(tagId);
+                        if (tag == null)
+                        {
+                            // Should never happen, but VS complains about null checks.
+                            continue;
+                        }
+
+                        RunningThread rt = new();
+                        Thread t = new(new ThreadStart(() => SendTagThread(rt, tag, ws)))
+                        {
+                            IsBackground = false
+                        };
+                        t.Start();
+                        rt.Thread = t;
+                        tagThreads[tagId] = rt;
+
+                        Console.WriteLine($"Added thread for tag {tagId}.");
+                    }
+                }
+            }
+
+            Console.WriteLine("Sync tag threads STOP.");
+        }
+
+        private void SendTagThread(RunningThread self, Tag t, WebSocket ws)
+        {
+            while (self.IsRunning)
             {
                 Thread.Sleep(t.ScanTime);
 
@@ -105,12 +175,19 @@ namespace USca_Server.Tags
                         };
                         var messageJson = JsonSerializer.Serialize(message);
 
-                        ws.SendAsync(
-                            new(Encoding.UTF8.GetBytes(messageJson)),
-                            WebSocketMessageType.Text,
-                            true,
-                            CancellationToken.None
-                        );
+                        try
+                        {
+                            ws.SendAsync(
+                                new(Encoding.UTF8.GetBytes(messageJson)),
+                                WebSocketMessageType.Text,
+                                true,
+                                CancellationToken.None
+                            );
+                        }
+                        catch (WebSocketException)
+                        {
+                            // Client forcibly closed the socket.
+                        }
                     }
                     else
                     {
@@ -118,6 +195,7 @@ namespace USca_Server.Tags
                     }
                 }
             }
+            
         }
     }
 }
