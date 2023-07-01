@@ -15,7 +15,6 @@ namespace USca_DbManager.Tags
 		{
 			InitializeComponent();
             LoadAllTags();
-            DataContext = this;
         }
 
         private async void BtnAddTag_Click(object sender, RoutedEventArgs e)
