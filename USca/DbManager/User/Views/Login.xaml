@@ -1,0 +1,22 @@
+﻿<util:MyPage  
+	xmlns:util="clr-namespace:USca_DbManager.Util"
+	x:Class="USca_DbManager.User.Login"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+	xmlns:local="clr-namespace:USca_DbManager.User"
+	mc:Ignorable="d" 
+	Background="LightSalmon"
+	d:Width="640" d:Height="480"
+	Title="Login">
+
+	<StackPanel Margin="100 0 100 0" VerticalAlignment="Center">
+		<Label FontSize="32" Content="SIGN IN" HorizontalContentAlignment="Center"/>
+		<Label Content="Username:"/>
+		<TextBox x:Name="tbUsername"/>
+		<Label Content="Password:"/>
+		<PasswordBox x:Name="tbPassword"/>
+		<Button Margin="0 20 0 0" x:Name="btnLogin" Click="btnLogin_Click" Content="Login"/>
+	</StackPanel>
+</util:MyPage>

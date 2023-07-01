@@ -1,0 +1,49 @@
+﻿<Window x:Class="USca_RTU.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:USca_RTU"
+		Background="#121212"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="540" Width="960">
+
+	<Window.Resources>
+		<Style TargetType="{x:Type CheckBox}">
+			<Setter Property="Foreground" Value="White"/>
+		</Style>
+		<Style TargetType="{x:Type Label}">
+			<Setter Property="Foreground" Value="White"/>
+		</Style>
+	</Window.Resources>
+
+	<Canvas Width="640" Height="480" >
+		<Image Source="Data/schem_01.png" Height="320" Canvas.Left="0" Canvas.Top="0"/>
+		<CheckBox 
+			Canvas.Left="84" Canvas.Top="291" 
+			IsChecked="{Binding Simulator.Valves[0].Open, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			ToolTip="{Binding Simulator.Valves[0].Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			/>
+		<CheckBox 
+			Canvas.Left="130" Canvas.Top="253" 
+			IsChecked="{Binding Simulator.Valves[1].Open, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			ToolTip="{Binding Simulator.Valves[1].Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Top"
+			/>
+		<Label
+			Canvas.Left="185" Canvas.Top="247" 
+			Content="{Binding Simulator.Tanks[0].Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			d:Content="Tank123"
+			/>
+		<Label
+			Canvas.Left="187" Canvas.Top="262" 
+			Content="{Binding Simulator.Tanks[0].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			ContentStringFormat="N4"
+			d:Content="12.3456" HorizontalAlignment="Left" VerticalAlignment="Center"
+			/>
+		<CheckBox 
+			Canvas.Left="359" Canvas.Top="272" 
+			IsChecked="{Binding Simulator.Valves[2].Open, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			ToolTip="{Binding Simulator.Valves[2].Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			/>
+	</Canvas>
+</Window>

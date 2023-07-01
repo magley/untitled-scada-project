@@ -5,15 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:USca_DbManager"
         mc:Ignorable="d"
-		Background="LightSalmon"
 		FontSize="16"
-        Title="MainWindow" Height="450" Width="800">
-	<StackPanel Margin="100 0 100 0" VerticalAlignment="Center">
-		<Label FontSize="32" Content="Log In" HorizontalContentAlignment="Center"/>
-		<Label Content="Username:"/>
-		<TextBox x:Name="tbUsername"/>
-		<Label Content="Password:"/>
-		<PasswordBox x:Name="tbPassword"/>
-		<Button Margin="0 20 0 0" x:Name="btnLogin" Click="btnLogin_Click" Content="Login"/>
-	</StackPanel>
+        Title="MainWindow" Height="480" Width="640">
+	<Frame x:Name="FrameContent"/>
 </Window>
