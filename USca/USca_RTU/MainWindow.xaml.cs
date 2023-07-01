@@ -7,8 +7,7 @@ namespace USca_RTU
 {
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private Simulator _simulator;
-        public Simulator Simulator { get { return _simulator; } private set { _simulator = value; } }
+        public Simulator Simulator { get; set; }
         private Reader _reader;
         private Thread _loopThread;
         private Thread _sendThread;
@@ -20,8 +19,8 @@ namespace USca_RTU
 			InitializeComponent();
             DataContext = this;
 
-			_simulator = new();
-            _reader = new(_simulator);
+            Simulator = new();
+            _reader = new(Simulator);
 
 			_loopThread = new(new ThreadStart(MainLoop));
 			_loopThread.IsBackground = true;
@@ -38,7 +37,7 @@ namespace USca_RTU
             {
                 Thread.Sleep(500);
 
-                _simulator.Update();
+                Simulator.Update();
                 _reader.Update();
 
                 string output = $"[\n\t{string.Join(",\n\t", _reader.Signals)}\n]";
