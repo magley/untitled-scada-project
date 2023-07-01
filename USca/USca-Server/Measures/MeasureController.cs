@@ -17,7 +17,7 @@ namespace USca_Server.Measures
 		[HttpPost]
 		public ActionResult<string> PutDataBatch(SignedDTO<List<MeasureFromRtuDTO>> data)
 		{
-			bool isValid = CryptoUtil.VerifySignedMessage(data.Payload, data.Signature);
+			bool isValid = CryptoUtil.VerifySignedMessage(data.Payload ?? new(), data.Signature ?? ""u8.ToArray());
 			if (!isValid)
 			{
 				return StatusCode(400, "Invalid signature");

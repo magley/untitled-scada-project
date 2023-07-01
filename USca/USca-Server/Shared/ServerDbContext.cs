@@ -21,9 +21,12 @@ namespace USca_Server.Shared
                 Database.EnsureCreated();
             }
 
-            Users.Add(new() { Name = "Bob", Surname = "Jones", Username = "user1", Password = "1234" });
-            Users.Add(new() { Name = "Bab", Surname = "Janes", Username = "user2", Password = "1234" });
-            Users.Add(new() { Name = "Bib", Surname = "Jines", Username = "user3", Password = "1234" });
+            if (Users != null)
+            {
+                Users.Add(new() { Name = "Bob", Surname = "Jones", Username = "user1", Password = "1234" });
+                Users.Add(new() { Name = "Bab", Surname = "Janes", Username = "user2", Password = "1234" });
+                Users.Add(new() { Name = "Bib", Surname = "Jines", Username = "user3", Password = "1234" });
+            }
             SaveChanges();
         }
 

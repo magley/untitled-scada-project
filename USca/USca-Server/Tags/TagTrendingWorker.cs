@@ -13,7 +13,7 @@ namespace USca_Server.Tags
     {
         public WebSocket Ws { get; set; }
         private Dictionary<int, LoopThread> _threads = new();
-        private LoopThread _tagSyncThread;
+        private LoopThread? _tagSyncThread;
         private readonly ITagService _tagService;
 
         ~TagTrendingWorker()

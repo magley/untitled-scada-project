@@ -5,8 +5,8 @@ namespace USca_Server.Util
 	public class SignedDTO<T>
 	{
 		[JsonProperty("payload")]
-		public T Payload { get; set; }
+		public T? Payload { get; set; }
 		[JsonProperty("signature")]
-		public byte[] Signature { get; set; }
+		public byte[]? Signature { get; set; }
 	}
 }
