@@ -3,11 +3,17 @@ using System.Text;
 using System.Threading;
 using System;
 using System.Windows.Controls;
+using System.Collections.Generic;
+using System.Text.Json;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace USca_Trending.Tags
 {
     public partial class TagValues : UserControl
     {
+        public ObservableCollection<InputTagReadingDTO> TagReadings { get; set; } = new();
+
         public TagValues()
         {
             InitializeComponent();
@@ -31,9 +37,30 @@ namespace USca_Trending.Tags
                     else
                     {
                         // Get data...
-                        Console.WriteLine(Encoding.ASCII.GetString(buffer, 0, result.Count));
+                        var dtoJson = Encoding.ASCII.GetString(buffer, 0, result.Count);
+                        Console.WriteLine(dtoJson);
+                        LoadTagReading(JsonSerializer.Deserialize<InputTagReadingDTO>(dtoJson));
                     }
                 }
+            }
+        }
+
+        private void LoadTagReading(InputTagReadingDTO? dto)
+        {
+            if (dto == null)
+            {
+                return;
+            }
+            var item = TagReadings.FirstOrDefault(t => t.Id == dto.Id);
+            int idx =  (item != null) ? TagReadings.IndexOf(item) : -1;
+            Console.WriteLine($"idx {idx}");
+            if (idx == -1)
+            {
+                Console.WriteLine("Huh??");
+                TagReadings.Add(dto);
+            } else
+            {
+                TagReadings[idx] = dto;
             }
         }
     }

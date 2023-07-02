@@ -135,19 +135,21 @@ namespace USca_Server.Tags
         {
             Thread.Sleep(t.ScanTime);
 
-            double value = 0;
             using (var db = new ServerDbContext())
             {
                 var measure = db.Measures.Find(t.Address);
                 if (measure != null)
                 {
-                    value = measure.Value;
-
                     var message = new
                     {
-                        TagID = t.Id,
-                        Address = t.Address,
-                        Value = value
+                        t.Id,
+                        t.Name,
+                        t.Type,
+                        t.Min,
+                        t.Max,
+                        t.Unit,
+                        measure.Value,
+                        measure.Timestamp,
                     };
                     var messageJson = JsonSerializer.Serialize(message);
 

@@ -19,15 +19,19 @@ namespace USca_Server.Shared
                 _created = true;
                 Database.EnsureDeleted();
                 Database.EnsureCreated();
-            }
-
-            if (Users != null)
-            {
-                Users.Add(new() { Name = "Bob", Surname = "Jones", Username = "user1", Password = "1234" });
-                Users.Add(new() { Name = "Bab", Surname = "Janes", Username = "user2", Password = "1234" });
-                Users.Add(new() { Name = "Bib", Surname = "Jines", Username = "user3", Password = "1234" });
+                LoadInitialData();
             }
             SaveChanges();
+        }
+
+        private void LoadInitialData()
+        {
+            Users.Add(new() { Name = "Bob", Surname = "Jones", Username = "user1", Password = "1234" });
+            Users.Add(new() { Name = "Bab", Surname = "Janes", Username = "user2", Password = "1234" });
+            Users.Add(new() { Name = "Bib", Surname = "Jines", Username = "user3", Password = "1234" });
+
+            Tags.Add(new() { Address = 1, Name = "Tag 1" });
+            Tags.Add(new() { Address = 2, Name = "Tag 2" });
         }
 
 		protected override void OnConfiguring(DbContextOptionsBuilder options)
