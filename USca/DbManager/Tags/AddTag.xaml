@@ -8,7 +8,7 @@
 		mc:Ignorable="d"
 		Title="Create a new tag"
 		Width="450"
-		Height="360"
+		Height="380"
 		WindowStartupLocation="CenterOwner"
 		DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
