@@ -33,10 +33,42 @@ namespace USca_Server.Shared
             Users.Add(new() { Name = "Bab", Surname = "Janes", Username = "user2", Password = "1234" });
             Users.Add(new() { Name = "Bib", Surname = "Jines", Username = "user3", Password = "1234" });
 
-            Tags.Add(new() { Address = 1, Name = "Tank01" });
-            Tags.Add(new() { Address = 2, Name = "Tank01_ValveIn" });
-            Tags.Add(new() { Address = 3, Name = "Tank01_ValveIn_Reserve" });
-            Tags.Add(new() { Address = 4, Name = "Tank01_ValveOut" });
+            Tags.Add(new()
+            {
+                Address = 1,
+                Name = "Tank01",
+                Type = TagType.Analog,
+                Unit = "litre",
+                Min = 0,
+                Max = 10,
+            });
+            Tags.Add(new() 
+            {
+                Address = 2,
+                Name = "Tank01_ValveIn",
+                Type = TagType.Analog,
+                Unit = "litre",
+                Min = 0,
+                Max = 1,
+            });
+            Tags.Add(new()
+            { 
+                Address = 3,
+                Name = "Tank01_ValveIn_Reserve",
+                Type = TagType.Analog,
+                Unit = "litre",
+                Min = 0,
+                Max = 1,
+            });
+            Tags.Add(new() 
+            { 
+                Address = 4,
+                Name = "Tank01_ValveOut",
+                Type = TagType.Analog,
+                Unit = "litre",
+                Min = 0,
+                Max = 1,
+            });
 
             SaveChanges();
         }

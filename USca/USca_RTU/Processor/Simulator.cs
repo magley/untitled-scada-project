@@ -21,7 +21,12 @@ namespace USca_RTU.Processor
 	{
 		public int Id { get; set; } = -1;
 		public string Name { get; set; }
-		public double Value { get; set; } = 5;
+		private double _value = 5;
+		public double Value
+		{
+			get { return _value; }
+			set { _value = Math.Clamp(value, 0, ValueMax); }
+		}
 		public double ValueMax { get; set; } = 10;
 
 		public Tank(int id, string name)
@@ -39,7 +44,7 @@ namespace USca_RTU.Processor
         public double Value
         {
             get { return Open ? _value : 0; }
-            set { _value = value; }
+            set { _value = Math.Clamp(value, 0, Double.MaxValue); }
         }
         public bool Open { get; set; } = true;
 
@@ -124,7 +129,7 @@ namespace USca_RTU.Processor
 		{
 			foreach (var o in Valves)
 			{
-				o.Value += r.NextDouble() * Math.Sin(DateTime.Now.Ticks / 5.0 + r.NextDouble() * 0.0001) * 0.0001;
+				o.Value += Math.Abs(r.NextDouble() * Math.Sin(DateTime.Now.Ticks / 5.0 + r.NextDouble() * 0.0001) * 0.0001);
 			}
 
 			foreach (var o in TankValves)
