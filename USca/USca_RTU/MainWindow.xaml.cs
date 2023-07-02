@@ -35,7 +35,7 @@ namespace USca_RTU
         {
             while (true)
             {
-                Thread.Sleep(500);
+                Thread.Sleep(250);
 
                 Simulator.Update();
                 _reader.Update();
@@ -48,7 +48,7 @@ namespace USca_RTU
         {
             while (true)
             {
-                Thread.Sleep(2000);
+                Thread.Sleep(250);
 
                 await CommService.SendSignalsBatch(_reader.Signals);
             }
