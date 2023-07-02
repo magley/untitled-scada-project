@@ -12,17 +12,9 @@ namespace USca_Server.Tags
     public class TagTrendingWorker
     {
         public WebSocket Ws { get; set; }
-        private Dictionary<int, LoopThread> _threads = new();
+        private Dictionary<int, TagThreadWrapper> _threads = new();
         private LoopThread? _tagSyncThread;
         private readonly ITagService _tagService;
-
-        ~TagTrendingWorker()
-        {
-            foreach (var t in _threads.Values)
-            {
-                t.Abort();
-            }
-        }
 
         public TagTrendingWorker(WebSocket ws, ITagService tagService)
         {
@@ -92,37 +84,30 @@ namespace USca_Server.Tags
 
             var currentTags = _tagService.GetAll()
                 .Where(t => t.Mode == TagMode.Input && t.IsScanning)
-                .Select(t => t.Id)
                 .ToList();
-            var staleTags = _threads.Keys.ToList().Except(currentTags);
+            var staleTagIds = _threads.Keys.ToList().Except(currentTags.Select(t => t.Id));
 
             // Remove threads for tags that don't exist anymore.
 
-            foreach (var tagId in staleTags)
+            foreach (var tagId in staleTagIds)
             {
-                _threads[tagId].Abort();
+                _threads[tagId].LoopThread.Abort();
                 _threads.Remove(tagId);
                 Console.WriteLine($"Removed thread for tag {tagId}.");
             }
 
             // Create threads for new tags.
 
-            foreach (var tagId in currentTags)
+            foreach (var tag in currentTags)
             {
-                if (!_threads.ContainsKey(tagId))
+                if (!_threads.ContainsKey(tag.Id))
                 {
-                    Tag? tag = _tagService.Get(tagId);
-                    if (tag == null)
-                    {
-                        // Should never happen, but VS complains about null checks.
-                        continue;
-                    }
-
-                    LoopThread rt = new(new ThreadStart(() => SendTagData(tag)));
-                    rt.Start();
-                    _threads[tagId] = rt;
-
-                    Console.WriteLine($"Added thread for tag {tagId}.");
+                    _threads[tag.Id] = new(tag, Ws);
+                    _threads[tag.Id].LoopThread.Start();
+                    Console.WriteLine($"Added thread for tag {tag}.");
+                } else
+                {
+                    _threads[tag.Id].Tag = tag;
                 }
             }
         }
@@ -170,6 +155,71 @@ namespace USca_Server.Tags
                 else
                 {
                     // The tag points to a measure that doesn't exist.
+                }
+            }
+        }
+        public class TagThreadWrapper
+        {
+            public Tag Tag { get; set; }
+            public WebSocket Ws { get; set; }
+            public LoopThread LoopThread { get; set; }
+
+            public TagThreadWrapper(Tag tag, WebSocket ws)
+            {
+                Tag = tag;
+                Ws = ws;
+                LoopThread = new(() => SendTagData());
+            }
+
+            ~TagThreadWrapper()
+            {
+                LoopThread.Abort();
+            }
+
+            /// <summary>
+            /// This method tries to send current data from the tag <c>t</c> across the WebSocket.
+            /// This method should run in a <c>LoopThread</c> assigned to the given tag.
+            /// </summary>
+            private void SendTagData()
+            {
+                Thread.Sleep(Tag.ScanTime);
+
+                using (var db = new ServerDbContext())
+                {
+                    var measure = db.Measures.Find(Tag.Address);
+                    if (measure != null)
+                    {
+                        var message = new
+                        {
+                            Tag.Id,
+                            Tag.Name,
+                            Tag.Type,
+                            Tag.Min,
+                            Tag.Max,
+                            Tag.Unit,
+                            measure.Value,
+                            measure.Timestamp,
+                        };
+                        var messageJson = JsonSerializer.Serialize(message);
+
+                        try
+                        {
+                            Ws.SendAsync(
+                                new(Encoding.UTF8.GetBytes(messageJson)),
+                                WebSocketMessageType.Text,
+                                true,
+                                CancellationToken.None
+                            );
+                        }
+                        catch (WebSocketException)
+                        {
+                            // Client forcibly closed the socket.
+                        }
+                    }
+                    else
+                    {
+                        // The tag points to a measure that doesn't exist.
+                    }
                 }
             }
         }
