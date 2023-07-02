@@ -12,14 +12,18 @@ namespace USca_Server.Shared
 		public DbSet<Tag> Tags { get; set; }
 
 		private static bool _created = false;
+        private static readonly object _lock = new();
         public ServerDbContext()
         {
-            if (!_created)
+            lock (_lock)
             {
-                _created = true;
-                Database.EnsureDeleted();
-                Database.EnsureCreated();
-                LoadInitialData();
+                if (!_created)
+                {
+                    _created = true;
+                    Database.EnsureDeleted();
+                    Database.EnsureCreated();
+                    LoadInitialData();
+                }
             }
             SaveChanges();
         }
