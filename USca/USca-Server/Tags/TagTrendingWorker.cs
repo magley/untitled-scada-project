@@ -104,57 +104,10 @@ namespace USca_Server.Tags
                 {
                     _threads[tag.Id] = new(tag, Ws);
                     _threads[tag.Id].LoopThread.Start();
-                    Console.WriteLine($"Added thread for tag {tag}.");
+                    Console.WriteLine($"Added thread for tag {tag.Id}.");
                 } else
                 {
                     _threads[tag.Id].Tag = tag;
-                }
-            }
-        }
-
-        /// <summary>
-        /// This method tries to send current data from the tag <c>t</c> across the WebSocket.
-        /// This method should run in a <c>LoopThread</c> assigned to the given tag.
-        /// </summary>
-        private void SendTagData(Tag t)
-        {
-            Thread.Sleep(t.ScanTime);
-
-            using (var db = new ServerDbContext())
-            {
-                var measure = db.Measures.Find(t.Address);
-                if (measure != null)
-                {
-                    var message = new
-                    {
-                        t.Id,
-                        t.Name,
-                        t.Type,
-                        t.Min,
-                        t.Max,
-                        t.Unit,
-                        measure.Value,
-                        measure.Timestamp,
-                    };
-                    var messageJson = JsonSerializer.Serialize(message);
-
-                    try
-                    {
-                        Ws.SendAsync(
-                            new(Encoding.UTF8.GetBytes(messageJson)),
-                            WebSocketMessageType.Text,
-                            true,
-                            CancellationToken.None
-                        );
-                    }
-                    catch (WebSocketException)
-                    {
-                        // Client forcibly closed the socket.
-                    }
-                }
-                else
-                {
-                    // The tag points to a measure that doesn't exist.
                 }
             }
         }
@@ -193,6 +146,8 @@ namespace USca_Server.Tags
                         {
                             Tag.Id,
                             Tag.Name,
+                            Tag.Address,
+                            Tag.ScanTime,
                             Tag.Type,
                             Tag.Min,
                             Tag.Max,

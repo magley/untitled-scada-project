@@ -17,8 +17,9 @@
         IsReadOnly="True"
         ItemsSource="{Binding TagReadings}">
         <DataGrid.Columns>
-            <DataGridTextColumn Binding="{Binding Id}" Header="Id" />
             <DataGridTextColumn Binding="{Binding Name}" Header="Name" />
+            <DataGridTextColumn Binding="{Binding Address}" Header="Address" />
+            <DataGridTextColumn Binding="{Binding ScanTime}" Header="ScanTime" />
             <DataGridTextColumn Binding="{Binding Type}" Header="Type" />
             <DataGridTemplateColumn Header="Min">
                 <DataGridTemplateColumn.CellTemplate>

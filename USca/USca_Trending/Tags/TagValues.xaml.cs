@@ -38,7 +38,6 @@ namespace USca_Trending.Tags
                     {
                         // Get data...
                         var dtoJson = Encoding.ASCII.GetString(buffer, 0, result.Count);
-                        Console.WriteLine(dtoJson);
                         LoadTagReading(JsonSerializer.Deserialize<InputTagReadingDTO>(dtoJson));
                     }
                 }
@@ -53,10 +52,8 @@ namespace USca_Trending.Tags
             }
             var item = TagReadings.FirstOrDefault(t => t.Id == dto.Id);
             int idx =  (item != null) ? TagReadings.IndexOf(item) : -1;
-            Console.WriteLine($"idx {idx}");
             if (idx == -1)
             {
-                Console.WriteLine("Huh??");
                 TagReadings.Add(dto);
             } else
             {
