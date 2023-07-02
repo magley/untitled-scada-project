@@ -57,7 +57,13 @@
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>
-            <DataGridTextColumn Binding="{Binding Value, StringFormat='#0.0000'}" Header="Value" />
+            <DataGridTextColumn Binding="{Binding Value, StringFormat={}{0:+#0.000000;-#0.000000;' 0'}}" Header="Value" >
+				<DataGridTextColumn.ElementStyle>
+					<Style TargetType="{x:Type TextBlock}">
+						<Setter Property="HorizontalAlignment" Value="Right" />
+					</Style>
+				</DataGridTextColumn.ElementStyle>
+			</DataGridTextColumn>
             <DataGridTextColumn Binding="{Binding Timestamp}" Header="Timestamp" />
         </DataGrid.Columns>
     </DataGrid>

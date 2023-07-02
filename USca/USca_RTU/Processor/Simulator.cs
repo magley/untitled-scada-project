@@ -35,10 +35,15 @@ namespace USca_RTU.Processor
 	{
 		public int Id { get; set; } = -1;
 		public string Name { get; set; }
-		public double Value { get; set; } = 0;
-		public bool Open { get; set; } = true;
+        private double _value = 0;
+        public double Value
+        {
+            get { return Open ? _value : 0; }
+            set { _value = value; }
+        }
+        public bool Open { get; set; } = true;
 
-		public Valve(int id, string name, double startValue, bool open)
+    public Valve(int id, string name, double startValue, bool open)
 		{
 			Id = id;
 			Name = name;
