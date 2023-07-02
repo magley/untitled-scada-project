@@ -91,7 +91,7 @@ namespace USca_Server.Tags
             Console.WriteLine("Sync tags");
 
             var currentTags = _tagService.GetAll()
-                .Where(t => t.Mode == TagMode.Input)
+                .Where(t => t.Mode == TagMode.Input && t.IsScanning)
                 .Select(t => t.Id)
                 .ToList();
             var staleTags = _threads.Keys.ToList().Except(currentTags);

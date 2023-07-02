@@ -14,6 +14,7 @@
 
 	<Window.Resources>
 		<util:EnumToBooleanConverter x:Key="EnumToBoolConv" />
+		<util:BoolInverterConverter x:Key="BoolInverterConv" />
 	</Window.Resources>
 
 	<Grid Margin="10">
@@ -153,6 +154,19 @@
 								  SelectedItem="{Binding TagData.Unit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 					</Grid>
 				</GroupBox>
+                <GroupBox Header="Scanning">
+                    <StackPanel Orientation="Horizontal">
+                        <RadioButton
+                            Margin="0,0,15,0"
+                            Content="On"
+                            GroupName="Scanning"
+                            IsChecked="{Binding TagData.IsScanning, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <RadioButton
+                            Content="Off"
+                            GroupName="Scanning"
+                            IsChecked="{Binding TagData.IsScanning, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolInverterConv}}" />
+                    </StackPanel>
+                </GroupBox>
 			</StackPanel>
 		</Grid>
 

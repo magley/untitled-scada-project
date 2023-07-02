@@ -98,6 +98,21 @@
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Scanning">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock x:Name="TextHolder" />
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding IsScanning}" Value="true">
+                                    <Setter TargetName="TextHolder" Property="Text" Value="On" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsScanning}" Value="false">
+                                    <Setter TargetName="TextHolder" Property="Text" Value="Off" />
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
 			</DataGrid.Columns>
 		</DataGrid>
 
