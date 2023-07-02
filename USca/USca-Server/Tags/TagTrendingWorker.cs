@@ -93,6 +93,18 @@ namespace USca_Server.Tags
             {
                 _threads[tagId].LoopThread.Abort();
                 _threads.Remove(tagId);
+                SocketMessageDTO message = new()
+                {
+                    Type = SocketMessageType.DELETE_TAG_READING,
+                    Message = JsonSerializer.Serialize(tagId),
+                };
+                var messageJson = JsonSerializer.Serialize(message);
+                Ws.SendAsync(
+                    new(Encoding.UTF8.GetBytes(messageJson)),
+                    WebSocketMessageType.Text,
+                    true,
+                    CancellationToken.None
+                );
                 Console.WriteLine($"Removed thread for tag {tagId}.");
             }
 
@@ -136,13 +148,18 @@ namespace USca_Server.Tags
             private void SendTagData()
             {
                 Thread.Sleep(Tag.ScanTime);
+                // make sure the wrapper's IsRunning hasn't become false since we put the underlying thread to sleep
+                if (!LoopThread.IsRunning)
+                {
+                    return;
+                }
 
                 using (var db = new ServerDbContext())
                 {
                     var measure = db.Measures.Find(Tag.Address);
                     if (measure != null)
                     {
-                        var message = new
+                        var tagReading = new
                         {
                             Tag.Id,
                             Tag.Name,
@@ -154,6 +171,11 @@ namespace USca_Server.Tags
                             Tag.Unit,
                             measure.Value,
                             measure.Timestamp,
+                        };
+                        SocketMessageDTO message = new()
+                        {
+                            Type = SocketMessageType.UPDATE_TAG_READING,
+                            Message = JsonSerializer.Serialize(tagReading),
                         };
                         var messageJson = JsonSerializer.Serialize(message);
 

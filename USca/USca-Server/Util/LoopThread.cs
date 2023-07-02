@@ -7,7 +7,7 @@
     public class LoopThread
     {
         private Thread _thread { get; set; }
-        public bool _isRunning { get; set; } = true;
+        public bool IsRunning { get; set; } = true;
 
         public LoopThread(ThreadStart threadStart)
         {
@@ -17,7 +17,7 @@
 
         private void ThinWrapper(ThreadStart threadStart)
         {
-            while (_isRunning)
+            while (IsRunning)
             {
                 threadStart.Invoke();
             }
@@ -30,7 +30,7 @@
 
         public void Abort()
         {
-            _isRunning = false;
+            IsRunning = false;
         }
     }
 }

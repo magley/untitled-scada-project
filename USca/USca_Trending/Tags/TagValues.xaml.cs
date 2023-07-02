@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Diagnostics;
+using USca_Trending.Util;
 
 namespace USca_Trending.Tags
 {
@@ -38,7 +40,24 @@ namespace USca_Trending.Tags
                     {
                         // Get data...
                         var dtoJson = Encoding.ASCII.GetString(buffer, 0, result.Count);
-                        LoadTagReading(JsonSerializer.Deserialize<InputTagReadingDTO>(dtoJson));
+                        var socketMessage = JsonSerializer.Deserialize<SocketMessageDTO>(dtoJson);
+                        if (socketMessage == null || socketMessage?.Type == null || socketMessage?.Message == null)
+                        {
+                            Console.WriteLine($"Strange socket message: {dtoJson}");
+                            continue;
+                        }
+                        switch (socketMessage.Type)
+                        {
+                            case SocketMessageType.UPDATE_TAG_READING:
+                                LoadTagReading(JsonSerializer.Deserialize<InputTagReadingDTO>(socketMessage.Message));
+                                break;
+                            case SocketMessageType.DELETE_TAG_READING:
+                                DeleteTagReading(JsonSerializer.Deserialize<int>(socketMessage.Message));
+                                break;
+                            default:
+                                Console.WriteLine($"Unsupported message type: {socketMessage.Type}");
+                                break;
+                        }
                     }
                 }
             }
@@ -59,6 +78,17 @@ namespace USca_Trending.Tags
             {
                 TagReadings[idx] = dto;
             }
+        }
+
+        private void DeleteTagReading(int id)
+        {
+            var item = TagReadings.FirstOrDefault(t => t.Id == id);
+            int idx = (item != null) ? TagReadings.IndexOf(item) : -1;
+            if (idx == -1)
+            {
+                return;
+            }
+            TagReadings.RemoveAt(idx);
         }
     }
 }
