@@ -25,7 +25,6 @@ namespace USca_Server.Shared
                     LoadInitialData();
                 }
             }
-            SaveChanges();
         }
 
         private void LoadInitialData()
@@ -38,6 +37,8 @@ namespace USca_Server.Shared
             Tags.Add(new() { Address = 2, Name = "Tank01_ValveIn" });
             Tags.Add(new() { Address = 3, Name = "Tank01_ValveIn_Reserve" });
             Tags.Add(new() { Address = 4, Name = "Tank01_ValveOut" });
+
+            SaveChanges();
         }
 
 		protected override void OnConfiguring(DbContextOptionsBuilder options)
