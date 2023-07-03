@@ -27,6 +27,7 @@ namespace USca_Server.Tags
         public double Max { get; set; } = 10.0;
         public string Unit { get; set; } = "";
         public int ScanTime { get; set; } = 1000;
+        public bool IsScanning { get; set; } = true;
 
         public Tag()
         {
@@ -44,6 +45,7 @@ namespace USca_Server.Tags
             Max = dto.Max;
             Unit = dto.Unit;
             ScanTime = dto.ScanTime;
+            IsScanning = dto.IsScanning;
         }
     }
 }

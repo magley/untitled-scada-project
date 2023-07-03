@@ -12,21 +12,64 @@ namespace USca_Server.Shared
 		public DbSet<Tag> Tags { get; set; }
 
 		private static bool _created = false;
+        private static readonly object _lock = new();
         public ServerDbContext()
         {
-            if (!_created)
+            lock (_lock)
             {
-                _created = true;
-                Database.EnsureDeleted();
-                Database.EnsureCreated();
+                if (!_created)
+                {
+                    _created = true;
+                    Database.EnsureDeleted();
+                    Database.EnsureCreated();
+                    LoadInitialData();
+                }
             }
+        }
 
-            if (Users != null)
+        private void LoadInitialData()
+        {
+            Users.Add(new() { Name = "Bob", Surname = "Jones", Username = "user1", Password = "1234" });
+            Users.Add(new() { Name = "Bab", Surname = "Janes", Username = "user2", Password = "1234" });
+            Users.Add(new() { Name = "Bib", Surname = "Jines", Username = "user3", Password = "1234" });
+
+            Tags.Add(new()
             {
-                Users.Add(new() { Name = "Bob", Surname = "Jones", Username = "user1", Password = "1234" });
-                Users.Add(new() { Name = "Bab", Surname = "Janes", Username = "user2", Password = "1234" });
-                Users.Add(new() { Name = "Bib", Surname = "Jines", Username = "user3", Password = "1234" });
-            }
+                Address = 1,
+                Name = "Tank01",
+                Type = TagType.Analog,
+                Unit = "litre",
+                Min = 0,
+                Max = 10,
+            });
+            Tags.Add(new() 
+            {
+                Address = 2,
+                Name = "Tank01_ValveIn",
+                Type = TagType.Analog,
+                Unit = "litre",
+                Min = 0,
+                Max = 1,
+            });
+            Tags.Add(new()
+            { 
+                Address = 3,
+                Name = "Tank01_ValveIn_Reserve",
+                Type = TagType.Analog,
+                Unit = "litre",
+                Min = 0,
+                Max = 1,
+            });
+            Tags.Add(new() 
+            { 
+                Address = 4,
+                Name = "Tank01_ValveOut",
+                Type = TagType.Analog,
+                Unit = "litre",
+                Min = 0,
+                Max = 1,
+            });
+
             SaveChanges();
         }
 
