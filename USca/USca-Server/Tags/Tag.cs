@@ -28,6 +28,7 @@ namespace USca_Server.Tags
         public string Unit { get; set; } = "";
         public int ScanTime { get; set; } = 1000;
         public bool IsScanning { get; set; } = true;
+        public double Value { get; set; } = 0;
 
         public Tag()
         {
@@ -46,6 +47,7 @@ namespace USca_Server.Tags
             Unit = dto.Unit;
             ScanTime = dto.ScanTime;
             IsScanning = dto.IsScanning;
+            Value = dto.Value;
         }
     }
 }
