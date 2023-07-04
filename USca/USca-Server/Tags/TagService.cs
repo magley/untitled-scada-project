@@ -65,11 +65,6 @@ namespace USca_Server.Tags
             }
         }
 
-        public void Update(OutputTagValueDTO dto)
-        {
-            // TODO: Delete this.
-        }
-
         public List<OutputTagValueDTO> GetOutputTagValues()
         {
             using (var db = new ServerDbContext())

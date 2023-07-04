@@ -149,10 +149,6 @@
 					Width="100"
 					x:Name="BtnAddTag"
 					Click="BtnAddTag_Click" />
-			<Button Content="Set Value"
-					Width="100"
-					x:Name="BtnSetTagValue"
-					Click="BtnSetTagValue_Click" />
 		</StackPanel>
 	</Grid>
 </util:MyPage>
