@@ -54,6 +54,12 @@ namespace USca_Server.Tags
                 if (tag != null)
                 {
                     db.Tags.Entry(tag).CurrentValues.SetValues(dto);
+
+                    if (tag.Type == TagType.Digital)
+                    {
+                        tag.Value = Convert.ToDouble(Convert.ToBoolean(dto.Value));
+                    }
+
                     db.SaveChanges();
                 }
             }
@@ -61,16 +67,7 @@ namespace USca_Server.Tags
 
         public void Update(OutputTagValueDTO dto)
         {
-            using (var db = new ServerDbContext())
-            {
-                var tag = db.Tags.Find(dto.Id);
-                if (tag != null)
-                {
-                    Console.WriteLine($"Sending value {dto.Value} to tag {dto.Id}.");
-                    //db.Tags.Entry(tag).CurrentValues.SetValues(dto);
-                   // db.SaveChanges();
-                }
-            }
+            // TODO: Delete this.
         }
 
         public List<OutputTagValueDTO> GetOutputTagValues()
