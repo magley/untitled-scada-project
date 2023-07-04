@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using USca_Server.Tags;
 
 namespace USca_RTU.Processor
 {
@@ -137,5 +138,21 @@ namespace USca_RTU.Processor
 				o.Apply();
 			}
 		}
-	}
+
+        internal void UpdateOutputFrom(List<OutputTagValueDTO> outputTagValues)
+        {
+            foreach (var o in outputTagValues)
+			{
+				foreach (var oo in Valves)
+				{
+					//Console.WriteLine(o.Address);
+					if (oo.Id == o.Address)
+					{
+						oo.Open = o.Value != 0;
+					}
+				}
+				// Check for other objects the same way, once we add them.
+            }
+        }
+    }
 }

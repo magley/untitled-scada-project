@@ -10,6 +10,7 @@ namespace USca_Server.Tags
         public void Update(TagDTO dto);
         public void Update(OutputTagValueDTO dto);
         public void Delete(int id);
+        public List<OutputTagValueDTO> GetOutputTagValues();
 
         public Task SendTagValues(WebSocket ws);
     }

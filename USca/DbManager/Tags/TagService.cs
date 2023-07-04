@@ -62,7 +62,8 @@ namespace USca_DbManager.Tags
             // PRECONDITION: Tag is an output tag.
             var body = new
             {
-                Id = tag.Address,
+                Id = tag.Id,
+                Address = tag.Address,
                 Value = value
             };
             

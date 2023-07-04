@@ -1,7 +1,13 @@
-﻿using System.ComponentModel;
+﻿using RestSharp;
+using System.Collections.Generic;
+using System;
+using System.ComponentModel;
+using System.Text.Json;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using USca_RTU.Processor;
+using USca_RTU.Tag;
 
 namespace USca_RTU
 {
@@ -16,20 +22,20 @@ namespace USca_RTU
         {
             //CryptoUtil.SavePublicKey("C:/Users/aaa/Desktop/USca_RTU_Key.pub");
 
-			InitializeComponent();
+            InitializeComponent();
             DataContext = this;
 
             Simulator = new();
             _reader = new(Simulator);
 
-			_loopThread = new(new ThreadStart(MainLoop));
-			_loopThread.IsBackground = true;
-			_loopThread.Start();
+            _loopThread = new(new ThreadStart(MainLoop));
+            _loopThread.IsBackground = true;
+            _loopThread.Start();
 
             _sendThread = new(new ThreadStart(SendData));
             _sendThread.IsBackground = true;
             _sendThread.Start();
-		}
+        }
 
         private void MainLoop()
         {
@@ -41,7 +47,7 @@ namespace USca_RTU
                 _reader.Update();
 
                 string output = $"[\n\t{string.Join(",\n\t", _reader.Signals)}\n]";
-			}
+            }
         }
 
         private async void SendData()
@@ -51,7 +57,14 @@ namespace USca_RTU
                 Thread.Sleep(250);
 
                 await CommService.SendSignalsBatch(_reader.Signals);
+                FetchOutputTagValues();
             }
         }
-	}
+
+        private async void FetchOutputTagValues()
+        {
+            var outputTagValues = await TagService.GetOutputTagValues();
+            Simulator.UpdateOutputFrom(outputTagValues);
+        }
+    }
 }
