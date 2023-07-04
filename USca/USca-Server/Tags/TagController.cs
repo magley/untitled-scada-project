@@ -42,6 +42,13 @@ namespace USca_Server.Tags
             return StatusCode(204);
         }
 
+        [HttpPut("output")]
+        public ActionResult<object> SetOutputTagValue(OutputTagValueDTO dto)
+        {
+            _tagService.Update(dto);
+            return StatusCode(204);
+        }
+
         [HttpGet("ws")]
         public async Task OpenTagWebSocket()
         {

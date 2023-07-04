@@ -55,5 +55,22 @@ namespace USca_DbManager.Tags
 
             return response;
         }
+
+        public static async Task<RestResponse> SetOutputTagValue(TagDTO tag, double value)
+        {
+            // PRECONDITION: Tag is an output tag.
+            var body = new
+            {
+                Id = tag.Address,
+                Value = value
+            };
+            
+            using var cli = new RestClient(new RestClientOptions(URL));
+            var req = new RestRequest("tag/output", Method.Put);
+            req.AddBody(body);
+            RestResponse response = await cli.ExecuteAsync(req);
+
+            return response;
+        }
     }
 }

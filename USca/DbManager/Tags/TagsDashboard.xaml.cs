@@ -70,5 +70,22 @@ namespace USca_DbManager.Tags
                 LoadAllTags();
             }
         }
+
+        private async void BtnSetTagValue_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedTag == null)
+            {
+                return;
+            }
+
+            if (SelectedTag.Mode != TagMode.Output)
+            {
+                return;
+            }
+
+            double value = 0;
+            await TagService.SetOutputTagValue(SelectedTag, value);
+            LoadAllTags();
+        }
     }
 }

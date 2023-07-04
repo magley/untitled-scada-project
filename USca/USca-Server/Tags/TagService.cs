@@ -59,6 +59,20 @@ namespace USca_Server.Tags
             }
         }
 
+        public void Update(OutputTagValueDTO dto)
+        {
+            using (var db = new ServerDbContext())
+            {
+                var tag = db.Tags.Find(dto.Id);
+                if (tag != null)
+                {
+                    Console.WriteLine($"Sending value {dto.Value} to tag {dto.Id}.");
+                    //db.Tags.Entry(tag).CurrentValues.SetValues(dto);
+                   // db.SaveChanges();
+                }
+            }
+        }   
+
         public async Task SendTagValues(WebSocket ws)
         {
             Console.WriteLine("Connected");
