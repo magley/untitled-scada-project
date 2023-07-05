@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using USca_RTU.Processor;
 using USca_RTU.Tag;
+using System.Runtime.CompilerServices;
 
 namespace USca_RTU
 {
@@ -35,6 +36,10 @@ namespace USca_RTU
             _sendThread = new(new ThreadStart(SendData));
             _sendThread.IsBackground = true;
             _sendThread.Start();
+
+            _sendThread = new(new ThreadStart(SyncOutputTagValues));
+            _sendThread.IsBackground = true;
+            _sendThread.Start();
         }
 
         private void MainLoop()
@@ -57,6 +62,14 @@ namespace USca_RTU
                 Thread.Sleep(250);
 
                 await CommService.SendSignalsBatch(_reader.Signals);
+            }
+        }
+
+        private void SyncOutputTagValues()
+        {
+            while (true)
+            {
+                Thread.Sleep(250);
                 FetchOutputTagValues();
             }
         }
