@@ -54,8 +54,27 @@ namespace USca_Server.Tags
                 if (tag != null)
                 {
                     db.Tags.Entry(tag).CurrentValues.SetValues(dto);
+
+                    if (tag.Type == TagType.Digital)
+                    {
+                        tag.Value = Convert.ToDouble(Convert.ToBoolean(dto.Value));
+                    }
+
                     db.SaveChanges();
                 }
+            }
+        }
+
+        public List<OutputTagValueDTO> GetOutputTagValues()
+        {
+            using (var db = new ServerDbContext())
+            {
+                return db.Tags.Where(tag => tag.Mode == TagMode.Output).Select(tag => new OutputTagValueDTO()
+                {
+                    Id = tag.Id,
+                    Address = tag.Address,
+                    Value = tag.Value
+                }).ToList();
             }
         }
 

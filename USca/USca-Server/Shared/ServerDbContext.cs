@@ -70,6 +70,31 @@ namespace USca_Server.Shared
                 Max = 1,
             });
 
+            Tags.Add(new()
+            {
+                Address = 2,
+                Name = "Tank01_ValveIn_Open",
+                Type = TagType.Digital,
+                Mode = TagMode.Output,
+                Value = 1,
+            });
+            Tags.Add(new()
+            {
+                Address = 3,
+                Name = "Tank01_ValveIn_Reserve_Open",
+                Type = TagType.Digital,
+                Mode = TagMode.Output,
+                Value = 0,
+            });
+            Tags.Add(new()
+            {
+                Address = 4,
+                Name = "Tank01_ValveOut_Open",
+                Type = TagType.Digital,
+                Mode = TagMode.Output,
+                Value = 1,
+            });
+
             SaveChanges();
         }
 
