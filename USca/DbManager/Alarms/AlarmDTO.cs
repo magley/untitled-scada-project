@@ -1,8 +1,6 @@
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-using USca_Server.Tags;
+﻿using System.ComponentModel;
 
-namespace USca_Server.Alarms
+namespace USca_DbManager.Alarms
 {
     public enum AlarmThresholdType
     {
@@ -17,20 +15,13 @@ namespace USca_Server.Alarms
         HIGH = 3,
     }
 
-    public class Alarm
+    public partial class AlarmDTO : INotifyPropertyChanged
     {
-        [Key]
         public int Id { get; set; }
-        [Required]
         public AlarmThresholdType ThresholdType { get; set; }
-        [Required]
         public AlarmPriority Priority { get; set; }
-        [Required]
         public double Threshold { get; set; }
-        [Required]
         public int TagId { get; set; }
-        [JsonIgnore]
-        public virtual Tag Tag { get; set; } = new();
 
         public override string ToString()
         {
