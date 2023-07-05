@@ -25,5 +25,19 @@ namespace USca_Server.Alarms
             _alarmService.Delete(alarmId);
             return StatusCode(204);
         }
+
+        [HttpPost]
+        public ActionResult AddAlarm(AlarmAddDTO alarmAddDTO)
+        {
+            _alarmService.Add(alarmAddDTO);
+            return StatusCode(204);
+        }
+
+        [HttpPut]
+        public ActionResult UpdateAlarm(AlarmUpdateDTO alarmUpdateDTO)
+        {
+            _alarmService.Update(alarmUpdateDTO);
+            return StatusCode(204);
+        }
     }
 }

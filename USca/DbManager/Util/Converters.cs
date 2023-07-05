@@ -2,6 +2,7 @@
 using System.Windows.Data;
 using System.Windows;
 using System.Globalization;
+using USca_DbManager.Tags;
 
 namespace USca_DbManager.Util
 {
@@ -39,6 +40,23 @@ namespace USca_DbManager.Util
             {
                 return !val;
             }
+            return value;
+        }
+    }
+
+    public class TagDTOToCustomStringConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is TagDTO tag)
+            {
+                return TagDTO.SimpleString(tag);
+            }
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
             return value;
         }
     }

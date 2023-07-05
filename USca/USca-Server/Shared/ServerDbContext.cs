@@ -106,6 +106,8 @@ namespace USca_Server.Shared
             };
             Alarms.Add(a3);
 
+            SaveChanges();
+
             Console.WriteLine($"Tag 1 alarms:");
             tag1.Alarms.ForEach(a => Console.WriteLine($"   {a}"));
 
@@ -114,8 +116,6 @@ namespace USca_Server.Shared
 
             Console.WriteLine($"Tag 3 alarms:");
             tag3.Alarms.ForEach(a => Console.WriteLine($"   {a}"));
-
-            SaveChanges();
         }
 
 		protected override void OnConfiguring(DbContextOptionsBuilder options)

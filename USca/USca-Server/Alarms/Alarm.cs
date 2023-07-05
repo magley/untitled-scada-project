@@ -12,9 +12,9 @@ namespace USca_Server.Alarms
 
     public enum AlarmPriority
     {
-        LOW = 1,
-        MEDIUM = 2,
-        HIGH = 3,
+        LOW,
+        MEDIUM,
+        HIGH,
     }
 
     public class Alarm

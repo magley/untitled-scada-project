@@ -39,5 +39,31 @@ namespace USca_DbManager.Alarms
                 throw new Exception(response.StatusCode.ToString());
             }
         }
+
+        public static async Task AddAlarm(AlarmDTO alarmDTO)
+        {
+            using var cli = new RestClient(new RestClientOptions(URL));
+            var req = new RestRequest($"alarm", Method.Post);
+            req.AddBody(alarmDTO);
+            RestResponse response = await cli.ExecuteAsync(req);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.NoContent)
+            {
+                throw new Exception(response.StatusCode.ToString());
+            }
+        }
+
+        public static async Task UpdateAlarm(AlarmDTO alarmDTO)
+        {
+            using var cli = new RestClient(new RestClientOptions(URL));
+            var req = new RestRequest($"alarm", Method.Put);
+            req.AddBody(alarmDTO);
+            RestResponse response = await cli.ExecuteAsync(req);
+
+            if (response.StatusCode != System.Net.HttpStatusCode.NoContent)
+            {
+                throw new Exception(response.StatusCode.ToString());
+            }
+        }
     }
 }

@@ -10,9 +10,9 @@ namespace USca_DbManager.Alarms
 
     public enum AlarmPriority
     {
-        LOW = 1,
-        MEDIUM = 2,
-        HIGH = 3,
+        LOW,
+        MEDIUM,
+        HIGH,
     }
 
     public partial class AlarmDTO : INotifyPropertyChanged

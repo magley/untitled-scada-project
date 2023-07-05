@@ -7,19 +7,25 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:util="clr-namespace:USca_DbManager.Util"
     Title="Alarms dashboard"
+    Height="400"
     d:DesignHeight="450"
     d:DesignWidth="800"
     DataContext="{Binding RelativeSource={RelativeSource Self}}"
     mc:Ignorable="d">
-    <StackPanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
         <DataGrid
-            d:Height="400"
+            Grid.Row="0"
             AutoGenerateColumns="False"
             IsReadOnly="True"
             ItemsSource="{Binding Alarms}"
             MouseDoubleClick="TbAlarms_MouseDoubleClick"
             SelectedItem="{Binding SelectedAlarm}">
             <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Id}" Header="Id" />
                 <DataGridTextColumn Binding="{Binding Threshold}" Header="Threshold" />
                 <DataGridTextColumn Binding="{Binding ThresholdType}" Header="Threshold type" />
                 <DataGridTextColumn Binding="{Binding Priority}" Header="Priority" />
@@ -27,6 +33,7 @@
             </DataGrid.Columns>
         </DataGrid>
         <StackPanel
+            Grid.Row="1"
             Margin="5"
             HorizontalAlignment="Right"
             Orientation="Horizontal">
@@ -40,5 +47,5 @@
                 Click="BtnAddAlarm_Click"
                 Content="Add" />
         </StackPanel>
-    </StackPanel>
+    </Grid>
 </util:MyPage>

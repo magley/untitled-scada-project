@@ -30,9 +30,17 @@ namespace USca_DbManager.Alarms
             }
         }
 
-        private void BtnAddAlarm_Click(object sender, RoutedEventArgs e)
+        private async void BtnAddAlarm_Click(object sender, RoutedEventArgs e)
         {
-
+            var dialog = new AddAlarm
+            {
+                Owner = Owner
+            };
+            if (dialog.ShowDialog() == true)
+            {
+                await AlarmService.AddAlarm(dialog.Alarm);
+                LoadAlarms();
+            }
         }
 
         private async void BtnDeleteAlarm_Click(object sender, RoutedEventArgs e)
@@ -50,8 +58,22 @@ namespace USca_DbManager.Alarms
             }
         }
 
-        private void TbAlarms_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private async void TbAlarms_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            if (SelectedAlarm == null)
+            {
+                return;
+            }
+
+            var dialog = new AddAlarm(SelectedAlarm)
+            {
+                Owner = Owner
+            };
+            if (dialog.ShowDialog() == true)
+            {
+                await AlarmService.UpdateAlarm(dialog.Alarm);
+                LoadAlarms();
+            }
         }
     }
 }
