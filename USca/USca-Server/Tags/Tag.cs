@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using USca_Server.Alarms;
 
 namespace USca_Server.Tags
 {
@@ -28,6 +29,7 @@ namespace USca_Server.Tags
         public string Unit { get; set; } = "";
         public int ScanTime { get; set; } = 1000;
         public bool IsScanning { get; set; } = true;
+        public virtual List<Alarm> Alarms { get; set; } = new();
 
         public Tag()
         {
