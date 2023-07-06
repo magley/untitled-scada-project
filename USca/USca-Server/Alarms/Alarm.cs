@@ -17,6 +17,19 @@ namespace USca_Server.Alarms
         HIGH,
     }
 
+    public static class ExtensionMethods
+    {
+        public static string ToSign(this AlarmThresholdType type)
+        {
+            return type switch
+            {
+                AlarmThresholdType.ABOVE => ">",
+                AlarmThresholdType.BELOW => "<",
+                _ => throw new NotImplementedException()
+            };
+        }
+    }
+
     public class Alarm
     {
         [Key]
@@ -35,6 +48,16 @@ namespace USca_Server.Alarms
         public override string ToString()
         {
             return $"Alarm[Id={Id}, ThresholdType={ThresholdType}, Priority={Priority}, Threshold={Threshold}, TagId={TagId}]";
+        }
+
+        public bool ThresholdCrossed(double value)
+        {
+            return ThresholdType switch
+            {
+                AlarmThresholdType.BELOW => value < Threshold,
+                AlarmThresholdType.ABOVE => value > Threshold,
+                _ => throw new NotImplementedException()
+            };
         }
     }
 }

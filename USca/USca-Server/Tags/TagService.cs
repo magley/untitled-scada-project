@@ -1,4 +1,5 @@
-﻿using System.Net.WebSockets;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Net.WebSockets;
 using USca_Server.Shared;
 
 namespace USca_Server.Tags
@@ -42,7 +43,7 @@ namespace USca_Server.Tags
         {
             using (var db = new ServerDbContext())
             {
-                return db.Tags.ToList();
+                return db.Tags.Include(t => t.Alarms).ToList();
             }
         }
 

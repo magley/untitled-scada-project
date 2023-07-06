@@ -1,6 +1,8 @@
 ﻿using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
+using USca_Server.Alarms;
+using USca_Server.Measures;
 using USca_Server.Shared;
 using USca_Server.Util;
 
@@ -15,6 +17,8 @@ namespace USca_Server.Tags
         private Dictionary<int, TagThreadWrapper> _threads = new();
         private LoopThread? _tagSyncThread;
         private readonly ITagService _tagService;
+        private static readonly object _lock = new();
+        private const string alarmLogPath = "./alarmLog.txt";
 
         public TagTrendingWorker(WebSocket ws, ITagService tagService)
         {
@@ -133,7 +137,7 @@ namespace USca_Server.Tags
             {
                 Tag = tag;
                 Ws = ws;
-                LoopThread = new(() => SendTagData());
+                LoopThread = new(() => UpdateTag());
             }
 
             ~TagThreadWrapper()
@@ -142,10 +146,11 @@ namespace USca_Server.Tags
             }
 
             /// <summary>
-            /// This method tries to send current data from the tag <c>t</c> across the WebSocket.
+            /// This method tries to send current data from the tag <c>t</c> across the WebSocket,
+            /// and also checks if any of <c>t</c>'s alarms have triggered.
             /// This method should run in a <c>LoopThread</c> assigned to the given tag.
             /// </summary>
-            private void SendTagData()
+            private void UpdateTag()
             {
                 Thread.Sleep(Tag.ScanTime);
                 // make sure the wrapper's IsRunning hasn't become false since we put the underlying thread to sleep
@@ -154,50 +159,84 @@ namespace USca_Server.Tags
                     return;
                 }
 
-                using (var db = new ServerDbContext())
+                using var db = new ServerDbContext();
+                var measure = db.Measures.Find(Tag.Address);
+                if (measure == null)
                 {
-                    var measure = db.Measures.Find(Tag.Address);
-                    if (measure != null)
-                    {
-                        var tagReading = new
-                        {
-                            Tag.Id,
-                            Tag.Name,
-                            Tag.Address,
-                            Tag.ScanTime,
-                            Tag.Type,
-                            Tag.Min,
-                            Tag.Max,
-                            Tag.Unit,
-                            measure.Value,
-                            measure.Timestamp,
-                        };
-                        SocketMessageDTO message = new()
-                        {
-                            Type = SocketMessageType.UPDATE_TAG_READING,
-                            Message = JsonSerializer.Serialize(tagReading),
-                        };
-                        var messageJson = JsonSerializer.Serialize(message);
+                    // The tag points to a measure that doesn't exist.
+                    return;
+                }
+                SendData(measure);
+                CheckAlarms(measure);
+            }
 
-                        try
-                        {
-                            Ws.SendAsync(
-                                new(Encoding.UTF8.GetBytes(messageJson)),
-                                WebSocketMessageType.Text,
-                                true,
-                                CancellationToken.None
-                            );
-                        }
-                        catch (WebSocketException)
-                        {
-                            // Client forcibly closed the socket.
-                        }
-                    }
-                    else
+            private async void SendData(Measure measure)
+            {
+                var tagReading = new
+                {
+                    Tag.Id,
+                    Tag.Name,
+                    Tag.Address,
+                    Tag.ScanTime,
+                    Tag.Type,
+                    Tag.Min,
+                    Tag.Max,
+                    Tag.Unit,
+                    measure.Value,
+                    measure.Timestamp,
+                };
+                SocketMessageDTO message = new()
+                {
+                    Type = SocketMessageType.UPDATE_TAG_READING,
+                    Message = JsonSerializer.Serialize(tagReading),
+                };
+                var messageJson = JsonSerializer.Serialize(message);
+
+                try
+                {
+                    await Ws.SendAsync(
+                        new(Encoding.UTF8.GetBytes(messageJson)),
+                        WebSocketMessageType.Text,
+                        true,
+                        CancellationToken.None
+                    );
+                }
+                catch (WebSocketException)
+                {
+                    // Client forcibly closed the socket.
+                }
+            }
+
+            private void CheckAlarms(Measure measure)
+            {
+                using var db = new ServerDbContext();
+                List<string> logs = new();
+                foreach (var alarm in Tag.Alarms)
+                {
+                    if (alarm.ThresholdCrossed(measure.Value))
                     {
-                        // The tag points to a measure that doesn't exist.
+                        AlarmLog log = new()
+                        {
+                            AlarmId = alarm.Id,
+                            ThresholdType = alarm.ThresholdType,
+                            Priority = alarm.Priority,
+                            Threshold = alarm.Threshold,
+                            TagId = Tag.Id,
+                            TagName = Tag.Name,
+                            Address = Tag.Address,
+                            TimeStamp = DateTime.Now,
+                            RecordedValue = measure.Value,
+                        };
+                        db.AlarmLogs.Add(log);
+                        logs.Add(AlarmLog.LogEntry(log));
                     }
                 }
+                db.SaveChanges();
+                lock (_lock)
+                {
+                    File.AppendAllLines(alarmLogPath, logs);
+                }
+                logs.ForEach(Console.WriteLine);
             }
         }
     }

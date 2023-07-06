@@ -12,6 +12,7 @@ namespace USca_Server.Shared
         public DbSet<Measure> Measures { get; set; }
 		public DbSet<Tag> Tags { get; set; }
         public DbSet<Alarm> Alarms { get; set; }
+        public DbSet<AlarmLog> AlarmLogs { get; set; }
 
 		private static bool _created = false;
         private static readonly object _lock = new();
