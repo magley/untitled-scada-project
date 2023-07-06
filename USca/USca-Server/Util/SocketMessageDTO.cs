@@ -4,6 +4,7 @@ namespace USca_Server.Util
     {
         DELETE_TAG_READING,
         UPDATE_TAG_READING,
+        ALARM_TRIGGERED,
     }
 
     public class SocketMessageDTO

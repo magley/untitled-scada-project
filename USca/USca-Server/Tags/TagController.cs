@@ -56,7 +56,7 @@ namespace USca_Server.Tags
             {
                 using (var ws = await HttpContext.WebSockets.AcceptWebSocketAsync())
                 {
-                    await _tagService.SendTagValues(ws);
+                    await _tagService.StartTagValuesListener(ws);
                 }
             }
             else

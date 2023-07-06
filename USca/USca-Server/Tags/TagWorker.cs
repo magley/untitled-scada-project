@@ -1,5 +1,4 @@
-﻿using System.Net.WebSockets;
-using System.Text;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using USca_Server.Alarms;
 using USca_Server.Measures;
@@ -8,85 +7,45 @@ using USca_Server.Util;
 
 namespace USca_Server.Tags
 {
+
     /// <summary>
-    /// TagTrendingWorker encapsulates all logic for sending current tag values to the Trending app.
+    /// TagWorker encapsulates all logic for running tag threads that read measures.
     /// </summary>
-    public class TagWorker
+    public static class TagWorker
     {
-        public WebSocket Ws { get; set; }
-        private Dictionary<int, TagThreadWrapper> _threads = new();
-        private LoopThread? _tagSyncThread;
-        private readonly ITagService _tagService;
+        private static readonly Dictionary<int, TagThreadWrapper> _threads = new();
+        private static LoopThread? _tagSyncThread;
         private static readonly object _lock = new();
         private const string alarmLogPath = "./alarmLog.txt";
+        public static event EventHandler<SocketMessageDTO>? RaiseWorkerEvent;
 
-        public TagWorker(WebSocket ws, ITagService tagService)
+        private static void OnRaiseWorkerEvent(SocketMessageDTO e)
         {
-            Ws = ws;
-            _tagService = tagService;
+            RaiseWorkerEvent?.Invoke(null, e);
         }
 
-        public async Task Start()
+        static TagWorker()
         {
             StartTagSync();
-            await WebSocketLoop();
-            EndTagSync();
         }
 
-        /// <summary>
-        /// This method runs the main WebSocket code for this Worker.
-        /// <br/>
-        /// It waits for a message from the other side, and if it receives a <c>WebSocketMessageType.Close</c>, it closes the WebSocket.
-        /// <br/>
-        /// This method returning implies that the WebSocket connection is closed.
-        /// </summary>
-        private async Task WebSocketLoop()
-        {
-            while (Ws.State == WebSocketState.Open)
-            {
-                var buffer = new byte[1024 * 4];
-
-                try
-                {
-                    var result = await Ws.ReceiveAsync(buffer, CancellationToken.None);
-
-                    if (result.MessageType == WebSocketMessageType.Close)
-                    {
-                        await Ws.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
-                    }
-                    else
-                    {
-                        Console.WriteLine(Encoding.ASCII.GetString(buffer, 0, result.Count));
-                    }
-                }
-                catch (WebSocketException)
-                {
-                    break;
-                }
-            }
-        }
-
-        private void StartTagSync()
+        private static void StartTagSync()
         {
             _tagSyncThread = new(new ThreadStart(TagSync));
             _tagSyncThread.Start();
-        }
-
-        private void EndTagSync()
-        {
-            _tagSyncThread.Abort();
         }
 
         /// <summary>
         /// This method syncs the tags from the database onto _threads.
         /// This method should run in the tag sync thread.
         /// </summary>
-        private void TagSync()
+        private static void TagSync()
         {
             Thread.Sleep(1000);
             Console.WriteLine("Sync tags");
 
-            var currentTags = _tagService.GetAll()
+            using var db = new ServerDbContext();
+            var currentTags = db.Tags.Include(t => t.Alarms).ToList()
                 .Where(t => t.Mode == TagMode.Input && t.IsScanning)
                 .ToList();
             var staleTagIds = _threads.Keys.ToList().Except(currentTags.Select(t => t.Id));
@@ -102,13 +61,7 @@ namespace USca_Server.Tags
                     Type = SocketMessageType.DELETE_TAG_READING,
                     Message = JsonSerializer.Serialize(tagId),
                 };
-                var messageJson = JsonSerializer.Serialize(message);
-                Ws.SendAsync(
-                    new(Encoding.UTF8.GetBytes(messageJson)),
-                    WebSocketMessageType.Text,
-                    true,
-                    CancellationToken.None
-                );
+                OnRaiseWorkerEvent(message);
                 Console.WriteLine($"Removed thread for tag {tagId}.");
             }
 
@@ -118,10 +71,11 @@ namespace USca_Server.Tags
             {
                 if (!_threads.ContainsKey(tag.Id))
                 {
-                    _threads[tag.Id] = new(tag, Ws);
+                    _threads[tag.Id] = new(tag);
                     _threads[tag.Id].LoopThread.Start();
                     Console.WriteLine($"Added thread for tag {tag.Id}.");
-                } else
+                }
+                else
                 {
                     _threads[tag.Id].Tag = tag;
                 }
@@ -130,13 +84,11 @@ namespace USca_Server.Tags
         public class TagThreadWrapper
         {
             public Tag Tag { get; set; }
-            public WebSocket Ws { get; set; }
             public LoopThread LoopThread { get; set; }
 
-            public TagThreadWrapper(Tag tag, WebSocket ws)
+            public TagThreadWrapper(Tag tag)
             {
                 Tag = tag;
-                Ws = ws;
                 LoopThread = new(() => UpdateTag());
             }
 
@@ -170,7 +122,7 @@ namespace USca_Server.Tags
                 CheckAlarms(measure);
             }
 
-            private async void SendData(Measure measure)
+            private void SendData(Measure measure)
             {
                 var tagReading = new
                 {
@@ -190,21 +142,7 @@ namespace USca_Server.Tags
                     Type = SocketMessageType.UPDATE_TAG_READING,
                     Message = JsonSerializer.Serialize(tagReading),
                 };
-                var messageJson = JsonSerializer.Serialize(message);
-
-                try
-                {
-                    await Ws.SendAsync(
-                        new(Encoding.UTF8.GetBytes(messageJson)),
-                        WebSocketMessageType.Text,
-                        true,
-                        CancellationToken.None
-                    );
-                }
-                catch (WebSocketException)
-                {
-                    // Client forcibly closed the socket.
-                }
+                OnRaiseWorkerEvent(message);
             }
 
             private void CheckAlarms(Measure measure)
@@ -229,6 +167,12 @@ namespace USca_Server.Tags
                         };
                         db.AlarmLogs.Add(log);
                         logs.Add(AlarmLog.LogEntry(log));
+                        SocketMessageDTO message = new()
+                        {
+                            Type = SocketMessageType.ALARM_TRIGGERED,
+                            Message = JsonSerializer.Serialize(log),
+                        };
+                        OnRaiseWorkerEvent(message);
                     }
                 }
                 db.SaveChanges();
