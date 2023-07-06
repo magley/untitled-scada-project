@@ -11,7 +11,7 @@ namespace USca_Server.Tags
     /// <summary>
     /// TagTrendingWorker encapsulates all logic for sending current tag values to the Trending app.
     /// </summary>
-    public class TagTrendingWorker
+    public class TagWorker
     {
         public WebSocket Ws { get; set; }
         private Dictionary<int, TagThreadWrapper> _threads = new();
@@ -20,7 +20,7 @@ namespace USca_Server.Tags
         private static readonly object _lock = new();
         private const string alarmLogPath = "./alarmLog.txt";
 
-        public TagTrendingWorker(WebSocket ws, ITagService tagService)
+        public TagWorker(WebSocket ws, ITagService tagService)
         {
             Ws = ws;
             _tagService = tagService;

@@ -72,7 +72,7 @@ namespace USca_Server.Tags
         {
             Console.WriteLine("Connected");
 
-            TagTrendingWorker tagTrendingWorker = new(ws, this);
+            TagWorker tagTrendingWorker = new(ws, this);
             await tagTrendingWorker.Start();
 
             Console.WriteLine("Disconnected");
