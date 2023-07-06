@@ -18,9 +18,16 @@ namespace USca_Server.Tags
 		{
 			var res = _tagService.GetAll();
 			return StatusCode(200, res);
-		}
+        }
 
-		[HttpPost]
+        [HttpGet("analog")]
+        public ActionResult<List<Tag>> GetAnalogTags()
+        {
+            var res = _tagService.GetAnalog();
+            return StatusCode(200, res);
+        }
+
+        [HttpPost]
         public ActionResult<object> AddTag(TagAddDTO dto)
         {
 			_tagService.Add(dto);

@@ -29,7 +29,7 @@ namespace USca_DbManager.Alarms
 
         private async void LoadTags(bool alarmLoaded)
         {
-            var tags = await TagService.GetAllTags();
+            var tags = await TagService.GetAnalogTags();
             Tags.Clear();
             tags.ForEach(Tags.Add);
             if (alarmLoaded)

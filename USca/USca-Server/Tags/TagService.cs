@@ -47,6 +47,14 @@ namespace USca_Server.Tags
             }
         }
 
+        public List<Tag> GetAnalog()
+        {
+            using (var db = new ServerDbContext())
+            {
+                return db.Tags.Where(t => t.Type == TagType.Analog).Include(t => t.Alarms).ToList();
+            }
+        }
+
         public void Update(TagDTO dto)
         {
             using (var db = new ServerDbContext())
