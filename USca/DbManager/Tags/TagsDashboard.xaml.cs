@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
-using USca_DbManager.Util;
 
 namespace USca_DbManager.Tags
 {
-	public partial class TagsDashboard : MyPage
+	public partial class TagsDashboard : UserControl
     {
         public ObservableCollection<TagDTO> Tags { get; set; } = new();
         public TagDTO? SelectedTag { get; set; } = null;
@@ -20,7 +20,7 @@ namespace USca_DbManager.Tags
         private async void BtnAddTag_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new AddTag();
-            dialog.Owner = Owner;
+            dialog.Owner = (MainWindow)Window.GetWindow(this);
             if (dialog.ShowDialog() == true)
             {
                 await TagService.AddTag(dialog.TagData);
@@ -46,7 +46,7 @@ namespace USca_DbManager.Tags
             }
 
             var dialog = new AddTag(SelectedTag);
-            dialog.Owner = Owner;
+            dialog.Owner = (MainWindow)Window.GetWindow(this);
             if (dialog.ShowDialog() == true)
             {
                 await TagService.UpdateTag(dialog.TagData);

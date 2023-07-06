@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
-using USca_DbManager.Util;
 
 namespace USca_DbManager.Alarms
 {
     /// <summary>
     /// Interaction logic for AlarmsDashboard.xaml
     /// </summary>
-    public partial class AlarmsDashboard : MyPage
+    public partial class AlarmsDashboard : UserControl
     {
         public ObservableCollection<AlarmDTO> Alarms { get; set; } = new();
         public AlarmDTO? SelectedAlarm { get; set; }
@@ -34,8 +34,8 @@ namespace USca_DbManager.Alarms
         {
             var dialog = new AddAlarm
             {
-                Owner = Owner
-            };
+                Owner = (MainWindow)Window.GetWindow(this)
+        };
             if (dialog.ShowDialog() == true)
             {
                 await AlarmService.AddAlarm(dialog.Alarm);
@@ -67,8 +67,8 @@ namespace USca_DbManager.Alarms
 
             var dialog = new AddAlarm(SelectedAlarm)
             {
-                Owner = Owner
-            };
+                Owner = (MainWindow)Window.GetWindow(this)
+        };
             if (dialog.ShowDialog() == true)
             {
                 await AlarmService.UpdateAlarm(dialog.Alarm);

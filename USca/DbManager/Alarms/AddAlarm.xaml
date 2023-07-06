@@ -11,6 +11,7 @@
     Height="220"
     DataContext="{Binding RelativeSource={RelativeSource Self}}"
     ResizeMode="NoResize"
+    WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
     <Window.Resources>
         <util:EnumToBooleanConverter x:Key="EnumToBoolConv" />
