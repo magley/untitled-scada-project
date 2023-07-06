@@ -162,7 +162,7 @@ namespace USca_Server.Tags
                             TagId = Tag.Id,
                             TagName = Tag.Name,
                             Address = Tag.Address,
-                            TimeStamp = DateTime.Now,
+                            TimeStamp = measure.Timestamp,
                             RecordedValue = measure.Value,
                         };
                         db.AlarmLogs.Add(log);
