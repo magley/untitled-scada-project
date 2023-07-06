@@ -39,5 +39,19 @@ namespace USca_Server.Alarms
             _alarmService.Update(alarmUpdateDTO);
             return StatusCode(204);
         }
+
+        [HttpGet("ws")]
+        public async Task OpenAlarmWebSocket()
+        {
+            if (HttpContext.WebSockets.IsWebSocketRequest)
+            {
+                using var ws = await HttpContext.WebSockets.AcceptWebSocketAsync();
+                await _alarmService.StartAlarmValuesListener(ws);
+            }
+            else
+            {
+                HttpContext.Response.StatusCode = 400;
+            }
+        }
     }
 }

@@ -93,7 +93,7 @@ namespace USca_Server.Shared
             {
                 ThresholdType = AlarmThresholdType.BELOW,
                 Priority = AlarmPriority.MEDIUM,
-                Threshold = 0.5,
+                Threshold = 4.6,
                 Tag = tag1,
             };
             Alarms.Add(a2);

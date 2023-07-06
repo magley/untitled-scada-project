@@ -1,5 +1,8 @@
+using System.Text.Json.Serialization;
+
 namespace USca_Server.Util
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum SocketMessageType
     {
         DELETE_TAG_READING,

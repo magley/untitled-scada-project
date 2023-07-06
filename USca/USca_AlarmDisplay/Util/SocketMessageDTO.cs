@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace USca_Trending.Util
+namespace USca_AlarmDisplay.Util
 {
-
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum SocketMessageType
     {
-        DELETE_TAG_READING,
-        UPDATE_TAG_READING,
+        ALARM_TRIGGERED,
     }
 
     public class SocketMessageDTO

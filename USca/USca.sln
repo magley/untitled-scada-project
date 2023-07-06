@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "USca_DbManager", "DbManager
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "USca_RTU", "USca_RTU\USca_RTU.csproj", "{C232538A-E495-4954-A563-FB88C636670F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USca_Trending", "USca_Trending\USca_Trending.csproj", "{6C9A6551-C11B-4CB8-990E-09B69054E98D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "USca_Trending", "USca_Trending\USca_Trending.csproj", "{6C9A6551-C11B-4CB8-990E-09B69054E98D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USca_AlarmDisplay", "USca_AlarmDisplay\USca_AlarmDisplay.csproj", "{18F7A5B2-8740-4552-A533-96983D5E2ADD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{6C9A6551-C11B-4CB8-990E-09B69054E98D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C9A6551-C11B-4CB8-990E-09B69054E98D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C9A6551-C11B-4CB8-990E-09B69054E98D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18F7A5B2-8740-4552-A533-96983D5E2ADD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18F7A5B2-8740-4552-A533-96983D5E2ADD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18F7A5B2-8740-4552-A533-96983D5E2ADD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18F7A5B2-8740-4552-A533-96983D5E2ADD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

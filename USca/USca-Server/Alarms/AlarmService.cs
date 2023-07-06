@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using System.Net.WebSockets;
 using USca_Server.Shared;
 using USca_Server.Tags;
+using USca_Server.Util;
 
 namespace USca_Server.Alarms
 {
@@ -50,6 +52,16 @@ namespace USca_Server.Alarms
             }
             db.Alarms.Entry(alarm).CurrentValues.SetValues(alarmUpdateDTO);
             db.SaveChanges();
+        }
+
+        public async Task StartAlarmValuesListener(WebSocket ws)
+        {
+            List<SocketMessageType> supportedMessageTypes = new()
+            {
+                SocketMessageType.ALARM_TRIGGERED,
+            };
+            SocketWorker listener = new(ws, supportedMessageTypes);
+            await listener.Start();
         }
     }
 }
