@@ -8,7 +8,7 @@
 		mc:Ignorable="d"
 		Title="Create a new tag"
 		Width="450"
-		Height="380"
+		Height="400"
 		WindowStartupLocation="CenterOwner"
 		DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
@@ -79,6 +79,26 @@
 					</GroupBox.Style>
 
 					<TextBox Text="{Binding TagData.ScanTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat='#0'}"
+							 HorizontalContentAlignment="Right" />
+				</GroupBox>
+
+				<GroupBox Header="Initial vlaue"
+						  Padding="10">
+					<GroupBox.Style>
+						<Style TargetType="{x:Type GroupBox}">
+							<Setter Property="IsEnabled"
+									Value="True" />
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding TagData.Mode}"
+											 Value="{x:Static local:TagMode.Input}">
+									<Setter Property="IsEnabled"
+											Value="False" />
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</GroupBox.Style>
+
+					<TextBox Text="{Binding TagData.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat='#0'}"
 							 HorizontalContentAlignment="Right" />
 				</GroupBox>
 			</StackPanel>

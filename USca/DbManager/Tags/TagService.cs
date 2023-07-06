@@ -56,6 +56,7 @@ namespace USca_DbManager.Tags
 
         public static async Task<RestResponse> UpdateTag(TagDTO tag)
         {
+            Console.WriteLine(tag.Value);
             using var cli = new RestClient(new RestClientOptions(URL));
             var req = new RestRequest("tag", Method.Put);
             req.AddBody(tag);

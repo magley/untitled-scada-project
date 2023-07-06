@@ -32,6 +32,7 @@ namespace USca_Server.Tags
         public bool IsScanning { get; set; } = true;
         [JsonIgnore]
         public virtual List<Alarm> Alarms { get; set; } = new();
+        public double Value { get; set; } = 0;
 
         public Tag()
         {
@@ -50,6 +51,7 @@ namespace USca_Server.Tags
             Unit = dto.Unit;
             ScanTime = dto.ScanTime;
             IsScanning = dto.IsScanning;
+            Value = dto.Value;
         }
     }
 }

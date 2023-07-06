@@ -106,10 +106,33 @@
                                 <DataTrigger Binding="{Binding IsScanning}" Value="false">
                                     <Setter TargetName="TextHolder" Property="Text" Value="Off" />
                                 </DataTrigger>
-                            </DataTemplate.Triggers>
+								<DataTrigger Binding="{Binding Mode}"
+											 Value="{x:Static local:TagMode.Output}">
+									<Setter TargetName="TextHolder"
+											Property="Text"
+											Value="-" />
+								</DataTrigger>
+							</DataTemplate.Triggers>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+
+				<DataGridTemplateColumn Header="Value">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<TextBlock x:Name="TextHolder"
+									   Text="{Binding Value}" />
+							<DataTemplate.Triggers>
+								<DataTrigger Binding="{Binding Mode}"
+											 Value="{x:Static local:TagMode.Input}">
+									<Setter TargetName="TextHolder"
+											Property="Text"
+											Value="-" />
+								</DataTrigger>
+							</DataTemplate.Triggers>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
 			</DataGrid.Columns>
 		</DataGrid>
 		<StackPanel

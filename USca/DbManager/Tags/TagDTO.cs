@@ -20,5 +20,6 @@ namespace USca_DbManager.Tags
         {
             return $"({tag.Id}) {tag.Name}";
         }
+        public double Value { get; set; }
     }
 }

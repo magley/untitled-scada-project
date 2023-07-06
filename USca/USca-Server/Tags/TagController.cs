@@ -2,36 +2,29 @@
 
 namespace USca_Server.Tags
 {
-	[Route("api/tag")]
-	[ApiController]
-	public class TagController : ControllerBase
-	{
-		private ITagService _tagService;
+    [Route("api/tag")]
+    [ApiController]
+    public class TagController : ControllerBase
+    {
+        private ITagService _tagService;
 
-		public TagController(ITagService tagService)
-		{
-			_tagService = tagService;
-		}
-
-		[HttpGet]
-		public ActionResult<List<Tag>> GetAllTags()
-		{
-			var res = _tagService.GetAll();
-			return StatusCode(200, res);
+        public TagController(ITagService tagService)
+        {
+            _tagService = tagService;
         }
 
-        [HttpGet("analog")]
-        public ActionResult<List<Tag>> GetAnalogTags()
+        [HttpGet]
+        public ActionResult<List<Tag>> GetAllTags()
         {
-            var res = _tagService.GetAnalog();
+            var res = _tagService.GetAll();
             return StatusCode(200, res);
         }
 
         [HttpPost]
         public ActionResult<object> AddTag(TagAddDTO dto)
         {
-			_tagService.Add(dto);
-			return StatusCode(204);
+            _tagService.Add(dto);
+            return StatusCode(204);
         }
 
         [HttpPut]
@@ -41,12 +34,19 @@ namespace USca_Server.Tags
             return StatusCode(204);
         }
 
-		[HttpDelete("{id}")]
+        [HttpDelete("{id}")]
         public ActionResult<object> DeleteTag(int id)
         {
-			Console.WriteLine(id);
+            Console.WriteLine(id);
             _tagService.Delete(id);
             return StatusCode(204);
+        }
+
+        [HttpGet("output")]
+        public ActionResult<List<OutputTagValueDTO>> GetOutputTagValues()
+        {
+            var res = _tagService.GetOutputTagValues();
+            return StatusCode(200, res);
         }
 
         [HttpGet("ws")]

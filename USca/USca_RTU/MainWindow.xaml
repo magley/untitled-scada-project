@@ -20,11 +20,13 @@
 	<Canvas Width="640" Height="480" >
 		<Image Source="Data/schem_01.png" Height="320" Canvas.Left="0" Canvas.Top="0"/>
 		<CheckBox 
+			IsHitTestVisible="False" Focusable="False"
 			Canvas.Left="84" Canvas.Top="291" 
 			IsChecked="{Binding Simulator.Valves[0].Open, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 			ToolTip="{Binding Simulator.Valves[0].Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 			/>
 		<CheckBox 
+			IsHitTestVisible="False" Focusable="False"
 			Canvas.Left="130" Canvas.Top="253" 
 			IsChecked="{Binding Simulator.Valves[1].Open, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 			ToolTip="{Binding Simulator.Valves[1].Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Top"
@@ -41,6 +43,7 @@
 			d:Content="12.3456" HorizontalAlignment="Left" VerticalAlignment="Center"
 			/>
 		<CheckBox 
+			IsHitTestVisible="False" Focusable="False"
 			Canvas.Left="359" Canvas.Top="272" 
 			IsChecked="{Binding Simulator.Valves[2].Open, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 			ToolTip="{Binding Simulator.Valves[2].Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
