@@ -9,6 +9,7 @@
 	mc:Ignorable="d" 
 	Background="LightSalmon"
 	d:Width="640" d:Height="480"
+	KeyDown="Login_KeyDown"
 	Title="Login">
 
 	<StackPanel Margin="100 0 100 0" VerticalAlignment="Center">

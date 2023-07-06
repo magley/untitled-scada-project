@@ -1,5 +1,9 @@
-﻿using System.Net.WebSockets;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Net.WebSockets;
+using System.Text;
+using System.Text.Json;
 using USca_Server.Shared;
+using USca_Server.Util;
 
 namespace USca_Server.Tags
 {
@@ -42,7 +46,15 @@ namespace USca_Server.Tags
         {
             using (var db = new ServerDbContext())
             {
-                return db.Tags.ToList();
+                return db.Tags.Include(t => t.Alarms).ToList();
+            }
+        }
+
+        public List<Tag> GetAnalog()
+        {
+            using (var db = new ServerDbContext())
+            {
+                return db.Tags.Where(t => t.Type == TagType.Analog).Include(t => t.Alarms).ToList();
             }
         }
 
@@ -78,14 +90,15 @@ namespace USca_Server.Tags
             }
         }
 
-        public async Task SendTagValues(WebSocket ws)
+        public async Task StartTagValuesListener(WebSocket ws)
         {
-            Console.WriteLine("Connected");
-
-            TagTrendingWorker tagTrendingWorker = new(ws, this);
-            await tagTrendingWorker.Start();
-
-            Console.WriteLine("Disconnected");
+            List<SocketMessageType> supportedMessageTypes = new()
+            {
+                SocketMessageType.UPDATE_TAG_READING,
+                SocketMessageType.DELETE_TAG_READING,
+            };
+            SocketWorker listener = new(ws, supportedMessageTypes);
+            await listener.Start();
         }
     }
 }

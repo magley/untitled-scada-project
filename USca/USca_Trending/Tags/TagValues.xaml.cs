@@ -40,7 +40,16 @@ namespace USca_Trending.Tags
                     {
                         // Get data...
                         var dtoJson = Encoding.ASCII.GetString(buffer, 0, result.Count);
-                        var socketMessage = JsonSerializer.Deserialize<SocketMessageDTO>(dtoJson);
+                        SocketMessageDTO? socketMessage;
+                        try
+                        {
+                            socketMessage = JsonSerializer.Deserialize<SocketMessageDTO>(dtoJson);
+                        }
+                        catch (JsonException)
+                        {
+                            // Probably failed to deserialize SocketMessageType, which is fine
+                            continue;
+                        }
                         if (socketMessage == null || socketMessage?.Type == null || socketMessage?.Message == null)
                         {
                             Console.WriteLine($"Strange socket message: {dtoJson}");

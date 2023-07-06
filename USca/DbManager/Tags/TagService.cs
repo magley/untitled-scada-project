@@ -27,7 +27,24 @@ namespace USca_DbManager.Tags
 			}
 		}
 
-		public static async Task<RestResponse> AddTag(TagDTO tag)
+        public static async Task<List<TagDTO>> GetAnalogTags()
+        {
+            using var cli = new RestClient(new RestClientOptions(URL));
+            var req = new RestRequest("tag/analog", Method.Get);
+            RestResponse response = await cli.ExecuteAsync(req);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var li = JsonSerializer.Deserialize<List<TagDTO>>(response.Content);
+                return li;
+            }
+            else
+            {
+                throw new Exception(response.StatusCode.ToString());
+            }
+        }
+
+        public static async Task<RestResponse> AddTag(TagDTO tag)
 		{
             using var cli = new RestClient(new RestClientOptions(URL));
             var req = new RestRequest("tag", Method.Post);

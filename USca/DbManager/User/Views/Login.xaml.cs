@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 using USca_DbManager.Tags;
+using USca_DbManager.User.Views;
 using USca_DbManager.Util;
 
 namespace USca_DbManager.User
@@ -11,6 +12,9 @@ namespace USca_DbManager.User
 		public Login()
 		{
 			InitializeComponent();
+            tbUsername.Focus();
+            tbUsername.Text = "user1";
+            tbPassword.Password = "1234";
 		}
 
 		private void btnLogin_Click(object sender, RoutedEventArgs e)
@@ -30,7 +34,7 @@ namespace USca_DbManager.User
 				var res = await UserService.Login(username, password);
 				MessageBox.Show($"Logged in as {res.username}", "Alert.", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 
-				Owner.Navigate(new TagsDashboard());
+				Owner.Navigate(new Dashboard());
 				var res2 = await TagService.GetAllTags();
 				Console.WriteLine(res2);
 			}
@@ -46,5 +50,13 @@ namespace USca_DbManager.User
 				btnLogin.IsEnabled = true;
 			}
 		}
-	}
+
+        private void Login_KeyDown(object sender, KeyEventArgs e)
+        {
+			if (e.Key == Key.Enter)
+			{
+				DoLogin(tbUsername.Text, tbPassword.Password);
+			}
+        }
+    }
 }

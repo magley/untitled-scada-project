@@ -15,6 +15,11 @@ namespace USca_DbManager.Tags
         public string Unit { get; set; } = "";
         public int ScanTime { get; set; } = 1000;
         public bool IsScanning { get; set; } = true;
+
+        public static string SimpleString(TagDTO tag)
+        {
+            return $"({tag.Id}) {tag.Name}";
+        }
         public double Value { get; set; }
     }
 }

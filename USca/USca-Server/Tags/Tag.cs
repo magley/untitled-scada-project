@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+using USca_Server.Alarms;
 
 namespace USca_Server.Tags
 {
@@ -28,6 +30,8 @@ namespace USca_Server.Tags
         public string Unit { get; set; } = "";
         public int ScanTime { get; set; } = 1000;
         public bool IsScanning { get; set; } = true;
+        [JsonIgnore]
+        public virtual List<Alarm> Alarms { get; set; } = new();
         public double Value { get; set; } = 0;
 
         public Tag()
