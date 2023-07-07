@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.Build.Framework;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using USca_Server.Alarms;
 
@@ -32,7 +33,20 @@ namespace USca_Server.Tags
         public bool IsScanning { get; set; } = true;
         [JsonIgnore]
         public virtual List<Alarm> Alarms { get; set; } = new();
-        public double Value { get; set; } = 0;
+
+        private double _value = 0;
+        public double Value { 
+            get { 
+                return _value; 
+            } 
+            set {
+                _value = value;
+                if (Type == TagType.Analog)
+                {
+                    _value = Math.Clamp(_value, Min, Max);
+                }
+            }
+        }
 
         public Tag()
         {
