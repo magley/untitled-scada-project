@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Threading.Tasks;
+using System.Drawing;
 using System.Windows.Media;
 using USca_Server.Tags;
 
@@ -156,7 +156,7 @@ namespace USca_RTU.Processor
         public double Value { get { return Rate; } set { Rate = value; } }
     }
 
-    public partial class SimBindingThermometer
+    public partial class SimBindingThermometer : INotifyPropertyChanged
     {
         public SimThermometer Thermometer { get; set; }
         public List<SimCondenser> Cooler { get; set; } = new();
@@ -199,6 +199,56 @@ namespace USca_RTU.Processor
         }
     }
 
+    public partial class SimManometer : INotifyPropertyChanged
+    {
+        public int Address { get; set; }
+        public string Name { get; set; } = "";
+        public double Pressure { get; set; }
+        
+        public SimManometer(int address, double pressure)
+        {
+            Address = address;
+            Pressure = pressure;
+        }
+
+        public double Value { get { return Pressure; } set { Pressure = value; } }
+    }
+
+    public partial class SimCompressor : INotifyPropertyChanged
+    {
+        public int Address { get; set; }
+        public string Name { get; set; } = "";
+        public double Rate { get; set; }
+
+        public SimCompressor(int address, double rate, bool active)
+        {
+            Address = address;
+            Rate = rate;
+        }
+
+        public double Value { get { return Rate; } set { Rate = value; } }
+    }
+
+    public partial class SimBindingPressure : INotifyPropertyChanged
+    {
+        public SimManometer Manometer { get; set; }
+        public List<SimCompressor> Compressors = new();
+
+        public SimBindingPressure(SimManometer manometer, SimCompressor compressor)
+        {
+            Manometer = manometer;
+            Compressors.Add(compressor);
+        }
+
+        public void ApplyCompression()
+        {
+            foreach (var o in Compressors)
+            {
+                Manometer.Pressure += o.Value;
+            }
+        }
+    }
+
     public partial class SimulatorNew : INotifyPropertyChanged
     {
         private int AddressCnt = 0;
@@ -219,6 +269,10 @@ namespace USca_RTU.Processor
         public List<SimCondenser> Condensers { get; set; } = new();
         public List<SimHeatSource> HeatSources { get; set; } = new();
         public List<SimBindingThermometer> ThermometerBindings { get; set; } = new();
+
+        public List<SimManometer> Manometers { get; set; } = new();
+        public List<SimCompressor> Compressors { get; set; } = new();
+        public List<SimBindingPressure> PressureBindings { get; set; } = new();
 
         public SimulatorNew()
         {
@@ -267,6 +321,10 @@ namespace USca_RTU.Processor
 
             SimBindingThermometer CoolingTankThermometer_Binding = new(CoolingTankThermometer, new List<SimCondenser> { CoolingTankCondenser1, CoolingTankCondenser2, CoolingTankCondenser3, CoolingTankCondenser4 }, new() { CoolingTankStartingTemp });
 
+            SimManometer Manometer = new(NextAddress(), 9000); // desired pressure: ~14000
+            SimCompressor Compressor = new(NextAddress(), 10, true);
+            SimBindingPressure PressureBinding = new(Manometer, Compressor);
+
             Tanks.Add(MilkTank01);
             Tanks.Add(MilkTank02);
             Tanks.Add(MilkTank03);
@@ -313,6 +371,10 @@ namespace USca_RTU.Processor
             HeatSources.Add(CoolingTankStartingTemp);
 
             ThermometerBindings.Add(CoolingTankThermometer_Binding);
+
+            Manometers.Add(Manometer);
+            Compressors.Add(Compressor);
+            PressureBindings.Add(PressureBinding);
         }
 
         public void PertubateRates()
@@ -335,6 +397,16 @@ namespace USca_RTU.Processor
             foreach (var o in HeatSources)
             {
                 o.Value += Math.Abs(r.NextDouble() * Math.Sin(DateTime.Now.Ticks / 5.0 + r.NextDouble() * 0.00001) * 0.00001);
+            }
+
+            foreach (var o in Compressors)
+            {
+                o.Value += Math.Abs(r.NextDouble() * Math.Sin(DateTime.Now.Ticks / 5.0 + r.NextDouble() * 0.001) * 0.001);
+            }
+
+            foreach (var o in PressureBindings)
+            {
+                o.ApplyCompression();
             }
         }
 
@@ -388,6 +460,14 @@ namespace USca_RTU.Processor
                     if (oo.Address == o.Address)
                     {
                         oo.Open = o.Value != 0;
+                    }
+                }
+
+                foreach (var oo in Compressors)
+                {
+                    if (oo.Address == o.Address)
+                    {
+                        oo.Rate = o.Value;
                     }
                 }
             }

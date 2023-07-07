@@ -235,6 +235,21 @@
 			   HorizontalAlignment="Left"
 			   VerticalAlignment="Top" />
 
+		<!-- Pressure -->
 
+		<Label Canvas.Left="410"
+			   Canvas.Top="134"
+			   Content="{Binding Simulator.Manometers[0].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			   ContentStringFormat="{}{0:N0} mB"
+			   d:Content="12346"
+			   HorizontalAlignment="Left"
+			   VerticalAlignment="Top" />
+		<Label Canvas.Left="441"
+			   Canvas.Top="203"
+			   Content="{Binding Simulator.Compressors[0].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			   ContentStringFormat="{}{0:N0} mB"
+			   d:Content="12346"
+			   HorizontalAlignment="Left"
+			   VerticalAlignment="Top" />
 	</Canvas>
 </Window>

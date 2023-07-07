@@ -38,6 +38,14 @@ namespace USca_RTU.Processor
                 {
                     Signals.Add(new(o.Address, o.Name, o.Value, DateTime.Now));
                 }
+                foreach (var o in simulator.Manometers)
+                {
+                    Signals.Add(new(o.Address, o.Name, o.Value, DateTime.Now));
+                }
+                foreach (var o in simulator.Compressors)
+                {
+                    Signals.Add(new(o.Address, o.Name, o.Value, DateTime.Now));
+                }
             }
 		}
 	}
