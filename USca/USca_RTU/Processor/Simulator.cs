@@ -117,13 +117,22 @@ namespace USca_RTU.Processor
 
 		public Simulator()
 		{
-			Tanks.Add(new(NextId(), "Tank01"));
+			Tanks.Add(new(NextId(), "Raw Milk Tank 01"));
+            Tanks.Add(new(NextId(), "Raw Milk Tank 02"));
+            Tanks.Add(new(NextId(), "Raw Milk Tank 03"));
+            Tanks.Add(new(NextId(), "Milk Filter Tank"));
 
-			Valves.Add(new(NextId(), "Tank01_ValveIn", 0.1, true));
-			Valves.Add(new(NextId(), "Tank01_ValveIn_Reserve", 0.05, false));
-			Valves.Add(new(NextId(), "Tank01_ValveOut", 0.11, true));
+            Valves.Add(new(NextId(), "Infinite Valve", 0.05, true));
+            Valves.Add(new(NextId(), "Raw Milk Tank 01 Valve", 0.1, true));
+			Valves.Add(new(NextId(), "Raw Milk Tank 02 Valve", 0.1, true));
+			Valves.Add(new(NextId(), "Raw Milk Tank 03 Valve", 0.1, true));
+            Valves.Add(new(NextId(), "Milk Filter To Cream Storage Valve", 0.01, false));
 
-			TankValves.Add(new(Tanks[0], Valves.GetRange(0, 2), Valves.GetRange(2, 1)));
+            TankValves.Add(new(Tanks[0], Valves.GetRange(0, 1), Valves.GetRange(1, 1)));
+            TankValves.Add(new(Tanks[1], Valves.GetRange(0, 1), Valves.GetRange(2, 1)));
+            TankValves.Add(new(Tanks[2], Valves.GetRange(0, 1), Valves.GetRange(3, 1)));
+
+            TankValves.Add(new(Tanks[3], Valves.GetRange(1, 3), Valves.GetRange(4, 1)));
 		}
 
 		public void Update()
