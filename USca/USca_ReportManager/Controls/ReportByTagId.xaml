@@ -8,15 +8,15 @@
 			 mc:Ignorable="d"
 			 d:DesignHeight="450"
 			 d:DesignWidth="800">
-	<Grid>
+	<Grid Margin="10">
 		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
 
 		<StackPanel Grid.Row="0"
-					Orientation="Horizontal"
-					Margin="10">
+					Orientation="Horizontal">
 			<TextBox x:Name="TxtTagID"
 					 Width="100"
 					 />
@@ -26,9 +26,16 @@
 					Click="BtnSearch_Click" />
 		</StackPanel>
 
+		<StackPanel Grid.Row="1"
+					Orientation="Horizontal">
+			<Label Content="Tag values for tag:" />
+			<Label x:Name="LblTagName"
+				   FontWeight="Bold"
+				   Content="{Binding TagName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+		</StackPanel>
+
 		<DataGrid x:Name="TbTagLogs"
-				  Grid.Row="1"
-				  Margin="10"
+				  Grid.Row="2"
 				  AutoGenerateColumns="False"
 				  IsReadOnly="True"
 				  ItemsSource="{Binding TagLogs}">

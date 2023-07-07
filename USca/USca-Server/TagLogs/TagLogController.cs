@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using USca_Server.TagLogs.DTO;
 using USca_Server.Tags;
 
 namespace USca_Server.TagLogs
@@ -8,10 +9,12 @@ namespace USca_Server.TagLogs
     public class TagLogController : ControllerBase
     {
         private ITagLogService _tagLogService;
+        private ITagService _tagService;
 
-        public TagLogController(ITagLogService tagLogService)
+        public TagLogController(ITagLogService tagLogService, ITagService tagService)
         {
             _tagLogService = tagLogService;
+            _tagService = tagService;
         }
 
         [HttpGet("{id}")]
@@ -29,10 +32,17 @@ namespace USca_Server.TagLogs
         }
 
         [HttpGet("all/{tagId}")]
-        public ActionResult<List<TagLog>> GetAllByTag(int tagId)
+        public ActionResult<TagLogByTagIdDTO> GetAllByTag(int tagId)
         {
-            var res = _tagLogService.GetAllByTag(tagId);
-            return StatusCode(200, res);
+            var tag = _tagService.Get(tagId);
+            if (tag == null)
+            {
+                return StatusCode(404);
+            }
+
+            var logs = _tagLogService.GetAllByTag(tagId);
+
+            return StatusCode(200, new TagLogByTagIdDTO(tag, logs));
         }
     }
 }
