@@ -30,7 +30,15 @@ namespace USca_RTU.Processor
 						Signals.Add(new(o.Address, o.Name, o.Value, DateTime.Now));
 					}
 				}
-			}
+                foreach (var o in simulator.Thermometers)
+                {
+					Signals.Add(new(o.Address, o.Name, o.Value, DateTime.Now));
+                }
+                foreach (var o in simulator.Condensers)
+                {
+                    Signals.Add(new(o.Address, o.Name, o.Value, DateTime.Now));
+                }
+            }
 		}
 	}
 }

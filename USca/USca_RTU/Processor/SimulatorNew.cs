@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
+using System.Windows.Media;
 using USca_Server.Tags;
 
 namespace USca_RTU.Processor
@@ -71,8 +73,7 @@ namespace USca_RTU.Processor
             {
                 if (o.Open)
                 {
-
-                    diff += o.Rate;
+                    diff += o.Value;
                 }
             }
             Tank.Value += diff;
@@ -85,10 +86,116 @@ namespace USca_RTU.Processor
             {
                 if (o.Open)
                 {
-                    diff -= o.Rate;
+                    diff -= o.Value;
                 }
             }
             Tank.Value += diff;
+        }
+    }
+
+    public partial class SimThermometer : INotifyPropertyChanged
+    {
+        public int Address { get; set; }
+        public string Name { get; set; } = "";
+        public double Temperature { get; set; }
+
+        public SimThermometer(int address, double temperature)
+        {
+            Address = address;
+            Temperature = temperature;
+        }
+
+        public double Value { get { return Temperature; } set { Temperature = value; } }
+    }
+
+    public partial class SimCondenser : INotifyPropertyChanged
+    {
+        public int Address { get; set; }
+        public string Name { get; set; } = "";
+        public double Rate { get; set; }
+        public bool Open { get; set; } // If not open, the 'rate' slowly goes down to 0.
+
+        public SimCondenser(int address, double rate, bool open)
+        {
+            Address = address;
+            Rate = rate;
+            Open = open;
+        }
+
+        public double Value { get { return Rate; } set { Rate = value; } }
+
+        public void Update()
+        {
+            if (!Open)
+            {
+                if (Rate > 0)
+                {
+                    Rate -= Math.Abs(Rate / 10);
+                }
+                if (Rate < 0)
+                {
+                    Rate += Math.Abs(Rate / 10);
+                }
+                if (Math.Abs(Rate) < 0.001)
+                {
+                    Rate = 0;
+                }
+            }
+        }
+    }
+
+    public partial class SimHeatSource : INotifyPropertyChanged
+    {
+        public double Rate { get; set; }
+
+        public SimHeatSource(double rate)
+        {
+            Rate = rate;
+        }
+
+        public double Value { get { return Rate; } set { Rate = value; } }
+    }
+
+    public partial class SimBindingThermometer
+    {
+        public SimThermometer Thermometer { get; set; }
+        public List<SimCondenser> Cooler { get; set; } = new();
+        public List<SimHeatSource> Heater { get; set; } = new();
+
+        public SimBindingThermometer(SimThermometer thermometer, SimCondenser? cooler = null, SimHeatSource? heater = null)
+        {
+            Thermometer = thermometer;
+            if (cooler != null)
+            {
+                Cooler.Add(cooler);
+            }
+            if (heater != null)
+            {
+                Heater.Add(heater);
+            }
+        }
+
+        public SimBindingThermometer(SimThermometer thermometer, List<SimCondenser> cooler, List<SimHeatSource> heater)
+        {
+            Thermometer = thermometer;
+            Cooler = cooler;
+            Heater = heater;
+        }
+
+        public void ApplyCooling()
+        {
+            foreach (var o in Cooler)
+            {
+                Thermometer.Temperature -= o.Value;
+            }
+        }
+
+        public void ApplyHeating()
+        {
+            foreach (var o in Heater)
+            {
+                Thermometer.Temperature += o.Value;
+            }
         }
     }
 
@@ -107,6 +214,11 @@ namespace USca_RTU.Processor
         public List<SimValve> Valves { get; set; } = new();
         public List<SimValve> ExternalValves { get; set; } = new();
         public List<SimBindingTankValve> TankValveBindings { get; set; } = new();
+
+        public List<SimThermometer> Thermometers { get; set; } = new();
+        public List<SimCondenser> Condensers { get; set; } = new();
+        public List<SimHeatSource> HeatSources { get; set; } = new();
+        public List<SimBindingThermometer> ThermometerBindings { get; set; } = new();
 
         public SimulatorNew()
         {
@@ -146,6 +258,15 @@ namespace USca_RTU.Processor
             SimBindingTankValve WaterTank_Binding = new(WaterTank, WaterTank_ExternalValve, WaterTank_ExternalValve2);
             SimBindingTankValve CoolingTank_Binding = new(CoolingTank, new List<SimValve> { PostCompressorTank_ExternalValve, WaterTank_ExternalValve2 }, new() { CoolingTank_ExternalValve });
 
+            SimThermometer CoolingTankThermometer = new(NextAddress(), 4);
+            SimCondenser CoolingTankCondenser1 = new(NextAddress(), 0.001, true);
+            SimCondenser CoolingTankCondenser2 = new(NextAddress(), 0.01, false);
+            SimCondenser CoolingTankCondenser3 = new(NextAddress(), 0.01, false);
+            SimCondenser CoolingTankCondenser4 = new(NextAddress(), 0.01, false);
+            SimHeatSource CoolingTankStartingTemp = new(0.0025);
+
+            SimBindingThermometer CoolingTankThermometer_Binding = new(CoolingTankThermometer, new List<SimCondenser> { CoolingTankCondenser1, CoolingTankCondenser2, CoolingTankCondenser3, CoolingTankCondenser4 }, new() { CoolingTankStartingTemp });
+
             Tanks.Add(MilkTank01);
             Tanks.Add(MilkTank02);
             Tanks.Add(MilkTank03);
@@ -181,22 +302,59 @@ namespace USca_RTU.Processor
             TankValveBindings.Add(PostCompressorTank_Binding);
             TankValveBindings.Add(WaterTank_Binding);
             TankValveBindings.Add(CoolingTank_Binding);
+
+            Thermometers.Add(CoolingTankThermometer);
+
+            Condensers.Add(CoolingTankCondenser1);
+            Condensers.Add(CoolingTankCondenser2);
+            Condensers.Add(CoolingTankCondenser3);
+            Condensers.Add(CoolingTankCondenser4);
+
+            HeatSources.Add(CoolingTankStartingTemp);
+
+            ThermometerBindings.Add(CoolingTankThermometer_Binding);
+        }
+
+        public void PertubateRates()
+        {
+            foreach (var o in Valves)
+            {
+                o.Value += Math.Abs(r.NextDouble() * Math.Sin(DateTime.Now.Ticks / 5.0 + r.NextDouble() * 0.01) * 0.01);
+            }
+
+            foreach (var o in ExternalValves)
+            {
+                o.Value += Math.Abs(r.NextDouble() * Math.Sin(DateTime.Now.Ticks / 5.0 + r.NextDouble() * 0.01) * 0.01);
+            }
+
+            foreach (var o in Condensers)
+            {
+                o.Value += Math.Abs(r.NextDouble() * Math.Sin(DateTime.Now.Ticks / 5.0 + r.NextDouble() * 0.00001) * 0.00001);
+            }
+
+            foreach (var o in HeatSources)
+            {
+                o.Value += Math.Abs(r.NextDouble() * Math.Sin(DateTime.Now.Ticks / 5.0 + r.NextDouble() * 0.00001) * 0.00001);
+            }
         }
 
         public void Update1()
         {
-            foreach (var o in Valves)
-            {
-                o.Rate += Math.Abs(r.NextDouble() * Math.Sin(DateTime.Now.Ticks / 5.0 + r.NextDouble() * 0.01) * 0.01);
-            }
-            foreach (var o in ExternalValves)
-            {
-                o.Rate += Math.Abs(r.NextDouble() * Math.Sin(DateTime.Now.Ticks / 5.0 + r.NextDouble() * 0.01) * 0.01);
-            }
+            PertubateRates();
 
             foreach (var o in TankValveBindings)
             {
                 o.ApplyIn();
+            }
+
+            foreach (var o in ThermometerBindings)
+            {
+                o.ApplyCooling();
+            }
+
+            foreach (var o in Condensers)
+            {
+                o.Update();
             }
         }
 
@@ -205,6 +363,11 @@ namespace USca_RTU.Processor
             foreach (var o in TankValveBindings)
             {
                 o.ApplyOut();
+            }
+
+            foreach (var o in ThermometerBindings)
+            {
+                o.ApplyHeating();
             }
         }
 
@@ -220,7 +383,13 @@ namespace USca_RTU.Processor
                     }
                 }
 
-                // Check for other objects the same way, once we add them.
+                foreach (var oo in Condensers)
+                {
+                    if (oo.Address == o.Address)
+                    {
+                        oo.Open = o.Value != 0;
+                    }
+                }
             }
         }
     }
