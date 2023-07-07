@@ -33,7 +33,8 @@ namespace USca_DbManager.Tags
             TagUnits.Add("°C");
             TagUnits.Add("litre");
             TagUnits.Add("kg");
-            TagUnits.Add("g");   
+            TagUnits.Add("g");
+            TagUnits.Add("mB");
         }
 
         private void BtnCancel_Click(object sender, RoutedEventArgs e)
