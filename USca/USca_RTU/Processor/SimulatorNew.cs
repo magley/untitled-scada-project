@@ -279,12 +279,6 @@ namespace USca_RTU.Processor
             SimTank MilkTank01 = new(NextAddress(), 0);
             SimTank MilkTank02 = new(NextAddress(), 0);
             SimTank MilkTank03 = new(NextAddress(), 0);
-            SimTank MilkFilterTank = new(NextAddress(), 0);
-            SimTank ProcessedDairyTank = new(NextAddress(), 0);
-            SimTank RawCreamStorageTank = new(NextAddress(), 0);
-            SimTank PostCompressorTank = new(NextAddress(), 0);
-            SimTank WaterTank = new(NextAddress(), 0);
-            SimTank CoolingTank = new(NextAddress(), 0);
 
             SimValve MilkTank01_ExternalValve = new(-1, 4, true);
             SimValve MilkTank02_ExternalValve = new(-1, 4, true);
@@ -293,14 +287,27 @@ namespace USca_RTU.Processor
             SimValve MilkTank01_OutValve = new(NextAddress(), 1, true);
             SimValve MilkTank02_OutValve = new(NextAddress(), 1, true);
             SimValve MilkTank03_OutValve = new(NextAddress(), 1, true);
+
+            SimTank MilkFilterTank = new(NextAddress(), 0);
             SimValve MilkFilterTank_OutValve = new(NextAddress(), 2, true);
+            
+            SimTank ProcessedDairyTank = new(NextAddress(), 0);
             SimValve ProcessedDairyTank_ToRawCreamValve = new(NextAddress(), 2, true);
+            SimTank RawCreamStorageTank = new(NextAddress(), 0);
+            
             SimValve ProcessedDairyTank_ToCompressorValve = new(NextAddress(), 2, true);
+            SimManometer Manometer = new(NextAddress(), 9000); // desired pressure: ~14000
+            SimCompressor Compressor = new(NextAddress(), 10, true);
             SimValve PostCompressorTank_Valve = new(NextAddress(), 2, true);
+            SimTank PostCompressorTank = new(NextAddress(), 0);
             SimValve PostCompressorTank_ExternalValve = new(-1, 1, true);
+
             SimValve WaterTank_ExternalValve = new(-1, 1, true);
+            SimTank WaterTank = new(NextAddress(), 0);
             SimValve WaterTank_ExternalValve2 = new(-1, 1, true);
-            SimValve CoolingTank_ExternalValve = new(NextAddress(), 3, true);
+
+            SimTank CoolingTank = new(NextAddress(), 0);
+            SimValve CoolingTank_ExternalValve = new(-1, 3, true);
 
             SimBindingTankValve MilkTank01_Binding = new(MilkTank01, MilkTank01_ExternalValve, MilkTank01_OutValve);
             SimBindingTankValve MilkTank02_Binding = new(MilkTank02, MilkTank02_ExternalValve, MilkTank02_OutValve);
@@ -320,9 +327,6 @@ namespace USca_RTU.Processor
             SimHeatSource CoolingTankStartingTemp = new(0.0025);
 
             SimBindingThermometer CoolingTankThermometer_Binding = new(CoolingTankThermometer, new List<SimCondenser> { CoolingTankCondenser1, CoolingTankCondenser2, CoolingTankCondenser3, CoolingTankCondenser4 }, new() { CoolingTankStartingTemp });
-
-            SimManometer Manometer = new(NextAddress(), 9000); // desired pressure: ~14000
-            SimCompressor Compressor = new(NextAddress(), 10, true);
             SimBindingPressure PressureBinding = new(Manometer, Compressor);
 
             Tanks.Add(MilkTank01);

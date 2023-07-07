@@ -45,7 +45,7 @@ namespace USca_RTU
 
             while (true)
             {
-                Thread.Sleep(50);
+                Thread.Sleep(100);
 
                 if (alternator == 0)
                 {
