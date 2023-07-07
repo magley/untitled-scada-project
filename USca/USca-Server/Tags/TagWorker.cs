@@ -3,6 +3,7 @@ using System.Text.Json;
 using USca_Server.Alarms;
 using USca_Server.Measures;
 using USca_Server.Shared;
+using USca_Server.TagLogs;
 using USca_Server.Util;
 
 namespace USca_Server.Tags
@@ -85,11 +86,16 @@ namespace USca_Server.Tags
         {
             public Tag Tag { get; set; }
             public LoopThread LoopThread { get; set; }
+            private ITagLogService _tagLogService;
 
             public TagThreadWrapper(Tag tag)
             {
                 Tag = tag;
                 LoopThread = new(() => UpdateTag());
+
+                // TODO: This is bad. We can't inject (or can we?) the service
+                // in TagWorker because it's static.
+                _tagLogService = new TagLogService();
             }
 
             ~TagThreadWrapper()
@@ -118,11 +124,12 @@ namespace USca_Server.Tags
                     // The tag points to a measure that doesn't exist.
                     return;
                 }
+                UpdateTagDataFrom(measure);
                 SendData(measure);
                 CheckAlarms(measure);
             }
 
-            private void SendData(Measure measure)
+            private void UpdateTagDataFrom(Measure measure)
             {
                 // Update the tag's current value to the one in the measure.
                 if (measure.Value != Tag.Value)
@@ -133,11 +140,18 @@ namespace USca_Server.Tags
                         if (tag != null)
                         {
                             tag.Value = measure.Value;
+                            Tag.Value = measure.Value; // Do we need this?
                             db.SaveChanges();
                         }
                     }
                 }
 
+                // Log the new value.
+                _tagLogService.AddFrom(Tag, measure.Timestamp);
+            }
+
+            private void SendData(Measure measure)
+            {
                 var tagReading = new
                 {
                     Tag.Id,

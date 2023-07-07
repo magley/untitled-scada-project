@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using USca_Server.Alarms;
 using USca_Server.Measures;
+using USca_Server.TagLogs;
 using USca_Server.Tags;
 using USca_Server.Users;
 
@@ -13,6 +14,7 @@ namespace USca_Server.Shared
 		public DbSet<Tag> Tags { get; set; }
         public DbSet<Alarm> Alarms { get; set; }
         public DbSet<AlarmLog> AlarmLogs { get; set; }
+        public DbSet<TagLog> TagLogs { get; set; }
 
 		private static bool _created = false;
         private static readonly object _lock = new();

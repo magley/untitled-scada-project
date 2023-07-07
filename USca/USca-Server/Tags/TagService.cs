@@ -1,14 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Net.WebSockets;
-using System.Text;
-using System.Text.Json;
 using USca_Server.Shared;
+using USca_Server.TagLogs;
 using USca_Server.Util;
 
 namespace USca_Server.Tags
 {
     public class TagService : ITagService
     {
+        private ITagLogService _tagLogService;
+
+        public TagService(ITagLogService tagLogService)
+        {
+            _tagLogService = tagLogService;
+        }
+
         public void Add(TagAddDTO dto)
         {
             Tag t = new(dto);
@@ -17,6 +23,12 @@ namespace USca_Server.Tags
             {
                 db.Tags.Add(t);
                 db.SaveChanges();
+            }
+
+            // Output tags get logged immediately since their starting value is relevant.
+            if (dto.Mode == TagMode.Output)
+            {
+                _tagLogService.AddFrom(t);
             }
         }
 
@@ -70,6 +82,12 @@ namespace USca_Server.Tags
                     if (tag.Type == TagType.Digital)
                     {
                         tag.Value = Convert.ToDouble(Convert.ToBoolean(dto.Value));
+                    }
+
+                    // Output tag's value changed => log it.
+                    if (tag.Mode == TagMode.Output)
+                    {
+                        _tagLogService.AddFrom(tag);
                     }
 
                     db.SaveChanges();
