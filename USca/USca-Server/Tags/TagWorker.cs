@@ -124,6 +124,20 @@ namespace USca_Server.Tags
 
             private void SendData(Measure measure)
             {
+                // Update the tag's current value to the one in the measure.
+                if (measure.Value != Tag.Value)
+                {
+                    using (var db = new ServerDbContext())
+                    {
+                        var tag = db.Tags.Find(Tag.Id);
+                        if (tag != null)
+                        {
+                            tag.Value = measure.Value;
+                            db.SaveChanges();
+                        }
+                    }
+                }
+
                 var tagReading = new
                 {
                     Tag.Id,
@@ -134,7 +148,7 @@ namespace USca_Server.Tags
                     Tag.Min,
                     Tag.Max,
                     Tag.Unit,
-                    measure.Value,
+                    Tag.Value,
                     measure.Timestamp,
                 };
                 SocketMessageDTO message = new()
@@ -151,7 +165,7 @@ namespace USca_Server.Tags
                 List<string> logs = new();
                 foreach (var alarm in Tag.Alarms)
                 {
-                    if (alarm.ThresholdCrossed(measure.Value))
+                    if (alarm.ThresholdCrossed(Tag.Value))
                     {
                         AlarmLog log = new()
                         {
@@ -162,8 +176,8 @@ namespace USca_Server.Tags
                             TagId = Tag.Id,
                             TagName = Tag.Name,
                             Address = Tag.Address,
+                            RecordedValue = Tag.Value,
                             TimeStamp = measure.Timestamp,
-                            RecordedValue = measure.Value,
                         };
                         db.AlarmLogs.Add(log);
                         logs.Add(AlarmLog.LogEntry(log));
