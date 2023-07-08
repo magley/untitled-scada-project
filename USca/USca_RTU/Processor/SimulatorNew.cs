@@ -138,7 +138,7 @@ namespace USca_RTU.Processor
             PressureBindings.Add(PressureBinding);
         }
 
-        public void PertubateRates()
+        public void PerturbateRates()
         {
             foreach (var o in Valves)
             {
@@ -173,7 +173,7 @@ namespace USca_RTU.Processor
 
         public void Update1()
         {
-            PertubateRates();
+            PerturbateRates();
 
             foreach (var o in TankValveBindings)
             {
