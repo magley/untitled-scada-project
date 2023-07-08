@@ -289,7 +289,6 @@ namespace USca_AlarmDisplay
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             AlarmPriority priority = (AlarmPriority)parameter;
-            Console.WriteLine($"{value.GetType()}, {value}");
             if (value is ActiveAlarm alarm)
             {
                 if (alarm.IsMuted)
