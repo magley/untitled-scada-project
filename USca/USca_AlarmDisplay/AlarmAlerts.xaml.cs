@@ -100,7 +100,7 @@ namespace USca_AlarmDisplay
             {
                 ActiveAlarms.Add(new ActiveAlarm(log));
             }
-            else
+            else if (idx != -1)
             {
                 ActiveAlarms.RemoveAt(idx);
             }
