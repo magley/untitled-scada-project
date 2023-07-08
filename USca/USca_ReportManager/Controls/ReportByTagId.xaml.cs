@@ -38,9 +38,9 @@ namespace USca_ReportManager.Controls
             }
             catch (NotFoundException)
             {
-                MessageBox.Show("Tag not found!", "Failure", MessageBoxButton.OK);
                 TagLogs.Clear();
                 TagName = "";
+                MessageBox.Show("Tag not found!", "Failure", MessageBoxButton.OK);
             }
         }
     }
