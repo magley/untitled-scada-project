@@ -92,23 +92,7 @@ namespace USca_AlarmDisplay
             {
                 return;
             }
-            switch (log.Priority)
-            {
-                case AlarmPriority.LOW:
-                    AlarmLogs.Add(log);
-                    break;
-                case AlarmPriority.MEDIUM:
-                    AlarmLogs.Add(log);
-                    AlarmLogs.Add(log);
-                    break;
-                case AlarmPriority.HIGH:
-                    AlarmLogs.Add(log);
-                    AlarmLogs.Add(log);
-                    AlarmLogs.Add(log);
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
+            AlarmLogs.Add(log);
             LbLogs.ScrollIntoView(LbLogs.Items[^1]);
             var item = ActiveAlarms.FirstOrDefault(t => t.AlarmId == log.AlarmId);
             int idx = (item != null) ? ActiveAlarms.IndexOf(item) : -1;
@@ -272,7 +256,7 @@ namespace USca_AlarmDisplay
             }
             if (value is ActiveAlarm alarm)
             {
-                return $"Alarm {alarm.AlarmId} for tag {alarm.TagName}{muted(alarm)}";
+                return $"[{alarm.Priority}] Alarm {alarm.AlarmId} for {alarm.TagName}{muted(alarm)}";
             }
             return value;
         }
@@ -292,6 +276,64 @@ namespace USca_AlarmDisplay
                 return alarm.IsMuted;
             }
             return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
+
+    public class AlarmSeverityToBoolConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            AlarmPriority priority = (AlarmPriority)parameter;
+            Console.WriteLine($"{value.GetType()}, {value}");
+            if (value is ActiveAlarm alarm)
+            {
+                if (alarm.IsMuted)
+                {
+                    return false;
+                }
+                return priority == alarm.Priority;
+            }
+            else if (value is AlarmLogDTO log)
+            {
+                if (!log.IsActive)
+                {
+                    return false;
+                }
+                return priority == log.Priority;
+            }
+            else
+            {
+                return value;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
+
+    public class AlarmActiveToBoolConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is AlarmLogDTO log)
+            {
+                return log.IsActive;
+            }
+            else if (value is ActiveAlarm alarm)
+            {
+                return alarm.IsMuted;
+            }
+            else
+            {
+                return value;
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -2,6 +2,7 @@
     x:Class="USca_AlarmDisplay.AlarmAlerts"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:alarm="clr-namespace:USca_AlarmDisplay.Alarm"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:USca_AlarmDisplay"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -13,7 +14,8 @@
     <Window.Resources>
         <local:AlarmLogDTOToCustomStringConverter x:Key="logConverter" />
         <local:ActiveAlarmToCustomStringConverter x:Key="activeAlarmConverter" />
-        <local:AlarmIsMutedToBoolConverter x:Key="alarmMutedConverter" />
+        <local:AlarmSeverityToBoolConverter x:Key="alarmSeverityConverter" />
+        <local:AlarmActiveToBoolConverter x:Key="alarmActiveConverter" />
     </Window.Resources>
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -27,7 +29,26 @@
             ItemsSource="{Binding AlarmLogs}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding {}, Converter={StaticResource logConverter}}" />
+                    <TextBlock Text="{Binding {}, Converter={StaticResource logConverter}}">
+                        <TextBlock.Style>
+                            <Style>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding {}, Converter={StaticResource ResourceKey=alarmSeverityConverter}, ConverterParameter={x:Static alarm:AlarmPriority.HIGH}}" Value="true">
+                                        <Setter Property="TextBlock.Foreground" Value="Red" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding {}, Converter={StaticResource ResourceKey=alarmSeverityConverter}, ConverterParameter={x:Static alarm:AlarmPriority.MEDIUM}}" Value="true">
+                                        <Setter Property="TextBlock.Foreground" Value="DarkOrange" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding {}, Converter={StaticResource ResourceKey=alarmSeverityConverter}, ConverterParameter={x:Static alarm:AlarmPriority.LOW}}" Value="true">
+                                        <Setter Property="TextBlock.Foreground" Value="CornflowerBlue" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding {}, Converter={StaticResource ResourceKey=alarmActiveConverter}}" Value="false">
+                                        <Setter Property="TextBlock.Foreground" Value="Green" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
@@ -49,8 +70,17 @@
                                 <TextBlock.Style>
                                     <Style>
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding {}, Converter={StaticResource ResourceKey=alarmMutedConverter}}" Value="false">
+                                            <DataTrigger Binding="{Binding {}, Converter={StaticResource ResourceKey=alarmSeverityConverter}, ConverterParameter={x:Static alarm:AlarmPriority.HIGH}}" Value="true">
                                                 <Setter Property="TextBlock.Foreground" Value="Red" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding {}, Converter={StaticResource ResourceKey=alarmSeverityConverter}, ConverterParameter={x:Static alarm:AlarmPriority.MEDIUM}}" Value="true">
+                                                <Setter Property="TextBlock.Foreground" Value="DarkOrange" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding {}, Converter={StaticResource ResourceKey=alarmSeverityConverter}, ConverterParameter={x:Static alarm:AlarmPriority.LOW}}" Value="true">
+                                                <Setter Property="TextBlock.Foreground" Value="CornflowerBlue" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding {}, Converter={StaticResource ResourceKey=alarmActiveConverter}}" Value="true">
+                                                <Setter Property="TextBlock.Foreground" Value="LightGray" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>

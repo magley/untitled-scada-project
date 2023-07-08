@@ -23,6 +23,7 @@ namespace USca_Server.Alarms
                 AlarmId = a.Id,
                 TagId = a.TagId,
                 TagName = a.Tag.Name,
+                Priority = a.Priority,
             }).ToList();
         }
 
