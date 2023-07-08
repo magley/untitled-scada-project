@@ -6,6 +6,7 @@ namespace USca_Server.TagLogs
     {
         public void AddFrom(Tag tag);
         public void AddFrom(Tag tag, DateTime measureTimestamp);
+        public void AddBatch(List<Tuple<Tag, DateTime>> batch);
         public TagLog? Get(int id);
         public List<TagLog> GetAll();
         public List<TagLog> GetAllByTag(int tagId);

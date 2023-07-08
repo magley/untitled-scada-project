@@ -5,6 +5,20 @@ namespace USca_Server.TagLogs
 {
     public class TagLogService : ITagLogService
     {
+        public void AddBatch(List<Tuple<Tag, DateTime>> batch)
+        {
+            using (var db = new ServerDbContext())
+            {
+                foreach (var o in batch)
+                {
+                    TagLog tagLog = new(o.Item1, o.Item2);
+                    db.TagLogs.Add(tagLog);
+                }
+
+                db.SaveChanges();
+            }
+        }
+
         public void AddFrom(Tag tag, DateTime measureTimestamp)
         {
             TagLog tagLog = new(tag, measureTimestamp);

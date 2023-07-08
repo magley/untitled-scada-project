@@ -19,6 +19,23 @@ namespace USca_Server.Tags
         private static readonly object _lock = new();
         private const string alarmLogPath = "./alarmLog.txt";
         public static event EventHandler<SocketMessageDTO>? RaiseWorkerEvent;
+        private static List<Tuple<Tag, DateTime>> localLogs = new();
+        private static object localLogsLock = new();
+        private static ITagLogService _tagLogService = new TagLogService();
+
+        private static void WriteTagLog(Tag tag, DateTime timestamp)
+        {
+            lock (localLogsLock)
+            {
+                localLogs.Add(new(tag, timestamp));
+
+                if (localLogs.Count > 50)
+                {
+                    _tagLogService.AddBatch(localLogs);
+                    localLogs.Clear();
+                }
+            }
+        }
 
         private static void OnRaiseWorkerEvent(SocketMessageDTO e)
         {
@@ -86,16 +103,11 @@ namespace USca_Server.Tags
         {
             public Tag Tag { get; set; }
             public LoopThread LoopThread { get; set; }
-            private ITagLogService _tagLogService;
 
             public TagThreadWrapper(Tag tag)
             {
                 Tag = tag;
                 LoopThread = new(() => UpdateTag());
-
-                // TODO: This is bad. We can't inject (or can we?) the service
-                // in TagWorker because it's static.
-                _tagLogService = new TagLogService();
             }
 
             ~TagThreadWrapper()
@@ -131,23 +143,8 @@ namespace USca_Server.Tags
 
             private void UpdateTagDataFrom(Measure measure)
             {
-                // Update the tag's current value to the one in the measure.
-                if (measure.Value != Tag.Value)
-                {
-                    using (var db = new ServerDbContext())
-                    {
-                        var tag = db.Tags.Find(Tag.Id);
-                        if (tag != null)
-                        {
-                            tag.Value = measure.Value;
-                            Tag.Value = measure.Value; // Do we need this?
-                            db.SaveChanges();
-                        }
-                    }
-                }
-
-                // Log the new value.
-                _tagLogService.AddFrom(Tag, measure.Timestamp);
+                Tag.Value = measure.Value;
+                TagWorker.WriteTagLog(Tag, measure.Timestamp);
             }
 
             private void SendData(Measure measure)
