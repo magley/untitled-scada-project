@@ -143,27 +143,27 @@ namespace USca_RTU.Processor
         {
             foreach (var o in Valves)
             {
-                o.Value += Math.Abs(r.NextDouble() * Math.Sin(DateTime.Now.Ticks / 5.0 + r.NextDouble() * 0.01) * 0.01);
+                o.Value += r.NextDouble() * Math.Sin(DateTime.Now.Ticks / 5.0 + r.NextDouble() * 0.01) * 0.01;
             }
 
             foreach (var o in ExternalValves)
             {
-                o.Value += Math.Abs(r.NextDouble() * Math.Sin(DateTime.Now.Ticks / 5.0 + r.NextDouble() * 0.01) * 0.01);
+                o.Value += r.NextDouble() * Math.Sin(DateTime.Now.Ticks / 5.0 + r.NextDouble() * 0.01) * 0.01;
             }
 
             foreach (var o in Condensers)
             {
-                o.Value += Math.Abs(r.NextDouble() * Math.Sin(DateTime.Now.Ticks / 5.0 + r.NextDouble() * 0.00001) * 0.00001);
+                o.Value += r.NextDouble() * Math.Sin(DateTime.Now.Ticks / 5.0 + r.NextDouble() * 0.00001) * 0.00001;
             }
 
             foreach (var o in HeatSources)
             {
-                o.Value += Math.Abs(r.NextDouble() * Math.Sin(DateTime.Now.Ticks / 5.0 + r.NextDouble() * 0.00001) * 0.00001);
+                o.Value += r.NextDouble() * Math.Sin(DateTime.Now.Ticks / 5.0 + r.NextDouble() * 0.00001) * 0.00001;
             }
 
             foreach (var o in Compressors)
             {
-                o.Value += Math.Abs(r.NextDouble() * Math.Sin(DateTime.Now.Ticks / 5.0 + r.NextDouble() * 0.001) * 0.001);
+                o.Value += r.NextDouble() * Math.Sin(DateTime.Now.Ticks / 5.0 + r.NextDouble() * 0.001) * 0.001;
             }
 
             foreach (var o in PressureBindings)

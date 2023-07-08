@@ -234,32 +234,22 @@ namespace USca_Server.Shared
             Tags.Add(coolingTankCondenser03);
             Tags.Add(coolingTankCondenser04);
 
-            // TODO: Add alarms. Not all, but some. As a proof of concept, since it's tedious...
-            //Alarm a1 = new()
-            //{
-            //    ThresholdType = AlarmThresholdType.ABOVE,
-            //    Priority = AlarmPriority.HIGH,
-            //    Threshold = 9,
-            //    Tag = tag1,
-            //};
-            //Alarms.Add(a1);
-
-            //Alarm a2 = new()
-            //{
-            //    ThresholdType = AlarmThresholdType.BELOW,
-            //    Priority = AlarmPriority.MEDIUM,
-            //    Threshold = 4.6,
-            //    Tag = tag1,
-            //};
-            //Alarms.Add(a2);
-            //Alarm a3 = new()
-            //{
-            //    ThresholdType = AlarmThresholdType.ABOVE,
-            //    Priority = AlarmPriority.LOW,
-            //    Threshold = 0.0005,
-            //    Tag = tag2,
-            //};
-            //Alarms.Add(a3);
+            Alarms.Add(new()
+            {
+                ThresholdType = AlarmThresholdType.ABOVE,
+                Priority = AlarmPriority.HIGH,
+                Threshold = 5,
+                Tag = waterTank,
+                IsActive = false,
+            });
+            Alarms.Add(new()
+            {
+                ThresholdType = AlarmThresholdType.ABOVE,
+                Priority = AlarmPriority.MEDIUM,
+                Threshold = 1.7,
+                Tag = coolingTank,
+                IsActive = false,
+            });
 
             SaveChanges();
         }

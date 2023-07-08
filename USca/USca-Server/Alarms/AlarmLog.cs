@@ -11,14 +11,38 @@ namespace USca_Server.Alarms
         public AlarmPriority Priority { get; set; }
         public double Threshold { get; set; }
         public int TagId { get; set; }
+        public bool IsActive { get; set; }
         public string? TagName { get; set; }
         public int Address { get; set; }
-        public DateTime TimeStamp { get; set; }
+        public DateTime Timestamp { get; set; }
         public double RecordedValue { get; set; }
+
+        public static string ActiveStatus(bool status)
+        {
+            return status ? "activated" : "ceased";
+        }
+
+        public static string SignStatus(AlarmThresholdType Type, bool IsActive)
+        {
+            if (IsActive)
+            {
+                return Type.ToSign();
+            }
+            else
+            {
+                // Alarm has been deactivated, therefore the type/sign to display is reversed
+                return Type switch
+                {
+                    AlarmThresholdType.ABOVE => AlarmThresholdType.BELOW.ToSign(),
+                    AlarmThresholdType.BELOW => AlarmThresholdType.ABOVE.ToSign(),
+                    _ => throw new NotImplementedException()
+                };
+            }
+        }
 
         public static string LogEntry(AlarmLog log)
         {
-            return $"[{log.Priority} {log.TimeStamp}] Tag {log.TagId} ({log.TagName}) recorded alarm {log.AlarmId} at address {log.Address}: {log.RecordedValue:#.####} {log.ThresholdType.ToSign()} {log.Threshold:#.####}";
+            return $"[{log.Priority} {log.Timestamp}] Tag {log.TagId} ({log.TagName}) {ActiveStatus(log.IsActive)} alarm {log.AlarmId} at address {log.Address}: {log.RecordedValue:0.0000} {SignStatus(log.ThresholdType, log.IsActive)} {log.Threshold:0.0000}";
         }
     }
 }
