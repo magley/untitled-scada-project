@@ -1,14 +1,17 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace USca_AlarmDisplay.Alarm
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum AlarmThresholdType
     {
         BELOW, // Trigger alarm when value drops below threshold
         ABOVE, // Trigger alarm when value rises above threshold
     }
 
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum AlarmPriority
     {
         LOW,

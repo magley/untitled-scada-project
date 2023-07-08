@@ -9,12 +9,40 @@ using System.Windows;
 using System.Windows.Data;
 using USca_AlarmDisplay.Alarm;
 using USca_AlarmDisplay.Util;
+using System.Linq;
+using System.ComponentModel;
+using System.Diagnostics;
 
 namespace USca_AlarmDisplay
 {
-    public partial class AlarmAlerts : Window
+    public partial class ActiveAlarm : INotifyPropertyChanged
+    {
+        public int AlarmId { get; set; }
+        public int TagId { get; set; }
+        public string? TagName { get; set; }
+        public int MutedFor { get; set; } = 0;
+        public bool IsMuted { get { return MutedFor > 0; } }
+
+        public ActiveAlarm(ActiveAlarm other)
+        {
+            AlarmId = other.AlarmId;
+            TagId = other.TagId;
+            TagName = other.TagName;
+            MutedFor = other.MutedFor;
+        }
+        public ActiveAlarm(AlarmLogDTO log)
+        {
+            AlarmId = log.AlarmId;
+            TagId = log.TagId;
+            TagName = log.TagName;
+        }
+    }
+
+    public partial class AlarmAlerts : Window, INotifyPropertyChanged
     {
         public ObservableCollection<AlarmLogDTO> AlarmLogs { get; set; } = new();
+        public ObservableCollection<ActiveAlarm> ActiveAlarms { get; set; } = new();
+        public ActiveAlarm? SelectedActiveAlarm { get; set; }
 
         public AlarmAlerts()
         {
@@ -90,11 +118,138 @@ namespace USca_AlarmDisplay
                 default:
                     throw new NotImplementedException();
             }
+            LbLogs.ScrollIntoView(LbLogs.Items[^1]);
+            var item = ActiveAlarms.FirstOrDefault(t => t.AlarmId == log.AlarmId);
+            int idx = (item != null) ? ActiveAlarms.IndexOf(item) : -1;
+            if (log.IsActive && idx == -1)
+            {
+                ActiveAlarms.Add(new ActiveAlarm(log));
+            }
+            else if (idx != -1)
+            {
+                ActiveAlarms.RemoveAt(idx);
+            }
         }
 
         private void BtnClear_Click(object sender, RoutedEventArgs e)
         {
             AlarmLogs.Clear();
+        }
+
+        private void ListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            UpdateMuteDisplay();
+        }
+
+        private void UpdateMuteDisplay()
+        {
+            if (SelectedActiveAlarm == null)
+            {
+                PanelMute.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                PanelMute.Visibility = Visibility.Visible;
+                if (SelectedActiveAlarm.IsMuted)
+                {
+                    LblMute.IsEnabled = false;
+                    TbSeconds.IsEnabled = false;
+                    BtnMute.IsEnabled = false;
+                    BtnMute.IsEnabled = false;
+                    BtnUnmute.IsEnabled = true;
+                }
+                else
+                {
+                    LblMute.IsEnabled = true;
+                    TbSeconds.IsEnabled = true;
+                    BtnMute.IsEnabled = TbSeconds.Text != "";
+                    BtnUnmute.IsEnabled = false;
+                }
+            }
+        }
+
+        private void TbSeconds_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            e.Handled = !int.TryParse(e.Text, out _);
+        }
+
+        private void Snooze(int alarmId)
+        {
+            try
+            {
+                while (true)
+                {
+                    Thread.Sleep(1000);
+                    var alarm = ActiveAlarms.FirstOrDefault(a => a.AlarmId == alarmId);
+                    if (alarm == null || !alarm.IsMuted)
+                    {
+                        break;
+                    }
+                    int idx = ActiveAlarms.IndexOf(alarm);
+                    alarm.MutedFor -= 1;
+
+                    // https://stackoverflow.com/a/18336392
+                    Application.Current.Dispatcher.Invoke(delegate
+                    {
+                        // ActiveAlarms doesn't seem to display alarm changes, so have to do this hack
+                        // FIXME: Find something better? Why doesn't ActiveAlarms[idx] = alarm work?
+                        if (idx != -1)
+                        {
+                            var curSelectedIdx = LbActiveAlarms.SelectedIndex;
+                            UpdateActiveAlarmAt(idx, alarm, curSelectedIdx);
+                        }
+                    });
+                }
+            } catch
+            {
+                // When we close the GUI while the thread is still running we get an exception
+                // FIXME: This is ugly.
+                return;
+            }
+        }
+
+        private void BtnMute_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedActiveAlarm != null)
+            {
+                int seconds = int.Parse(TbSeconds.Text);
+                SelectedActiveAlarm.MutedFor = seconds;
+                int alarmId = SelectedActiveAlarm.AlarmId;
+                int idx = ActiveAlarms.IndexOf(SelectedActiveAlarm);
+                var newAlarm = new ActiveAlarm(SelectedActiveAlarm);
+                UpdateActiveAlarmAt(idx, newAlarm, idx);
+                Thread thread = new(()=>Snooze(alarmId));
+                thread.Start();
+                TbSeconds.Text = "";
+                UpdateMuteDisplay();
+            }
+        }
+
+        private void BtnUnmute_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedActiveAlarm != null)
+            {
+                SelectedActiveAlarm.MutedFor = 0;
+                int idx = ActiveAlarms.IndexOf(SelectedActiveAlarm);
+                var newAlarm = new ActiveAlarm(SelectedActiveAlarm);
+                UpdateActiveAlarmAt(idx, newAlarm, idx);
+            }
+        }
+
+        private void UpdateActiveAlarmAt(int idx, ActiveAlarm alarm, int idxToSelect)
+        {
+            // FIXME: Find something better? Why doesn't ActiveAlarms[idx] = alarm work?
+            ActiveAlarms.RemoveAt(idx);
+            ActiveAlarms.Insert(idx, alarm);
+            LbActiveAlarms.SelectedIndex = idxToSelect;
+        }
+
+        private void TbSeconds_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            if (SelectedActiveAlarm != null && !SelectedActiveAlarm.IsMuted)
+            {
+                BtnMute.IsEnabled = TbSeconds.Text != "";
+            }
         }
     }
 
@@ -105,6 +260,28 @@ namespace USca_AlarmDisplay
             if (value is AlarmLogDTO log)
             {
                 return AlarmLogDTO.LogEntry(log);
+            }
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
+
+    public class ActiveAlarmToCustomStringConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            static string muted(ActiveAlarm alarm)
+            {
+                string secondsPlurality = alarm.MutedFor > 1 ? "seconds" : "second";
+                return alarm.IsMuted ? $" (Muted for {alarm.MutedFor} {secondsPlurality})" : "";
+            }
+            if (value is ActiveAlarm alarm)
+            {
+                return $"Alarm {alarm.AlarmId} for tag {alarm.TagName}{muted(alarm)}";
             }
             return value;
         }

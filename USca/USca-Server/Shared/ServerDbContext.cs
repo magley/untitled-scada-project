@@ -237,17 +237,25 @@ namespace USca_Server.Shared
             Alarms.Add(new()
             {
                 ThresholdType = AlarmThresholdType.ABOVE,
-                Priority = AlarmPriority.HIGH,
-                Threshold = 5,
-                Tag = waterTank,
+                Priority = AlarmPriority.MEDIUM,
+                Threshold = 1.7,
+                Tag = coolingTank,
                 IsActive = false,
             });
             Alarms.Add(new()
             {
                 ThresholdType = AlarmThresholdType.ABOVE,
                 Priority = AlarmPriority.MEDIUM,
-                Threshold = 1.7,
-                Tag = coolingTank,
+                Threshold = 5,
+                Tag = milkTank01,
+                IsActive = false,
+            });
+            Alarms.Add(new()
+            {
+                ThresholdType = AlarmThresholdType.BELOW,
+                Priority = AlarmPriority.HIGH,
+                Threshold = 1000000000,
+                Tag = milkTank02,
                 IsActive = false,
             });
 

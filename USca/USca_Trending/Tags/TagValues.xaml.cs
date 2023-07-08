@@ -9,10 +9,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Diagnostics;
 using USca_Trending.Util;
+using System.Windows;
 
 namespace USca_Trending.Tags
 {
-    public partial class TagValues : UserControl
+    public partial class TagValues : Window
     {
         public ObservableCollection<InputTagReadingDTO> TagReadings { get; set; } = new();
 

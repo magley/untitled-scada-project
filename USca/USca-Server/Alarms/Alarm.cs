@@ -4,12 +4,15 @@ using USca_Server.Tags;
 
 namespace USca_Server.Alarms
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum AlarmThresholdType
     {
         BELOW, // Trigger alarm when value drops below threshold
         ABOVE, // Trigger alarm when value rises above threshold
     }
 
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum AlarmPriority
     {
         LOW,
