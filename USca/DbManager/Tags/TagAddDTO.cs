@@ -1,13 +1,17 @@
 ﻿using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace USca_DbManager.Tags
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum TagMode
     {
         Input,
         Output
     }
 
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum TagType
     {
         Digital,
