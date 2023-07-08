@@ -9,7 +9,7 @@ namespace USca_RTU.Processor
     public partial class SimulatorNew : INotifyPropertyChanged
     {
         private int AddressCnt = 0;
-        private int Seed = 123456;
+        private static int Seed = 123456;
         private Random r = new(Seed);
 
         public int NextAddress()
