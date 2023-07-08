@@ -13,6 +13,7 @@
     <Window.Resources>
         <local:AlarmLogDTOToCustomStringConverter x:Key="logConverter" />
         <local:ActiveAlarmToCustomStringConverter x:Key="activeAlarmConverter" />
+        <local:AlarmIsMutedToBoolConverter x:Key="alarmMutedConverter" />
     </Window.Resources>
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -44,7 +45,17 @@
                     SelectionChanged="ListBox_SelectionChanged">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding {}, Converter={StaticResource activeAlarmConverter}}" />
+                            <TextBlock Text="{Binding {}, Converter={StaticResource activeAlarmConverter}}">
+                                <TextBlock.Style>
+                                    <Style>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding {}, Converter={StaticResource ResourceKey=alarmMutedConverter}}" Value="false">
+                                                <Setter Property="TextBlock.Foreground" Value="Red" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>

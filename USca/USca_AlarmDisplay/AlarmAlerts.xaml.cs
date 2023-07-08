@@ -282,4 +282,21 @@ namespace USca_AlarmDisplay
             return value;
         }
     }
+
+    public class AlarmIsMutedToBoolConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is ActiveAlarm alarm)
+            {
+                return alarm.IsMuted;
+            }
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
 }
