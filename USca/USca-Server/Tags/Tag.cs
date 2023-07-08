@@ -5,12 +5,16 @@ using USca_Server.Alarms;
 
 namespace USca_Server.Tags
 {
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum TagMode
     {
         Input,
         Output
     }
 
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum TagType
     {
         Digital,

@@ -15,6 +15,18 @@ namespace USca_Server.Alarms
             return db.Alarms.Include(a => a.Tag).ToList();
         }
 
+        public List<ActiveAlarmDTO> GetActive()
+        {
+            using var db = new ServerDbContext();
+            return db.Alarms.Where(a => a.IsActive).Include(a => a.Tag).Select(a => new ActiveAlarmDTO()
+            {
+                AlarmId = a.Id,
+                TagId = a.TagId,
+                TagName = a.Tag.Name,
+                Priority = a.Priority,
+            }).ToList();
+        }
+
         public void Delete(int alarmId)
         {
             using var db = new ServerDbContext();

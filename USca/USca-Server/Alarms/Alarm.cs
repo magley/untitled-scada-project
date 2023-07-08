@@ -4,12 +4,15 @@ using USca_Server.Tags;
 
 namespace USca_Server.Alarms
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum AlarmThresholdType
     {
         BELOW, // Trigger alarm when value drops below threshold
         ABOVE, // Trigger alarm when value rises above threshold
     }
 
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum AlarmPriority
     {
         LOW,
@@ -44,10 +47,11 @@ namespace USca_Server.Alarms
         public int TagId { get; set; }
         [JsonIgnore]
         public virtual Tag Tag { get; set; } = new();
+        public bool IsActive { get; set; }
 
         public override string ToString()
         {
-            return $"Alarm[Id={Id}, ThresholdType={ThresholdType}, Priority={Priority}, Threshold={Threshold}, TagId={TagId}]";
+            return $"Alarm[Id={Id}, ThresholdType={ThresholdType}, Priority={Priority}, Threshold={Threshold}, TagId={TagId}, IsActive={IsActive}]";
         }
 
         public bool ThresholdCrossed(double value)

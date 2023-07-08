@@ -19,6 +19,12 @@ namespace USca_Server.Alarms
             return StatusCode(200, _alarmService.GetAll());
         }
 
+        [HttpGet("active")]
+        public ActionResult<List<ActiveAlarmDTO>> GetActiveAlarms()
+        {
+            return StatusCode(200, _alarmService.GetActive());
+        }
+
         [HttpDelete("{alarmId}")]
         public ActionResult DeleteAlarm(int alarmId)
         {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using System.Text.Json;
 using USca_Server.Alarms;
 using USca_Server.Measures;
@@ -173,39 +174,60 @@ namespace USca_Server.Tags
             private void CheckAlarms(Measure measure)
             {
                 using var db = new ServerDbContext();
-                List<string> logs = new();
+                List<AlarmLog> logs = new();
                 foreach (var alarm in Tag.Alarms)
                 {
                     if (alarm.ThresholdCrossed(Tag.Value))
                     {
-                        AlarmLog log = new()
+                        if (!alarm.IsActive)
                         {
-                            AlarmId = alarm.Id,
-                            ThresholdType = alarm.ThresholdType,
-                            Priority = alarm.Priority,
-                            Threshold = alarm.Threshold,
-                            TagId = Tag.Id,
-                            TagName = Tag.Name,
-                            Address = Tag.Address,
-                            RecordedValue = Tag.Value,
-                            TimeStamp = measure.Timestamp,
-                        };
-                        db.AlarmLogs.Add(log);
-                        logs.Add(AlarmLog.LogEntry(log));
-                        SocketMessageDTO message = new()
+                            alarm.IsActive = true;
+                            AddAlarmLog(db, alarm, measure, logs);
+                        }
+                    } else
+                    {
+                        if (alarm.IsActive)
                         {
-                            Type = SocketMessageType.ALARM_TRIGGERED,
-                            Message = JsonSerializer.Serialize(log),
-                        };
-                        OnRaiseWorkerEvent(message);
+                            alarm.IsActive = false;
+                            AddAlarmLog(db, alarm, measure, logs);
+                        }
                     }
+                }
+                foreach (var log in logs)
+                {
+                    SocketMessageDTO message = new()
+                    {
+                        Type = SocketMessageType.ALARM_TRIGGERED,
+                        Message = JsonSerializer.Serialize(log),
+                    };
+                    OnRaiseWorkerEvent(message);
                 }
                 db.SaveChanges();
                 lock (_lock)
                 {
-                    File.AppendAllLines(alarmLogPath, logs);
+                    File.AppendAllLines(alarmLogPath, logs.Select(AlarmLog.LogEntry));
                 }
-                logs.ForEach(Console.WriteLine);
+                logs.ForEach(log => Console.WriteLine(AlarmLog.LogEntry(log)));
+            }
+
+            private void AddAlarmLog(ServerDbContext db, Alarm alarm, Measure measure, List<AlarmLog> logs)
+            {
+                db.Alarms.Update(alarm);
+                AlarmLog log = new()
+                {
+                    AlarmId = alarm.Id,
+                    ThresholdType = alarm.ThresholdType,
+                    Priority = alarm.Priority,
+                    Threshold = alarm.Threshold,
+                    IsActive = alarm.IsActive,
+                    TagId = Tag.Id,
+                    TagName = Tag.Name,
+                    Address = Tag.Address,
+                    RecordedValue = Tag.Value,
+                    Timestamp = measure.Timestamp,
+                };
+                db.AlarmLogs.Add(log);
+                logs.Add(log);
             }
         }
     }
