@@ -21,26 +21,31 @@ namespace USca_AlarmDisplay
         public ObservableCollection<AlarmLogDTO> AlarmLogs { get; set; } = new();
         public ObservableCollection<ActiveAlarm> ActiveAlarms { get; set; } = new();
         public ActiveAlarm? SelectedActiveAlarm { get; set; }
+        private readonly ClientWebSocket ws = new();
 
         public AlarmAlerts()
         {
             InitializeComponent();
-            OpenWebSocket();
-            LoadInitialActiveAlarms();
+            OpenWebSocketAndInitializeActiveAlarms();
         }
 
-        private async void LoadInitialActiveAlarms()
+        ~AlarmAlerts()
         {
+            ws.Dispose();
+        }
+
+        private async void OpenWebSocketAndInitializeActiveAlarms()
+        {
+            await ws.ConnectAsync(new Uri("ws://localhost:5274/api/alarm/ws"), CancellationToken.None);
+            WebSocketLoop();
             var activeAlarms = await AlarmService.GetActiveAlarms();
             ActiveAlarms.Clear();
             activeAlarms.ForEach(ActiveAlarms.Add);
         }
 
 
-        private async void OpenWebSocket()
+        private async void WebSocketLoop()
         {
-            using var ws = new ClientWebSocket();
-            await ws.ConnectAsync(new Uri("ws://localhost:5274/api/alarm/ws"), CancellationToken.None);
             var buffer = new byte[1024 * 4];
 
             while (ws.State == WebSocketState.Open)
