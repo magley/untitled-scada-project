@@ -9,7 +9,6 @@
     Width="800"
     Height="450"
     DataContext="{Binding RelativeSource={RelativeSource Self}}"
-    ResizeMode="NoResize"
     mc:Ignorable="d">
     <Window.Resources>
         <local:AlarmLogDTOToCustomStringConverter x:Key="logConverter" />
@@ -52,8 +51,8 @@
                 <StackPanel
                     x:Name="PanelMute"
                     Grid.Column="1"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
                     d:Visibility="Visible"
                     Visibility="Collapsed">
                     <StackPanel
