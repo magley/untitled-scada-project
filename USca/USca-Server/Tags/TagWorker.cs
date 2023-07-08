@@ -193,6 +193,7 @@ namespace USca_Server.Tags
                         }
                     }
                 }
+                db.SaveChanges();
                 foreach (var log in logs)
                 {
                     SocketMessageDTO message = new()
@@ -202,7 +203,6 @@ namespace USca_Server.Tags
                     };
                     OnRaiseWorkerEvent(message);
                 }
-                db.SaveChanges();
                 lock (_lock)
                 {
                     File.AppendAllLines(alarmLogPath, logs.Select(AlarmLog.LogEntry));
