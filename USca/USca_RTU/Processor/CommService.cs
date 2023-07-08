@@ -12,15 +12,20 @@ namespace USca_RTU.Processor
 	{
 		private static readonly string URL = "http://localhost:5274/api";
 
-		public static async Task<object> SendSignalsBatch(List<Signal> signals)
+		public static async Task<object> SendSignalsBatch(List<Signal> signals, object _signalsLock)
 		{
-			var dtoPayload = signals.Select(s => new SignalDTO
+			List<SignalDTO> dtoPayload = new();
+
+			lock (_signalsLock)
 			{
-				Address = s.Address,
-				Name = s.Name,
-				Timestamp = s.Timestamp,
-				Value = s.Value
-			}).ToList();
+				dtoPayload = signals.Select(s => new SignalDTO
+				{
+					Address = s.Address,
+					Name = s.Name,
+					Timestamp = s.Timestamp,
+					Value = s.Value
+				}).ToList();
+			}
 
 			var dto = new
 			{

@@ -1,6 +1,7 @@
 using USca_Server.Alarms;
 using USca_Server.Measures;
 using USca_Server.Shared;
+using USca_Server.TagLogs;
 using USca_Server.Tags;
 using USca_Server.Users;
 
@@ -19,6 +20,7 @@ namespace USca_Server
 			builder.Services.AddScoped(typeof(IMeasureService), typeof(MeasureService));
             builder.Services.AddScoped(typeof(ITagService), typeof(TagService));
             builder.Services.AddScoped(typeof(IAlarmService), typeof(AlarmService));
+            builder.Services.AddScoped(typeof(ITagLogService), typeof(TagLogService));
             builder.Services.AddDbContext<ServerDbContext>();
             builder.Services.AddControllers().AddJsonOptions(options =>options.JsonSerializerOptions.PropertyNamingPolicy = null);
 

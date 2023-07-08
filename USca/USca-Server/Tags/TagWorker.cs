@@ -3,6 +3,7 @@ using System.Text.Json;
 using USca_Server.Alarms;
 using USca_Server.Measures;
 using USca_Server.Shared;
+using USca_Server.TagLogs;
 using USca_Server.Util;
 
 namespace USca_Server.Tags
@@ -18,6 +19,23 @@ namespace USca_Server.Tags
         private static readonly object _lock = new();
         private const string alarmLogPath = "./alarmLog.txt";
         public static event EventHandler<SocketMessageDTO>? RaiseWorkerEvent;
+        private static List<Tuple<Tag, DateTime>> localLogs = new();
+        private static object localLogsLock = new();
+        private static ITagLogService _tagLogService = new TagLogService();
+
+        private static void WriteTagLog(Tag tag, DateTime timestamp)
+        {
+            lock (localLogsLock)
+            {
+                localLogs.Add(new(tag, timestamp));
+
+                if (localLogs.Count > 50)
+                {
+                    _tagLogService.AddBatch(localLogs);
+                    localLogs.Clear();
+                }
+            }
+        }
 
         private static void OnRaiseWorkerEvent(SocketMessageDTO e)
         {
@@ -118,8 +136,15 @@ namespace USca_Server.Tags
                     // The tag points to a measure that doesn't exist.
                     return;
                 }
+                UpdateTagDataFrom(measure);
                 SendData(measure);
                 CheckAlarms(measure);
+            }
+
+            private void UpdateTagDataFrom(Measure measure)
+            {
+                Tag.Value = measure.Value;
+                TagWorker.WriteTagLog(Tag, measure.Timestamp);
             }
 
             private void SendData(Measure measure)
@@ -134,7 +159,7 @@ namespace USca_Server.Tags
                     Tag.Min,
                     Tag.Max,
                     Tag.Unit,
-                    measure.Value,
+                    Tag.Value,
                     measure.Timestamp,
                 };
                 SocketMessageDTO message = new()
@@ -151,7 +176,7 @@ namespace USca_Server.Tags
                 List<string> logs = new();
                 foreach (var alarm in Tag.Alarms)
                 {
-                    if (alarm.ThresholdCrossed(measure.Value))
+                    if (alarm.ThresholdCrossed(Tag.Value))
                     {
                         AlarmLog log = new()
                         {
@@ -162,8 +187,8 @@ namespace USca_Server.Tags
                             TagId = Tag.Id,
                             TagName = Tag.Name,
                             Address = Tag.Address,
+                            RecordedValue = Tag.Value,
                             TimeStamp = measure.Timestamp,
-                            RecordedValue = measure.Value,
                         };
                         db.AlarmLogs.Add(log);
                         logs.Add(AlarmLog.LogEntry(log));

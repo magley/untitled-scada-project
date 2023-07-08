@@ -1,23 +1,18 @@
-﻿using RestSharp;
-using System.Collections.Generic;
-using System;
-using System.ComponentModel;
-using System.Text.Json;
+﻿using System.ComponentModel;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using USca_RTU.Processor;
 using USca_RTU.Tag;
-using System.Runtime.CompilerServices;
 
 namespace USca_RTU
 {
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        public Simulator Simulator { get; set; }
+        public SimulatorNew Simulator { get; set; }
         private Reader _reader;
         private Thread _loopThread;
         private Thread _sendThread;
+        private object _signalsLock = new();
 
         public MainWindow()
         {
@@ -44,12 +39,25 @@ namespace USca_RTU
 
         private void MainLoop()
         {
+            int alternator = 0; // We don't want to apply in-valve and out-valve in the
+            // same tick, because the tank's value might not change (or will change slightly).
+            // This is just for demonstration purposes, to show that stuff is happening.
+
             while (true)
             {
-                Thread.Sleep(250);
+                Thread.Sleep(100);
 
-                Simulator.Update();
-                _reader.Update();
+                if (alternator == 0)
+                {
+                    Simulator.Update1();
+                    alternator = 1;
+                } else
+                {
+                    Simulator.Update2();
+                    alternator = 0;
+                }
+        
+                _reader.Update(_signalsLock);
 
                 string output = $"[\n\t{string.Join(",\n\t", _reader.Signals)}\n]";
             }
@@ -61,7 +69,7 @@ namespace USca_RTU
             {
                 Thread.Sleep(250);
 
-                await CommService.SendSignalsBatch(_reader.Signals);
+                await CommService.SendSignalsBatch(_reader.Signals, _signalsLock);
             }
         }
 

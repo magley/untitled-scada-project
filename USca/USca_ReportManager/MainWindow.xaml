@@ -1,0 +1,19 @@
+﻿<Window x:Class="USca_ReportManager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:USca_ReportManager"
+		xmlns:controls="clr-namespace:USca_ReportManager.Controls"
+        mc:Ignorable="d"
+        Title="USCA Report Manager" Height="480" Width="640">
+    <Grid>
+		<TabControl>
+			<TabItem Header="By tag ID">
+				<controls:ReportByTagId />
+			</TabItem>
+			<TabItem Header="By something else">
+			</TabItem>
+		</TabControl>
+	</Grid>
+</Window>
