@@ -125,7 +125,7 @@ namespace USca_AlarmDisplay
             {
                 ActiveAlarms.Add(new ActiveAlarm(log));
             }
-            else if (idx != -1)
+            else
             {
                 ActiveAlarms.RemoveAt(idx);
             }
@@ -154,7 +154,6 @@ namespace USca_AlarmDisplay
                 {
                     LblMute.IsEnabled = false;
                     TbSeconds.IsEnabled = false;
-                    BtnMute.IsEnabled = false;
                     BtnMute.IsEnabled = false;
                     BtnUnmute.IsEnabled = true;
                 }
@@ -193,11 +192,9 @@ namespace USca_AlarmDisplay
                     {
                         // ActiveAlarms doesn't seem to display alarm changes, so have to do this hack
                         // FIXME: Find something better? Why doesn't ActiveAlarms[idx] = alarm work?
-                        if (idx != -1)
-                        {
-                            var curSelectedIdx = LbActiveAlarms.SelectedIndex;
-                            UpdateActiveAlarmAt(idx, alarm, curSelectedIdx);
-                        }
+                        var curSelectedIdx = LbActiveAlarms.SelectedIndex;
+                        UpdateActiveAlarmAt(idx, alarm, curSelectedIdx);
+
                     });
                 }
             } catch
@@ -210,30 +207,33 @@ namespace USca_AlarmDisplay
 
         private void BtnMute_Click(object sender, RoutedEventArgs e)
         {
-            if (SelectedActiveAlarm != null)
+            if (SelectedActiveAlarm == null)
             {
-                int seconds = int.Parse(TbSeconds.Text);
-                SelectedActiveAlarm.MutedFor = seconds;
-                int alarmId = SelectedActiveAlarm.AlarmId;
-                int idx = ActiveAlarms.IndexOf(SelectedActiveAlarm);
-                var newAlarm = new ActiveAlarm(SelectedActiveAlarm);
-                UpdateActiveAlarmAt(idx, newAlarm, idx);
-                Thread thread = new(()=>Snooze(alarmId));
-                thread.Start();
-                TbSeconds.Text = "";
-                UpdateMuteDisplay();
+                return;
             }
+            int seconds = int.Parse(TbSeconds.Text);
+            SelectedActiveAlarm.MutedFor = seconds;
+            int alarmId = SelectedActiveAlarm.AlarmId;
+            int idx = ActiveAlarms.IndexOf(SelectedActiveAlarm);
+            // We make a copy because in UpdateActiveAlarmAt SelectedActiveAlarm will be set to null
+            var newAlarm = new ActiveAlarm(SelectedActiveAlarm);
+            UpdateActiveAlarmAt(idx, newAlarm, idx);
+            Thread thread = new(() => Snooze(alarmId));
+            thread.Start();
+            TbSeconds.Text = "";
+            UpdateMuteDisplay();
         }
 
         private void BtnUnmute_Click(object sender, RoutedEventArgs e)
         {
-            if (SelectedActiveAlarm != null)
+            if (SelectedActiveAlarm == null)
             {
-                SelectedActiveAlarm.MutedFor = 0;
-                int idx = ActiveAlarms.IndexOf(SelectedActiveAlarm);
-                var newAlarm = new ActiveAlarm(SelectedActiveAlarm);
-                UpdateActiveAlarmAt(idx, newAlarm, idx);
+                return;
             }
+            SelectedActiveAlarm.MutedFor = 0;
+            int idx = ActiveAlarms.IndexOf(SelectedActiveAlarm);
+            var newAlarm = new ActiveAlarm(SelectedActiveAlarm);
+            UpdateActiveAlarmAt(idx, newAlarm, idx);
         }
 
         private void UpdateActiveAlarmAt(int idx, ActiveAlarm alarm, int idxToSelect)
