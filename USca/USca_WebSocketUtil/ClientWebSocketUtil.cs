@@ -43,11 +43,11 @@ namespace USca_WebSocketUtil
         public Action<SocketMessageType, string?> HandleSocketMessage { get; set; }
         public Action? HandleAfterSocketEstablished { get; set; }
 
-        public ClientWebSocketUtil(string serverSocketEndpoint, Action<SocketMessageType, string?> handleSocketMessage, Action? handleAffterSocketEstablished = null)
+        public ClientWebSocketUtil(string serverSocketEndpoint, Action<SocketMessageType, string?> handleSocketMessage, Action? handleAfterSocketEstablished = null)
         {
             this.serverSocketEndpoint = serverSocketEndpoint;
             HandleSocketMessage = handleSocketMessage;
-            HandleAfterSocketEstablished = handleAffterSocketEstablished;
+            HandleAfterSocketEstablished = handleAfterSocketEstablished;
         }
 
         ~ClientWebSocketUtil()
@@ -131,16 +131,7 @@ namespace USca_WebSocketUtil
                 {
                     // Get data...
                     var dtoJson = Encoding.ASCII.GetString(buffer, 0, result.Count);
-                    SocketMessageDTO? socketMessage;
-                    try
-                    {
-                        socketMessage = JsonSerializer.Deserialize<SocketMessageDTO>(dtoJson);
-                    }
-                    catch (JsonException)
-                    {
-                        // Probably failed to deserialize SocketMessageType, which is fine
-                        continue;
-                    }
+                    var socketMessage = JsonSerializer.Deserialize<SocketMessageDTO>(dtoJson);
                     if (socketMessage == null || socketMessage?.Type == null)
                     {
                         Console.WriteLine($"Strange socket message: {dtoJson}");

@@ -24,7 +24,7 @@ namespace USca_AlarmDisplay
             ClientWebSocketUtil util = new(
                 serverSocketEndpoint,
                 HandleSocketMessage,
-                handleAffterSocketEstablished: async () => await LoadActiveAlarms());
+                handleAfterSocketEstablished: async () => await LoadActiveAlarms());
             util.WebSocketLoop();
         }
 
