@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 using System.Text.Json;
 using USca_Server.Alarms;
 using USca_Server.Measures;
@@ -18,7 +17,7 @@ namespace USca_Server.Tags
         private static readonly Dictionary<int, TagThreadWrapper> _threads = new();
         private static LoopThread? _tagSyncThread;
         private static readonly object _lock = new();
-        private const string alarmLogPath = "./alarmLog.txt";
+        private static ScadaConfig config = ScadaConfig.Instance;
         public static event EventHandler<SocketMessageDTO>? RaiseWorkerEvent;
         private static List<Tuple<Tag, DateTime>> localLogs = new();
         private static object localLogsLock = new();
@@ -60,7 +59,7 @@ namespace USca_Server.Tags
         /// </summary>
         private static void TagSync()
         {
-            Thread.Sleep(1000);
+            Thread.Sleep(config.SyncThreadTimerInMs);
 
             using var db = new ServerDbContext();
             var currentTags = db.Tags.Include(t => t.Alarms).ToList()
@@ -201,11 +200,27 @@ namespace USca_Server.Tags
                     };
                     OnRaiseWorkerEvent(message);
                 }
+                SaveAlarmLogToFile(logs);
+                logs.ForEach(log => LogHelper.GeneralLog(AlarmLog.LogEntry(log), ConsoleColor.Magenta));
+            }
+
+            private static void SaveAlarmLogToFile(List<AlarmLog> logs)
+            {
                 lock (_lock)
                 {
-                    File.AppendAllLines(alarmLogPath, logs.Select(AlarmLog.LogEntry));
+                    try
+                    {
+                        File.AppendAllLines(config.AlarmLogPath, logs.Select(AlarmLog.LogEntry));
+                    }
+                    // Probably had an invalid path in config
+                    catch
+                    {
+                        config.AlarmLogPath = ScadaConfig.DefaultAlarmLogPath;
+                        config.Save();
+                        // If it fails this time, let it throw
+                        File.AppendAllLines(config.AlarmLogPath, logs.Select(AlarmLog.LogEntry));
+                    }
                 }
-                logs.ForEach(log => LogHelper.GeneralLog(AlarmLog.LogEntry(log), ConsoleColor.Magenta));
             }
 
             private void AddAlarmLog(ServerDbContext db, Alarm alarm, Measure measure, List<AlarmLog> logs)
