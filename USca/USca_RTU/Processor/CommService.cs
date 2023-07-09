@@ -46,7 +46,6 @@ namespace USca_RTU.Processor
 			{
 				Console.WriteLine(response.ErrorMessage);
 				return new();
-				//throw new Exception(response.ErrorMessage);
 			}
 		}
 	}

@@ -23,7 +23,8 @@ namespace USca_RTU.Tag
             }
             else
             {
-                throw new Exception(response.StatusCode.ToString());
+                Console.WriteLine(response.StatusCode.ToString());
+                return new();
             }
         }
     }

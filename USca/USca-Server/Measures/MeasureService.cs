@@ -1,13 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using USca_Server.Shared;
+using USca_Server.Util;
 
 namespace USca_Server.Measures
 {
 	public class MeasureService : IMeasureService
 	{
         public void PutBatch(List<MeasureFromRtuDTO> batch)
-		{
-			var data = batch.Select(b => new Measure()
+        {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
+            var data = batch.Select(b => new Measure()
 			{
 				Id = b.Address,
 				Name = b.Name,
@@ -35,7 +37,8 @@ namespace USca_Server.Measures
 
         public List<Measure> Get()
         {
-			using (var db = new ServerDbContext())
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
+            using (var db = new ServerDbContext())
 			{
 				return db.Measures.ToList();
 			}
@@ -43,7 +46,8 @@ namespace USca_Server.Measures
 
         public List<int> GetAddresses()
         {
-			return (from m in Get() select m.Id).ToList();
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
+            return (from m in Get() select m.Id).ToList();
         }
     }
 }

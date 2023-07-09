@@ -26,5 +26,10 @@ namespace USca_Server.TagLogs
             Value = tag.Value;
             Timestamp = measureTime;
         }
+
+        public static string LogEntry(Tag tag, DateTime timestamp)
+        {
+            return $"[{timestamp}] Tag {tag.Id} ({tag.Name}) logged value {tag.Value}";
+        }
     }
 }

@@ -17,6 +17,7 @@ namespace USca_Server.Tags
 
         public void Add(TagAddDTO dto)
         {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
             Tag t = new(dto);
 
             using (var db = new ServerDbContext())
@@ -34,6 +35,7 @@ namespace USca_Server.Tags
 
         public Tag? Get(int id)
         {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
             using (var db = new ServerDbContext())
             {
                 return db.Tags.Find(id);
@@ -42,6 +44,7 @@ namespace USca_Server.Tags
 
         public void Delete(int id)
         {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
             using (var db = new ServerDbContext())
             {
                 var tag = db.Tags.Find(id);
@@ -56,6 +59,7 @@ namespace USca_Server.Tags
 
         public List<Tag> GetAll()
         {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
             using (var db = new ServerDbContext())
             {
                 return db.Tags.Include(t => t.Alarms).ToList();
@@ -64,6 +68,7 @@ namespace USca_Server.Tags
 
         public List<Tag> GetAnalog()
         {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
             using (var db = new ServerDbContext())
             {
                 return db.Tags.Where(t => t.Type == TagType.Analog).Include(t => t.Alarms).ToList();
@@ -72,6 +77,7 @@ namespace USca_Server.Tags
 
         public void Update(TagDTO dto)
         {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
             using (var db = new ServerDbContext())
             {
                 var tag = db.Tags.Find(dto.Id);
@@ -97,6 +103,7 @@ namespace USca_Server.Tags
 
         public List<OutputTagValueDTO> GetOutputTagValues()
         {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
             using (var db = new ServerDbContext())
             {
                 return db.Tags.Where(tag => tag.Mode == TagMode.Output).Select(tag => new OutputTagValueDTO()

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 using System.Text.Json;
 using USca_Server.Alarms;
 using USca_Server.Measures;
@@ -18,7 +17,7 @@ namespace USca_Server.Tags
         private static readonly Dictionary<int, TagThreadWrapper> _threads = new();
         private static LoopThread? _tagSyncThread;
         private static readonly object _lock = new();
-        private const string alarmLogPath = "./alarmLog.txt";
+        private static ScadaConfig config = ScadaConfig.Instance;
         public static event EventHandler<SocketMessageDTO>? RaiseWorkerEvent;
         private static List<Tuple<Tag, DateTime>> localLogs = new();
         private static object localLogsLock = new();
@@ -60,12 +59,11 @@ namespace USca_Server.Tags
         /// </summary>
         private static void TagSync()
         {
-            Thread.Sleep(1000);
-            Console.WriteLine("Sync tags");
+            Thread.Sleep(config.SyncThreadTimerInMs);
 
             using var db = new ServerDbContext();
             var currentTags = db.Tags.Include(t => t.Alarms).ToList()
-                .Where(t => t.Mode == TagMode.Input && t.IsScanning)
+                .Where(t => t.Mode == TagMode.Input)
                 .ToList();
             var staleTagIds = _threads.Keys.ToList().Except(currentTags.Select(t => t.Id));
 
@@ -81,7 +79,7 @@ namespace USca_Server.Tags
                     Message = JsonSerializer.Serialize(tagId),
                 };
                 OnRaiseWorkerEvent(message);
-                Console.WriteLine($"Removed thread for tag {tagId}.");
+                LogHelper.ServiceLog($"Removed thread for tag {tagId}.");
             }
 
             // Create threads for new tags.
@@ -92,7 +90,7 @@ namespace USca_Server.Tags
                 {
                     _threads[tag.Id] = new(tag);
                     _threads[tag.Id].LoopThread.Start();
-                    Console.WriteLine($"Added thread for tag {tag.Id}.");
+                    LogHelper.ServiceLog($"Added thread for tag {tag.Id}.");
                 }
                 else
                 {
@@ -137,15 +135,14 @@ namespace USca_Server.Tags
                     // The tag points to a measure that doesn't exist.
                     return;
                 }
-                UpdateTagDataFrom(measure);
-                SendData(measure);
-                CheckAlarms(measure);
-            }
-
-            private void UpdateTagDataFrom(Measure measure)
-            {
                 Tag.Value = measure.Value;
-                TagWorker.WriteTagLog(Tag, measure.Timestamp);
+                LogHelper.GeneralLog(TagLog.LogEntry(Tag, measure.Timestamp), ConsoleColor.Blue);
+                if (Tag.IsScanning)
+                {
+                    WriteTagLog(Tag, measure.Timestamp);
+                    SendData(measure);
+                    CheckAlarms(measure);
+                }
             }
 
             private void SendData(Measure measure)
@@ -203,11 +200,27 @@ namespace USca_Server.Tags
                     };
                     OnRaiseWorkerEvent(message);
                 }
+                SaveAlarmLogToFile(logs);
+                logs.ForEach(log => LogHelper.GeneralLog(AlarmLog.LogEntry(log), ConsoleColor.Magenta));
+            }
+
+            private static void SaveAlarmLogToFile(List<AlarmLog> logs)
+            {
                 lock (_lock)
                 {
-                    File.AppendAllLines(alarmLogPath, logs.Select(AlarmLog.LogEntry));
+                    try
+                    {
+                        File.AppendAllLines(config.AlarmLogPath, logs.Select(AlarmLog.LogEntry));
+                    }
+                    // Probably had an invalid path in config
+                    catch
+                    {
+                        config.AlarmLogPath = ScadaConfig.DefaultAlarmLogPath;
+                        config.Save();
+                        // If it fails this time, let it throw
+                        File.AppendAllLines(config.AlarmLogPath, logs.Select(AlarmLog.LogEntry));
+                    }
                 }
-                logs.ForEach(log => Console.WriteLine(AlarmLog.LogEntry(log)));
             }
 
             private void AddAlarmLog(ServerDbContext db, Alarm alarm, Measure measure, List<AlarmLog> logs)

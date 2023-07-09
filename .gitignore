@@ -402,4 +402,5 @@ FodyWeavers.xsd
 *.sln.iml
 
 # Custom
-alarmLog.txt
+**/alarmLog.txt
+**/scadaConfig.txt

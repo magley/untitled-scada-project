@@ -1,4 +1,5 @@
 ﻿using USca_Server.Shared;
+using USca_Server.Util;
 
 namespace USca_Server.Users
 {
@@ -6,6 +7,7 @@ namespace USca_Server.Users
     {
         public User? Login(LoginDTO loginCredentials)
         {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
             using (var db = new ServerDbContext())
             {
                 var user = db.Users.Where(u => u.Username == loginCredentials.Username).FirstOrDefault();

@@ -11,6 +11,8 @@ namespace USca_Server.Shared
     {
         public WebSocket Ws { get; set; }
         public List<SocketMessageType> SupportedTypes { get; set; }
+        private const string clientClosedConnectionWithoutHandshakeMessage = "The remote party closed the WebSocket connection without completing the close handshake.";
+
         public SocketWorker(WebSocket ws, List<SocketMessageType> supportedTypes)
         {
             Ws = ws;
@@ -67,9 +69,16 @@ namespace USca_Server.Shared
                         Console.WriteLine(Encoding.ASCII.GetString(buffer, 0, result.Count));
                     }
                 }
-                catch (WebSocketException)
+                catch (WebSocketException e)
                 {
-                    break;
+                    if (e.Message == clientClosedConnectionWithoutHandshakeMessage)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        throw e;
+                    }
                 }
             }
         }

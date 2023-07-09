@@ -237,7 +237,7 @@ namespace USca_Server.Shared
             Alarms.Add(new()
             {
                 ThresholdType = AlarmThresholdType.ABOVE,
-                Priority = AlarmPriority.MEDIUM,
+                Priority = AlarmPriority.HIGH,
                 Threshold = 1.7,
                 Tag = coolingTank,
                 IsActive = false,
@@ -253,7 +253,7 @@ namespace USca_Server.Shared
             Alarms.Add(new()
             {
                 ThresholdType = AlarmThresholdType.BELOW,
-                Priority = AlarmPriority.HIGH,
+                Priority = AlarmPriority.LOW,
                 Threshold = 1000000000,
                 Tag = milkTank02,
                 IsActive = false,

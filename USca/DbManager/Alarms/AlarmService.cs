@@ -18,7 +18,8 @@ namespace USca_DbManager.Alarms
 
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
             {
-                throw new Exception(response.StatusCode.ToString());
+                Console.WriteLine(response.StatusCode.ToString());
+                return new();
             }
             if (response.Content == null)
             {
@@ -36,7 +37,8 @@ namespace USca_DbManager.Alarms
 
             if (response.StatusCode != System.Net.HttpStatusCode.NoContent)
             {
-                throw new Exception(response.StatusCode.ToString());
+                Console.WriteLine(response.StatusCode.ToString());
+                return;
             }
         }
 
@@ -49,7 +51,8 @@ namespace USca_DbManager.Alarms
 
             if (response.StatusCode != System.Net.HttpStatusCode.NoContent)
             {
-                throw new Exception(response.StatusCode.ToString());
+                Console.WriteLine(response.StatusCode.ToString());
+                return;
             }
         }
 
@@ -62,7 +65,8 @@ namespace USca_DbManager.Alarms
 
             if (response.StatusCode != System.Net.HttpStatusCode.NoContent)
             {
-                throw new Exception(response.StatusCode.ToString());
+                Console.WriteLine(response.StatusCode.ToString());
+                return;
             }
         }
     }

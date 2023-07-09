@@ -42,7 +42,7 @@ namespace USca_Server.Alarms
 
         public static string LogEntry(AlarmLog log)
         {
-            return $"[{log.Priority} {log.Timestamp}] Tag {log.TagId} ({log.TagName}) {ActiveStatus(log.IsActive)} alarm {log.AlarmId} at address {log.Address}: {log.RecordedValue:0.0000} {SignStatus(log.ThresholdType, log.IsActive)} {log.Threshold:0.0000}";
+            return $"[{log.Timestamp}] ({log.Priority}) Tag {log.TagId} ({log.TagName}) {ActiveStatus(log.IsActive)} alarm {log.AlarmId} at address {log.Address}: {log.RecordedValue:0.0000} {SignStatus(log.ThresholdType, log.IsActive)} {log.Threshold:0.0000}";
         }
     }
 }
