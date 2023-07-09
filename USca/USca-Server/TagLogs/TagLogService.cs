@@ -1,5 +1,6 @@
 ﻿using USca_Server.Shared;
 using USca_Server.Tags;
+using USca_Server.Util;
 
 namespace USca_Server.TagLogs
 {
@@ -7,6 +8,7 @@ namespace USca_Server.TagLogs
     {
         public void AddBatch(List<Tuple<Tag, DateTime>> batch)
         {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
             using (var db = new ServerDbContext())
             {
                 foreach (var o in batch)
@@ -21,6 +23,7 @@ namespace USca_Server.TagLogs
 
         public void AddFrom(Tag tag, DateTime measureTimestamp)
         {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
             TagLog tagLog = new(tag, measureTimestamp);
 
             using (var db = new ServerDbContext())
@@ -32,6 +35,7 @@ namespace USca_Server.TagLogs
 
         public void AddFrom(Tag tag)
         {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
             TagLog tagLog = new(tag, DateTime.Now);
 
             using (var db = new ServerDbContext())
@@ -44,6 +48,7 @@ namespace USca_Server.TagLogs
 
         public TagLog? Get(int id)
         {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
             using (var db = new ServerDbContext())
             {
                 return db.TagLogs.Find(id);
@@ -52,6 +57,7 @@ namespace USca_Server.TagLogs
 
         public List<TagLog> GetAll()
         {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
             using (var db = new ServerDbContext())
             {
                 return db.TagLogs.ToList();
@@ -60,6 +66,7 @@ namespace USca_Server.TagLogs
 
         public List<TagLog> GetAllByTag(int tagId)
         {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
             using (var db = new ServerDbContext())
             {
                 return db.TagLogs.Where(t => t.TagId == tagId).ToList();

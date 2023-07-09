@@ -61,11 +61,10 @@ namespace USca_Server.Tags
         private static void TagSync()
         {
             Thread.Sleep(1000);
-            Console.WriteLine("Sync tags");
 
             using var db = new ServerDbContext();
             var currentTags = db.Tags.Include(t => t.Alarms).ToList()
-                .Where(t => t.Mode == TagMode.Input && t.IsScanning)
+                .Where(t => t.Mode == TagMode.Input)
                 .ToList();
             var staleTagIds = _threads.Keys.ToList().Except(currentTags.Select(t => t.Id));
 
@@ -81,7 +80,7 @@ namespace USca_Server.Tags
                     Message = JsonSerializer.Serialize(tagId),
                 };
                 OnRaiseWorkerEvent(message);
-                Console.WriteLine($"Removed thread for tag {tagId}.");
+                LogHelper.ServiceLog($"Removed thread for tag {tagId}.");
             }
 
             // Create threads for new tags.
@@ -92,7 +91,7 @@ namespace USca_Server.Tags
                 {
                     _threads[tag.Id] = new(tag);
                     _threads[tag.Id].LoopThread.Start();
-                    Console.WriteLine($"Added thread for tag {tag.Id}.");
+                    LogHelper.ServiceLog($"Added thread for tag {tag.Id}.");
                 }
                 else
                 {
@@ -137,15 +136,14 @@ namespace USca_Server.Tags
                     // The tag points to a measure that doesn't exist.
                     return;
                 }
-                UpdateTagDataFrom(measure);
-                SendData(measure);
-                CheckAlarms(measure);
-            }
-
-            private void UpdateTagDataFrom(Measure measure)
-            {
                 Tag.Value = measure.Value;
-                TagWorker.WriteTagLog(Tag, measure.Timestamp);
+                LogHelper.GeneralLog(TagLog.LogEntry(Tag, measure.Timestamp), ConsoleColor.Blue);
+                if (Tag.IsScanning)
+                {
+                    WriteTagLog(Tag, measure.Timestamp);
+                    SendData(measure);
+                    CheckAlarms(measure);
+                }
             }
 
             private void SendData(Measure measure)
@@ -205,9 +203,9 @@ namespace USca_Server.Tags
                 }
                 lock (_lock)
                 {
-                    File.AppendAllLines(alarmLogPath, logs.Select(AlarmLog.LogEntry));
+                    //File.AppendAllLines(alarmLogPath, logs.Select(AlarmLog.LogEntry));
                 }
-                logs.ForEach(log => Console.WriteLine(AlarmLog.LogEntry(log)));
+                logs.ForEach(log => LogHelper.GeneralLog(AlarmLog.LogEntry(log), ConsoleColor.Magenta));
             }
 
             private void AddAlarmLog(ServerDbContext db, Alarm alarm, Measure measure, List<AlarmLog> logs)

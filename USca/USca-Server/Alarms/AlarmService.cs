@@ -11,12 +11,14 @@ namespace USca_Server.Alarms
 
         public List<Alarm> GetAll()
         {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
             using var db = new ServerDbContext();
             return db.Alarms.Include(a => a.Tag).ToList();
         }
 
         public List<ActiveAlarmDTO> GetActive()
         {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
             using var db = new ServerDbContext();
             return db.Alarms.Where(a => a.IsActive).Include(a => a.Tag).Select(a => new ActiveAlarmDTO()
             {
@@ -29,6 +31,7 @@ namespace USca_Server.Alarms
 
         public void Delete(int alarmId)
         {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
             using var db = new ServerDbContext();
             var alarm = db.Alarms.Find(alarmId);
             if (alarm == null)
@@ -41,6 +44,7 @@ namespace USca_Server.Alarms
 
         public void Add(AlarmAddDTO alarmAddDTO)
         {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
             using var db = new ServerDbContext();
 
             Alarm alarm = new()
@@ -56,6 +60,7 @@ namespace USca_Server.Alarms
 
         public void Update(AlarmUpdateDTO alarmUpdateDTO)
         {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
             using var db = new ServerDbContext();
             var alarm = db.Alarms.Find(alarmUpdateDTO.Id);
             if (alarm == null)
