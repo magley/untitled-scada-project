@@ -85,7 +85,10 @@ namespace USca_RTU
         private async void FetchOutputTagValues()
         {
             var outputTagValues = await TagService.GetOutputTagValues();
-            Simulator.UpdateOutputFrom(outputTagValues);
+            if (outputTagValues != null)
+            {
+                Simulator.UpdateOutputFrom(outputTagValues);
+            }
         }
     }
 }
