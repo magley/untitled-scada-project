@@ -27,11 +27,7 @@ namespace USca_ReportManager.Util
             }
             else
             {
-                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-                {
-                    throw new NotFoundException();
-                }
-                throw new Exception(response.StatusCode.ToString());
+                throw new NotFoundException();
             }
         }
     }

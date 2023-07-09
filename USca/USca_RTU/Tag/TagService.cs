@@ -11,7 +11,7 @@ namespace USca_RTU.Tag
     {
         private static readonly string URL = "http://localhost:5274/api";
 
-        public static async Task<List<OutputTagValueDTO>?> GetOutputTagValues()
+        public static async Task<List<OutputTagValueDTO>> GetOutputTagValues()
         {
             using var cli = new RestClient(new RestClientOptions(URL));
             var req = new RestRequest("tag/output", Method.Get);
@@ -23,7 +23,8 @@ namespace USca_RTU.Tag
             }
             else
             {
-                return null;
+                Console.WriteLine(response.StatusCode.ToString());
+                return new();
             }
         }
     }

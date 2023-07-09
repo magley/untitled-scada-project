@@ -22,9 +22,10 @@ namespace USca_DbManager.Tags
 				return li;
 			}
 			else
-			{
-				throw new Exception(response.StatusCode.ToString());
-			}
+            {
+                Console.WriteLine(response.StatusCode.ToString());
+                return new();
+            }
 		}
 
         public static async Task<List<TagDTO>> GetAnalogTags()
@@ -40,7 +41,8 @@ namespace USca_DbManager.Tags
             }
             else
             {
-                throw new Exception(response.StatusCode.ToString());
+                Console.WriteLine(response.StatusCode.ToString());
+                return new();
             }
         }
 
@@ -50,6 +52,10 @@ namespace USca_DbManager.Tags
             var req = new RestRequest("tag", Method.Post);
 			req.AddBody(tag);
             RestResponse response = await cli.ExecuteAsync(req);
+            if (response.StatusCode != System.Net.HttpStatusCode.NoContent)
+            {
+                Console.WriteLine(response.StatusCode.ToString());
+            }
 
 			return response;
         }
@@ -61,6 +67,10 @@ namespace USca_DbManager.Tags
             var req = new RestRequest("tag", Method.Put);
             req.AddBody(tag);
             RestResponse response = await cli.ExecuteAsync(req);
+            if (response.StatusCode != System.Net.HttpStatusCode.NoContent)
+            {
+                Console.WriteLine(response.StatusCode.ToString());
+            }
 
             return response;
         }
@@ -70,6 +80,10 @@ namespace USca_DbManager.Tags
             using var cli = new RestClient(new RestClientOptions(URL));
             var req = new RestRequest($"tag/{tag.Id}", Method.Delete);
             RestResponse response = await cli.ExecuteAsync(req);
+            if (response.StatusCode != System.Net.HttpStatusCode.NoContent)
+            {
+                Console.WriteLine(response.StatusCode.ToString());
+            }
 
             return response;
         }
