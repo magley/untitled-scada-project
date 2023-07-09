@@ -203,7 +203,7 @@ namespace USca_Server.Tags
                 }
                 lock (_lock)
                 {
-                    //File.AppendAllLines(alarmLogPath, logs.Select(AlarmLog.LogEntry));
+                    File.AppendAllLines(alarmLogPath, logs.Select(AlarmLog.LogEntry));
                 }
                 logs.ForEach(log => LogHelper.GeneralLog(AlarmLog.LogEntry(log), ConsoleColor.Magenta));
             }
