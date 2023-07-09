@@ -6,16 +6,17 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:USca_AlarmDisplay"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:util="clr-namespace:USca_AlarmDisplay.Util"
     Title="Alam alerts"
     Width="800"
     Height="450"
     DataContext="{Binding RelativeSource={RelativeSource Self}}"
     mc:Ignorable="d">
     <Window.Resources>
-        <local:AlarmLogDTOToCustomStringConverter x:Key="logConverter" />
-        <local:ActiveAlarmToCustomStringConverter x:Key="activeAlarmConverter" />
-        <local:AlarmSeverityToBoolConverter x:Key="alarmSeverityConverter" />
-        <local:AlarmActiveToBoolConverter x:Key="alarmActiveConverter" />
+        <util:AlarmLogDTOToCustomStringConverter x:Key="logConverter" />
+        <util:ActiveAlarmToCustomStringConverter x:Key="activeAlarmConverter" />
+        <util:AlarmSeverityToBoolConverter x:Key="alarmSeverityConverter" />
+        <util:AlarmActiveToBoolConverter x:Key="alarmActiveConverter" />
     </Window.Resources>
     <Grid Margin="10">
         <Grid.RowDefinitions>

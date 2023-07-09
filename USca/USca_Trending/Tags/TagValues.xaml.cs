@@ -1,75 +1,42 @@
-﻿using System.Net.WebSockets;
-using System.Text;
-using System.Threading;
-using System;
-using System.Windows.Controls;
-using System.Collections.Generic;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Diagnostics;
-using USca_Trending.Util;
 using System.Windows;
+using USca_WebSocketUtil;
 
 namespace USca_Trending.Tags
 {
     public partial class TagValues : Window
     {
         public ObservableCollection<InputTagReadingDTO> TagReadings { get; set; } = new();
+        private const string serverSocketEndpoint = "ws://localhost:5274/api/tag/ws";
 
         public TagValues()
         {
             InitializeComponent();
-            OpenWebSocket();
+            new ClientWebSocketUtil(serverSocketEndpoint, HandleSocketMessage).WebSocketLoop();
         }
 
-        private async void OpenWebSocket()
+        private void HandleSocketMessage(SocketMessageType type, string? message)
         {
-            using (var ws = new ClientWebSocket())
+            switch (type)
             {
-                await ws.ConnectAsync(new Uri("ws://localhost:5274/api/tag/ws"), CancellationToken.None);
-                var buffer = new byte[1024 * 4];
-
-                while (ws.State == WebSocketState.Open)
-                {
-                    var result = await ws.ReceiveAsync(buffer, CancellationToken.None);
-                    if (result.MessageType == WebSocketMessageType.Close)
+                case SocketMessageType.UPDATE_TAG_READING:
+                    if (message == null)
                     {
-                        await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
+                        throw new InvalidSocketMessageException(type, message);
                     }
-                    else
+                    LoadTagReading(JsonSerializer.Deserialize<InputTagReadingDTO>(message));
+                    break;
+                case SocketMessageType.DELETE_TAG_READING:
+                    if (message == null)
                     {
-                        // Get data...
-                        var dtoJson = Encoding.ASCII.GetString(buffer, 0, result.Count);
-                        SocketMessageDTO? socketMessage;
-                        try
-                        {
-                            socketMessage = JsonSerializer.Deserialize<SocketMessageDTO>(dtoJson);
-                        }
-                        catch (JsonException)
-                        {
-                            // Probably failed to deserialize SocketMessageType, which is fine
-                            continue;
-                        }
-                        if (socketMessage == null || socketMessage?.Type == null || socketMessage?.Message == null)
-                        {
-                            Console.WriteLine($"Strange socket message: {dtoJson}");
-                            continue;
-                        }
-                        switch (socketMessage.Type)
-                        {
-                            case SocketMessageType.UPDATE_TAG_READING:
-                                LoadTagReading(JsonSerializer.Deserialize<InputTagReadingDTO>(socketMessage.Message));
-                                break;
-                            case SocketMessageType.DELETE_TAG_READING:
-                                DeleteTagReading(JsonSerializer.Deserialize<int>(socketMessage.Message));
-                                break;
-                            default:
-                                Console.WriteLine($"Unsupported message type: {socketMessage.Type}");
-                                break;
-                        }
+                        throw new InvalidSocketMessageException(type, message);
                     }
-                }
+                    DeleteTagReading(JsonSerializer.Deserialize<int>(message));
+                    break;
+                default:
+                    throw new UnsupportedSocketMessageTypeException(type);
             }
         }
 
