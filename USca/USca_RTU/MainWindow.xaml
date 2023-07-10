@@ -6,7 +6,7 @@
 		xmlns:local="clr-namespace:USca_RTU"
 		Background="White"
 		mc:Ignorable="d"
-		Title="MainWindow"
+		Title="USca Remote Terminal Unit (Milk Processing)"
 		Width="960"
 		Height="620">
 

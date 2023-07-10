@@ -75,5 +75,10 @@ namespace USca_DbManager.Alarms
                 LoadAlarms();
             }
         }
+
+        private void BtnRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            LoadAlarms();
+        }
     }
 }

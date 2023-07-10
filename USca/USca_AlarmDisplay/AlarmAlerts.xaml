@@ -7,7 +7,7 @@
     xmlns:local="clr-namespace:USca_AlarmDisplay"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:util="clr-namespace:USca_AlarmDisplay.Util"
-    Title="Alam alerts"
+    Title="USca Alarm Display"
     Width="800"
     Height="450"
     DataContext="{Binding RelativeSource={RelativeSource Self}}"

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:USca_ReportManager"
 		xmlns:controls="clr-namespace:USca_ReportManager.Controls"
         mc:Ignorable="d"
-        Title="USCA Report Manager" Height="480" Width="640">
+        Title="USca Report Manager" Height="480" Width="640">
     <Grid>
 		<TabControl>
 			<TabItem Header="By tag ID">

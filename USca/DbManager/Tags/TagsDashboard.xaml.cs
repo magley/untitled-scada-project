@@ -70,5 +70,10 @@ namespace USca_DbManager.Tags
                 LoadAllTags();
             }
         }
+
+        private void BtnRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            LoadAllTags();
+        }
     }
 }
