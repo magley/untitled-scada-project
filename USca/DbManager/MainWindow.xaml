@@ -6,6 +6,6 @@
         xmlns:local="clr-namespace:USca_DbManager"
         mc:Ignorable="d"
 		FontSize="16"
-        Title="MainWindow" Height="480" Width="640">
+        Title="USca Database Manager" Height="480" Width="640">
 	<Frame x:Name="FrameContent"/>
 </Window>

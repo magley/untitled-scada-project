@@ -5,6 +5,7 @@ using USca_Server.Measures;
 using USca_Server.Shared;
 using USca_Server.TagLogs;
 using USca_Server.Util;
+using USca_Server.Util.Socket;
 
 namespace USca_Server.Tags
 {
@@ -12,18 +13,21 @@ namespace USca_Server.Tags
     /// <summary>
     /// TagWorker encapsulates all logic for running tag threads that read measures.
     /// </summary>
-    public static class TagWorker
+    public class TagWorker : INotifySocket
     {
-        private static readonly Dictionary<int, TagThreadWrapper> _threads = new();
-        private static LoopThread? _tagSyncThread;
-        private static readonly object _lock = new();
-        private static ScadaConfig config = ScadaConfig.Instance;
-        public static event EventHandler<SocketMessageDTO>? RaiseWorkerEvent;
-        private static List<Tuple<Tag, DateTime>> localLogs = new();
+        private readonly Dictionary<int, TagThreadWrapper> _threads = new();
+        private LoopThread? _tagSyncThread;
+        private readonly object _lock = new();
+        private ScadaConfig config = ScadaConfig.Instance;
+        public event EventHandler<SocketMessageDTO>? RaiseSocketEvent;
+        private List<Tuple<Tag, DateTime>> localLogs = new();
         private static object localLogsLock = new();
-        private static ITagLogService _tagLogService = new TagLogService();
+        private ITagLogService _tagLogService = new TagLogService();
 
-        private static void WriteTagLog(Tag tag, DateTime timestamp)
+        private static readonly TagWorker _instance = new();
+        public static TagWorker Instance { get { return _instance; } }
+
+        private void WriteTagLog(Tag tag, DateTime timestamp)
         {
             lock (localLogsLock)
             {
@@ -37,17 +41,17 @@ namespace USca_Server.Tags
             }
         }
 
-        private static void OnRaiseWorkerEvent(SocketMessageDTO e)
+        private void OnRaiseSocketEvent(SocketMessageDTO e)
         {
-            RaiseWorkerEvent?.Invoke(null, e);
+            RaiseSocketEvent?.Invoke(this, e);
         }
 
-        static TagWorker()
+        private TagWorker()
         {
             StartTagSync();
         }
 
-        private static void StartTagSync()
+        private void StartTagSync()
         {
             _tagSyncThread = new(new ThreadStart(TagSync));
             _tagSyncThread.Start();
@@ -57,7 +61,7 @@ namespace USca_Server.Tags
         /// This method syncs the tags from the database onto _threads.
         /// This method should run in the tag sync thread.
         /// </summary>
-        private static void TagSync()
+        private void TagSync()
         {
             Thread.Sleep(config.SyncThreadTimerInMs);
 
@@ -73,13 +77,7 @@ namespace USca_Server.Tags
             {
                 _threads[tagId].LoopThread.Abort();
                 _threads.Remove(tagId);
-                SocketMessageDTO message = new()
-                {
-                    Type = SocketMessageType.DELETE_TAG_READING,
-                    Message = JsonSerializer.Serialize(tagId),
-                };
-                OnRaiseWorkerEvent(message);
-                LogHelper.ServiceLog($"Removed thread for tag {tagId}.");
+                LogHelper.GeneralLog($"[{DateTime.Now}] Removed thread for tag {tagId}.", ConsoleColor.Cyan);
             }
 
             // Create threads for new tags.
@@ -88,9 +86,9 @@ namespace USca_Server.Tags
             {
                 if (!_threads.ContainsKey(tag.Id))
                 {
-                    _threads[tag.Id] = new(tag);
+                    _threads[tag.Id] = new(this, tag);
                     _threads[tag.Id].LoopThread.Start();
-                    LogHelper.ServiceLog($"Added thread for tag {tag.Id}.");
+                    LogHelper.GeneralLog($"Added thread for tag {tag.Id}.", ConsoleColor.Cyan);
                 }
                 else
                 {
@@ -100,11 +98,13 @@ namespace USca_Server.Tags
         }
         public class TagThreadWrapper
         {
+            public TagWorker TagWorker { get; set; }
             public Tag Tag { get; set; }
             public LoopThread LoopThread { get; set; }
 
-            public TagThreadWrapper(Tag tag)
+            public TagThreadWrapper(TagWorker tagWorker, Tag tag)
             {
+                TagWorker = tagWorker;
                 Tag = tag;
                 LoopThread = new(() => UpdateTag());
             }
@@ -139,7 +139,7 @@ namespace USca_Server.Tags
                 LogHelper.GeneralLog(TagLog.LogEntry(Tag, measure.Timestamp), ConsoleColor.Blue);
                 if (Tag.IsScanning)
                 {
-                    WriteTagLog(Tag, measure.Timestamp);
+                    TagWorker.WriteTagLog(Tag, measure.Timestamp);
                     SendData(measure);
                     CheckAlarms(measure);
                 }
@@ -165,7 +165,7 @@ namespace USca_Server.Tags
                     Type = SocketMessageType.UPDATE_TAG_READING,
                     Message = JsonSerializer.Serialize(tagReading),
                 };
-                OnRaiseWorkerEvent(message);
+                TagWorker.OnRaiseSocketEvent(message);
             }
 
             private void CheckAlarms(Measure measure)
@@ -198,27 +198,27 @@ namespace USca_Server.Tags
                         Type = SocketMessageType.ALARM_TRIGGERED,
                         Message = JsonSerializer.Serialize(log),
                     };
-                    OnRaiseWorkerEvent(message);
+                    TagWorker.OnRaiseSocketEvent(message);
                 }
                 SaveAlarmLogToFile(logs);
                 logs.ForEach(log => LogHelper.GeneralLog(AlarmLog.LogEntry(log), ConsoleColor.Magenta));
             }
 
-            private static void SaveAlarmLogToFile(List<AlarmLog> logs)
+            private void SaveAlarmLogToFile(List<AlarmLog> logs)
             {
-                lock (_lock)
+                lock (TagWorker._lock)
                 {
                     try
                     {
-                        File.AppendAllLines(config.AlarmLogPath, logs.Select(AlarmLog.LogEntry));
+                        File.AppendAllLines(TagWorker.config.AlarmLogPath, logs.Select(AlarmLog.LogEntry));
                     }
                     // Probably had an invalid path in config
                     catch
                     {
-                        config.AlarmLogPath = ScadaConfig.DefaultAlarmLogPath;
-                        config.Save();
+                        TagWorker.config.AlarmLogPath = ScadaConfig.DefaultAlarmLogPath;
+                        TagWorker.config.Save();
                         // If it fails this time, let it throw
-                        File.AppendAllLines(config.AlarmLogPath, logs.Select(AlarmLog.LogEntry));
+                        File.AppendAllLines(TagWorker.config.AlarmLogPath, logs.Select(AlarmLog.LogEntry));
                     }
                 }
             }

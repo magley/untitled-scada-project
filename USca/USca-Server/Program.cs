@@ -16,11 +16,11 @@ namespace USca_Server
 			var builder = WebApplication.CreateBuilder(args);
 			builder.Services.AddControllers();
 
-			builder.Services.AddScoped(typeof(IUserService), typeof(UserService));
-			builder.Services.AddScoped(typeof(IMeasureService), typeof(MeasureService));
-            builder.Services.AddScoped(typeof(ITagService), typeof(TagService));
-            builder.Services.AddScoped(typeof(IAlarmService), typeof(AlarmService));
-            builder.Services.AddScoped(typeof(ITagLogService), typeof(TagLogService));
+			builder.Services.AddSingleton(typeof(IUserService), typeof(UserService));
+			builder.Services.AddSingleton(typeof(IMeasureService), typeof(MeasureService));
+            builder.Services.AddSingleton(typeof(ITagService), typeof(TagService));
+            builder.Services.AddSingleton(typeof(IAlarmService), typeof(AlarmService));
+            builder.Services.AddSingleton(typeof(ITagLogService), typeof(TagLogService));
             builder.Services.AddDbContext<ServerDbContext>();
             builder.Services.AddControllers().AddJsonOptions(options =>options.JsonSerializerOptions.PropertyNamingPolicy = null);
 

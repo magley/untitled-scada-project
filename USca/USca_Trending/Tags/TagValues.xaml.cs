@@ -28,7 +28,7 @@ namespace USca_Trending.Tags
                     }
                     LoadTagReading(JsonSerializer.Deserialize<InputTagReadingDTO>(message));
                     break;
-                case SocketMessageType.DELETE_TAG_READING:
+                case SocketMessageType.DELETE_TAG:
                     if (message == null)
                     {
                         throw new InvalidSocketMessageException(type, message);

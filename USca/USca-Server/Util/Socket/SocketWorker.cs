@@ -1,32 +1,32 @@
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
-using USca_Server.Tags;
-using USca_Server.Util;
 
-namespace USca_Server.Shared
+namespace USca_Server.Util.Socket
 {
 
     public class SocketWorker
     {
-        public WebSocket Ws { get; set; }
+        private WebSocket ws { get; set; }
         public List<SocketMessageType> SupportedTypes { get; set; }
+        private readonly List<INotifySocket> publishers;
         private const string clientClosedConnectionWithoutHandshakeMessage = "The remote party closed the WebSocket connection without completing the close handshake.";
 
-        public SocketWorker(WebSocket ws, List<SocketMessageType> supportedTypes)
+        public SocketWorker(WebSocket ws, List<SocketMessageType> supportedTypes, List<INotifySocket> publishers)
         {
-            Ws = ws;
+            this.ws = ws;
             SupportedTypes = supportedTypes;
+            this.publishers = publishers;
         }
 
-        public async void HandleTagWorkerEvent(object? sender, SocketMessageDTO e)
+        private async void HandleSocketEvent(object? sender, SocketMessageDTO e)
         {
             if (!SupportedTypes.Contains(e.Type))
             {
                 return;
             }
             var json = JsonSerializer.Serialize(e);
-            await Ws.SendAsync(
+            await ws.SendAsync(
                 new(Encoding.UTF8.GetBytes(json)),
                 WebSocketMessageType.Text,
                 true,
@@ -36,10 +36,10 @@ namespace USca_Server.Shared
 
         public async Task Start()
         {
-            TagWorker.RaiseWorkerEvent += HandleTagWorkerEvent;
+            publishers.ForEach(pub => pub.RaiseSocketEvent += HandleSocketEvent);
             Console.WriteLine("Started socket loop");
             await WebSocketLoop();
-            TagWorker.RaiseWorkerEvent -= HandleTagWorkerEvent;
+            publishers.ForEach(pub => pub.RaiseSocketEvent -= HandleSocketEvent);
             Console.WriteLine("Stopped socket loop (connection closed)");
         }
 
@@ -52,17 +52,17 @@ namespace USca_Server.Shared
         /// </summary>
         private async Task WebSocketLoop()
         {
-            while (Ws.State == WebSocketState.Open)
+            while (ws.State == WebSocketState.Open)
             {
                 var buffer = new byte[1024 * 4];
 
                 try
                 {
-                    var result = await Ws.ReceiveAsync(buffer, CancellationToken.None);
+                    var result = await ws.ReceiveAsync(buffer, CancellationToken.None);
 
                     if (result.MessageType == WebSocketMessageType.Close)
                     {
-                        await Ws.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
+                        await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, null, CancellationToken.None);
                     }
                     else
                     {

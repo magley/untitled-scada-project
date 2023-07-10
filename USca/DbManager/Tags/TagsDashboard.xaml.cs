@@ -30,12 +30,14 @@ namespace USca_DbManager.Tags
 
         private async void LoadAllTags()
         {
+            BtnRefresh.IsEnabled = false;
             List<TagDTO> tags = await TagService.GetAllTags();
             Tags.Clear();
             foreach (var t in tags)
             {
                 Tags.Add(t);
             }
+            BtnRefresh.IsEnabled = true;
         }
 
         private async void TbTags_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -69,6 +71,11 @@ namespace USca_DbManager.Tags
                 await TagService.DeleteTag(SelectedTag);
                 LoadAllTags();
             }
+        }
+
+        private void BtnRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            LoadAllTags();
         }
     }
 }

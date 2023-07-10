@@ -8,7 +8,8 @@ namespace USca_WebSocketUtil
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum SocketMessageType
     {
-        DELETE_TAG_READING,
+        DELETE_TAG,
+        DELETE_ALARM,
         UPDATE_TAG_READING,
         ALARM_TRIGGERED,
     }

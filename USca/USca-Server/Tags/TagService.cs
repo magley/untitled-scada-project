@@ -1,14 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Net.WebSockets;
+using System.Text.Json;
 using USca_Server.Shared;
 using USca_Server.TagLogs;
 using USca_Server.Util;
+using USca_Server.Util.Socket;
 
 namespace USca_Server.Tags
 {
-    public class TagService : ITagService
+    public class TagService : ITagService, INotifySocket
     {
         private ITagLogService _tagLogService;
+        public event EventHandler<SocketMessageDTO>? RaiseSocketEvent;
+
+        private void OnRaiseSocketEvent(SocketMessageDTO e)
+        {
+            RaiseSocketEvent?.Invoke(this, e);
+        }
 
         public TagService(ITagLogService tagLogService)
         {
@@ -53,6 +61,12 @@ namespace USca_Server.Tags
                 {
                     db.Tags.Remove(tag);
                     db.SaveChanges();
+                    SocketMessageDTO message = new()
+                    {
+                        Type = SocketMessageType.DELETE_TAG,
+                        Message = JsonSerializer.Serialize(id),
+                    };
+                    OnRaiseSocketEvent(message);
                 }
             }
         }
@@ -120,9 +134,9 @@ namespace USca_Server.Tags
             List<SocketMessageType> supportedMessageTypes = new()
             {
                 SocketMessageType.UPDATE_TAG_READING,
-                SocketMessageType.DELETE_TAG_READING,
+                SocketMessageType.DELETE_TAG,
             };
-            SocketWorker listener = new(ws, supportedMessageTypes);
+            SocketWorker listener = new(ws, supportedMessageTypes, new() { this, TagWorker.Instance });
             await listener.Start();
         }
     }

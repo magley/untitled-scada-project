@@ -7,6 +7,7 @@ using System.Linq;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using USca_WebSocketUtil;
+using RestSharp.Serializers.Xml;
 
 namespace USca_AlarmDisplay
 {
@@ -32,6 +33,13 @@ namespace USca_AlarmDisplay
         {
             switch (type)
             {
+                case SocketMessageType.DELETE_ALARM:
+                    if (message == null)
+                    {
+                        throw new InvalidSocketMessageException(type, message);
+                    }
+                    DeleteActiveAlarm(JsonSerializer.Deserialize<int>(message));
+                    break;
                 case SocketMessageType.ALARM_TRIGGERED:
                     if (message == null)
                     {
@@ -41,6 +49,16 @@ namespace USca_AlarmDisplay
                     break;
                 default:
                     throw new UnsupportedSocketMessageTypeException(type);
+            }
+        }
+
+        private void DeleteActiveAlarm(int alarmId)
+        {
+            var item = ActiveAlarms.FirstOrDefault(a => a.AlarmId == alarmId);
+            int idx = (item != null) ? ActiveAlarms.IndexOf(item) : -1;
+            if (idx != -1)
+            {
+                ActiveAlarms.RemoveAt(idx);
             }
         }
 

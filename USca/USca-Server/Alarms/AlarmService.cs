@@ -1,13 +1,21 @@
 using Microsoft.EntityFrameworkCore;
 using System.Net.WebSockets;
+using System.Text.Json;
 using USca_Server.Shared;
 using USca_Server.Tags;
 using USca_Server.Util;
+using USca_Server.Util.Socket;
 
 namespace USca_Server.Alarms
 {
-    public class AlarmService : IAlarmService
+    public class AlarmService : IAlarmService, INotifySocket
     {
+        public event EventHandler<SocketMessageDTO>? RaiseSocketEvent;
+
+        private void OnRaiseSocketEvent(SocketMessageDTO e)
+        {
+            RaiseSocketEvent?.Invoke(this, e);
+        }
 
         public List<Alarm> GetAll()
         {
@@ -40,6 +48,12 @@ namespace USca_Server.Alarms
             }
             db.Alarms.Remove(alarm);
             db.SaveChanges();
+            SocketMessageDTO message = new()
+            {
+                Type = SocketMessageType.DELETE_ALARM,
+                Message = JsonSerializer.Serialize(alarmId),
+            };
+            OnRaiseSocketEvent(message);
         }
 
         public void Add(AlarmAddDTO alarmAddDTO)
@@ -75,9 +89,10 @@ namespace USca_Server.Alarms
         {
             List<SocketMessageType> supportedMessageTypes = new()
             {
+                SocketMessageType.DELETE_ALARM,
                 SocketMessageType.ALARM_TRIGGERED,
             };
-            SocketWorker listener = new(ws, supportedMessageTypes);
+            SocketWorker listener = new(ws, supportedMessageTypes, new() { this, TagWorker.Instance });
             await listener.Start();
         }
     }

@@ -22,12 +22,14 @@ namespace USca_DbManager.Alarms
 
         private async void LoadAlarms()
         {
+            BtnRefresh.IsEnabled = false;
             var alarms = await AlarmService.GetAllAlarms();
             Alarms.Clear();
             foreach (var alarm in alarms)
             {
                 Alarms.Add(alarm);
             }
+            BtnRefresh.IsEnabled = true;
         }
 
         private async void BtnAddAlarm_Click(object sender, RoutedEventArgs e)
@@ -74,6 +76,11 @@ namespace USca_DbManager.Alarms
                 await AlarmService.UpdateAlarm(dialog.Alarm);
                 LoadAlarms();
             }
+        }
+
+        private void BtnRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            LoadAlarms();
         }
     }
 }
