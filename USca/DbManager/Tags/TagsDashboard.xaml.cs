@@ -32,12 +32,12 @@ namespace USca_DbManager.Tags
         {
             BtnRefresh.IsEnabled = false;
             List<TagDTO> tags = await TagService.GetAllTags();
-            BtnRefresh.IsEnabled = true;
             Tags.Clear();
             foreach (var t in tags)
             {
                 Tags.Add(t);
             }
+            BtnRefresh.IsEnabled = true;
         }
 
         private async void TbTags_MouseDoubleClick(object sender, MouseButtonEventArgs e)

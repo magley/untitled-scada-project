@@ -24,12 +24,12 @@ namespace USca_DbManager.Alarms
         {
             BtnRefresh.IsEnabled = false;
             var alarms = await AlarmService.GetAllAlarms();
-            BtnRefresh.IsEnabled = true;
             Alarms.Clear();
             foreach (var alarm in alarms)
             {
                 Alarms.Add(alarm);
             }
+            BtnRefresh.IsEnabled = true;
         }
 
         private async void BtnAddAlarm_Click(object sender, RoutedEventArgs e)
