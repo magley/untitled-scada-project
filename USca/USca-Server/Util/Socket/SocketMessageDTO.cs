@@ -1,11 +1,12 @@
 using System.Text.Json.Serialization;
 
-namespace USca_Server.Util
+namespace USca_Server.Util.Socket
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum SocketMessageType
     {
-        DELETE_TAG_READING,
+        DELETE_TAG,
+        DELETE_ALARM,
         UPDATE_TAG_READING,
         ALARM_TRIGGERED,
     }
