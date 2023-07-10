@@ -31,6 +31,7 @@
             </DataGrid.Columns>
         </DataGrid>
         <Button
+            x:Name="BtnRefresh"
             Grid.Row="1"
             Width="100"
             Margin="5"

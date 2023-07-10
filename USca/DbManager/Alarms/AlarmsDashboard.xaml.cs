@@ -22,7 +22,9 @@ namespace USca_DbManager.Alarms
 
         private async void LoadAlarms()
         {
+            BtnRefresh.IsEnabled = false;
             var alarms = await AlarmService.GetAllAlarms();
+            BtnRefresh.IsEnabled = true;
             Alarms.Clear();
             foreach (var alarm in alarms)
             {
