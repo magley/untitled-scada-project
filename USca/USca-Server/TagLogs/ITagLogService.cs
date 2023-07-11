@@ -9,6 +9,7 @@ namespace USca_Server.TagLogs
         public void AddBatch(List<Tuple<Tag, DateTime>> batch);
         public TagLog? Get(int id);
         public List<TagLog> GetAll();
+        public List<TagLog> GetLatestAnalogInputs();
         public List<TagLog> GetAllByTag(int tagId);
     }
 }

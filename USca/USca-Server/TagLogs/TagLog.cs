@@ -14,6 +14,11 @@ namespace USca_Server.TagLogs
         public int TagId { get; set; }
         public double Value { get; set; }
         public DateTime Timestamp { get; set; }
+        public string TagName { get; set; } = "";
+        public string TagDesc { get; set; } = "";
+        public TagMode Mode { get; set; }
+        public TagType Type { get; set; }
+        public string Unit { get; set; } = "";
 
         public TagLog()
         {
@@ -25,6 +30,11 @@ namespace USca_Server.TagLogs
             TagId = tag.Id;
             Value = tag.Value;
             Timestamp = measureTime;
+            this.TagName = tag.Name;
+            this.TagDesc = tag.Desc;
+            this.Mode = tag.Mode;
+            this.Type = tag.Type;
+            this.Unit = tag.Unit;
         }
 
         public static string LogEntry(Tag tag, DateTime timestamp)

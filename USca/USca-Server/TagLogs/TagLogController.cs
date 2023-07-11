@@ -44,5 +44,12 @@ namespace USca_Server.TagLogs
 
             return StatusCode(200, new TagLogByTagIdDTO(tag, logs));
         }
+
+        [HttpGet("analog/input")]
+        public ActionResult<TagLogByTagIdDTO> GetAnalogInputs()
+        {
+            var logs = _tagLogService.GetLatestAnalogInputs();
+            return StatusCode(200, new TagLogsDTO(logs));
+        }
     }
 }
