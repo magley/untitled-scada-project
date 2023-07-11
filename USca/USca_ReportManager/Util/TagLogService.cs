@@ -47,5 +47,22 @@ namespace USca_ReportManager.Util
                 throw new NotFoundException();
             }
         }
+
+        public async Task<TagLogsDTO> GetLatestDigitalInputs()
+        {
+            using var cli = new RestClient(new RestClientOptions(URL));
+            var req = new RestRequest($"tag/logs/digital/input", Method.Get);
+            RestResponse response = await cli.ExecuteAsync(req);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var li = JsonSerializer.Deserialize<TagLogsDTO>(response.Content);
+                return li;
+            }
+            else
+            {
+                throw new NotFoundException();
+            }
+        }
     }
 }
