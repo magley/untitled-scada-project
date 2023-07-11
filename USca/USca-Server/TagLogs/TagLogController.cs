@@ -58,5 +58,16 @@ namespace USca_Server.TagLogs
             var logs = _tagLogService.GetLatestDigitalInputs();
             return StatusCode(200, new TagLogsDTO(logs));
         }
+
+        [HttpGet("all/range")]
+        public ActionResult<TagLogByTagIdDTO> GetAllByRange(DateRangeDTO dateRange)
+        {
+            if (dateRange.StartTime >= dateRange.EndTime)
+            {
+                return StatusCode(400);
+            }
+            var logs = _tagLogService.GetAllByRange(dateRange.StartTime, dateRange.EndTime);
+            return StatusCode(200, new TagLogsDTO(logs));
+        }
     }
 }

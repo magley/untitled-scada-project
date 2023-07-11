@@ -96,5 +96,15 @@ namespace USca_Server.TagLogs
                     .Select(g => g.OrderByDescending(t => t.Timestamp).First()).ToList();
             }
         }
+
+        public List<TagLog> GetAllByRange(DateTime startTime, DateTime endTime)
+        {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
+            using (var db = new ServerDbContext())
+            {
+                return db.TagLogs
+                    .Where(t => t.Timestamp >= startTime && t.Timestamp <= endTime).ToList();
+            }
+        }
     }
 }

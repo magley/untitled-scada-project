@@ -12,6 +12,9 @@
 			<TabItem Header="By tag ID">
 				<controls:ReportByTagId />
 			</TabItem>
+			<TabItem Header="By Date Range">
+				<controls:ReportDateRange />
+			</TabItem>
 			<TabItem Header="Latest AI">
 				<controls:ReportAnalogInputs />
 			</TabItem>

@@ -12,5 +12,6 @@ namespace USca_Server.TagLogs
         public List<TagLog> GetLatestAnalogInputs();
         public List<TagLog> GetLatestDigitalInputs();
         public List<TagLog> GetAllByTag(int tagId);
+        public List<TagLog> GetAllByRange(DateTime startTime, DateTime endTime);
     }
 }

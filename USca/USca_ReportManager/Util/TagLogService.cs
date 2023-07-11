@@ -64,5 +64,26 @@ namespace USca_ReportManager.Util
                 throw new NotFoundException();
             }
         }
+        public async Task<TagLogsDTO> GetAllByDateRange(DateTime startTime, DateTime endTime)
+        {
+            using var cli = new RestClient(new RestClientOptions(URL));
+            var req = new RestRequest($"tag/logs/all/range", Method.Get);
+            req.AddBody(new
+            {
+                startTime,
+                endTime
+            });
+            RestResponse response = await cli.ExecuteAsync(req);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var li = JsonSerializer.Deserialize<TagLogsDTO>(response.Content);
+                return li;
+            }
+            else
+            {
+                throw new NotFoundException();
+            }
+        }
     }
 }
