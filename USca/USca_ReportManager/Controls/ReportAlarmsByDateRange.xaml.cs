@@ -48,11 +48,13 @@ namespace USca_ReportManager.Controls
             if (_startTime == null || _endTime == null)
             {
                 MessageBox.Show("Must select a date range!", "Failure", MessageBoxButton.OK);
+                BtnSearch.IsEnabled = true;
                 return;
             }
             if (_startTime >= _endTime)
             {
                 MessageBox.Show("Start must come before end!", "Failure", MessageBoxButton.OK);
+                BtnSearch.IsEnabled = true;
                 return;
             }
             try
