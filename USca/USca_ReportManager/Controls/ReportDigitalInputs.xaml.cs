@@ -27,6 +27,7 @@ namespace USca_ReportManager.Controls
 
         private async void Refresh()
         {
+            BtnRefresh.IsEnabled = false;
             try
             {
                 var res = await _tagLogService.GetLatestDigitalInputs();
@@ -41,6 +42,7 @@ namespace USca_ReportManager.Controls
                 TagLogs.Clear();
                 MessageBox.Show("Tag not found!", "Failure", MessageBoxButton.OK);
             }
+            BtnRefresh.IsEnabled = true;
         }
     }
 }
