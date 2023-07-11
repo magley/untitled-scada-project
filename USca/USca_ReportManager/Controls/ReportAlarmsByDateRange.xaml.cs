@@ -33,7 +33,7 @@ namespace USca_ReportManager.Controls
                 _endTime = calendar.SelectedDates.Last();
                 if (_endTime.HasValue)
                 {
-                    _endTime.Value.AddDays(1);
+                    _endTime = _endTime.Value.AddDays(1);
                 }
             }
             catch (ArgumentOutOfRangeException)
