@@ -36,8 +36,6 @@
 									Binding="{Binding TagName}" />
 				<DataGridTextColumn Header="Value"
 									Binding="{Binding Value}" />
-				<DataGridTextColumn Header="Unit"
-									Binding="{Binding Unit}" />
 			</DataGrid.Columns>
 		</DataGrid>
 	</Grid>
