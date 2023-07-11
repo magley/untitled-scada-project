@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using USca_ReportManager.Util;
 
 namespace USca_ReportManager.Controls
@@ -25,6 +26,7 @@ namespace USca_ReportManager.Controls
 
         private void Calendar_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
         {
+            Mouse.Capture(null);
             Calendar calendar = (Calendar)sender;
             try
             {
@@ -51,6 +53,7 @@ namespace USca_ReportManager.Controls
             }
             try
             {
+                MessageBox.Show("Start " + _startTime + "  END: " + _endTime, "Failure", MessageBoxButton.OK);
                 var res = await _tagLogService.GetAllByDateRange((DateTime) _startTime, (DateTime) _endTime);
                 TagLogs.Clear();
                 foreach (var o in res.Logs.OrderByDescending(log => log.Timestamp))

@@ -21,6 +21,12 @@
 			<TabItem Header="Latest DI">
 				<controls:ReportDigitalInputs />
 			</TabItem>
+			<TabItem Header="Alarms by Date Range">
+				<controls:ReportAlarmsByDateRange />
+			</TabItem>
+			<TabItem Header="Alarms by Priority">
+				<controls:ReportAlarmsByPriority />
+			</TabItem>
 		</TabControl>
 	</Grid>
 </Window>
