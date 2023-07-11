@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "USca_AlarmDisplay", "USca_A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "USca_ReportManager", "USca_ReportManager\USca_ReportManager.csproj", "{DC8F8D16-AC2C-4694-85B3-75307E19F52E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USca_WebSocketUtil", "USca_WebSocketUtil\USca_WebSocketUtil.csproj", "{3AD9D085-2FC1-4E56-8A9D-598969BF2F11}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "USca_WebSocketUtil", "USca_WebSocketUtil\USca_WebSocketUtil.csproj", "{3AD9D085-2FC1-4E56-8A9D-598969BF2F11}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
