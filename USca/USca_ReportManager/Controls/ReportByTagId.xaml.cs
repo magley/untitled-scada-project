@@ -20,6 +20,7 @@ namespace USca_ReportManager.Controls
 
         private async void BtnSearch_Click(object sender, RoutedEventArgs e)
         {
+            BtnSearch.IsEnabled = false;
             string searchQuery = TxtTagID.Text;
             if (!int.TryParse(searchQuery,  out int id))
             {
@@ -43,6 +44,7 @@ namespace USca_ReportManager.Controls
                 TagName = "";
                 MessageBox.Show("Tag not found!", "Failure", MessageBoxButton.OK);
             }
+            BtnSearch.IsEnabled = true;
         }
     }
 }

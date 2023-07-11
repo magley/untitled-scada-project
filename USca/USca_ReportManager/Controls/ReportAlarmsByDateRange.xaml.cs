@@ -40,6 +40,7 @@ namespace USca_ReportManager.Controls
 
         private async void BtnSearch_Click(object sender, RoutedEventArgs e)
         {
+            BtnSearch.IsEnabled = false;
             if (_startTime == null || _endTime == null)
             {
                 MessageBox.Show("Must select a date range!", "Failure", MessageBoxButton.OK);
@@ -64,6 +65,7 @@ namespace USca_ReportManager.Controls
                 AlarmLogs.Clear();
                 MessageBox.Show("Alarms not found!", "Failure", MessageBoxButton.OK);
             }
+            BtnSearch.IsEnabled = true;
         }
     }
 }

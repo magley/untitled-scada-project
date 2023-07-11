@@ -22,6 +22,7 @@ namespace USca_ReportManager.Controls
 
         private async void BtnSearch_Click(object sender, RoutedEventArgs e)
         {
+            BtnSearch.IsEnabled = false;
             var val = PriorityCombobox.SelectedValue;
             if (val == null)
             {
@@ -42,6 +43,7 @@ namespace USca_ReportManager.Controls
                 AlarmLogs.Clear();
                 MessageBox.Show("Alarms not found!", "Failure", MessageBoxButton.OK);
             }
+            BtnSearch.IsEnabled = true;
         }
     }
 }
