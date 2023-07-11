@@ -10,5 +10,6 @@ namespace USca_Server.Alarms
         public void Update(AlarmUpdateDTO alarmUpdateDTO);
         public void Delete(int alarmId);
         public Task StartAlarmValuesListener(WebSocket ws);
+        public List<AlarmLog> GetLogsByRange(DateTime startTime, DateTime endTime);
     }
 }

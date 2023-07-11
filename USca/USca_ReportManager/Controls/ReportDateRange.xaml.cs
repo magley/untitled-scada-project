@@ -53,7 +53,6 @@ namespace USca_ReportManager.Controls
             }
             try
             {
-                MessageBox.Show("Start " + _startTime + "  END: " + _endTime, "Failure", MessageBoxButton.OK);
                 var res = await _tagLogService.GetAllByDateRange((DateTime) _startTime, (DateTime) _endTime);
                 TagLogs.Clear();
                 foreach (var o in res.Logs.OrderByDescending(log => log.Timestamp))

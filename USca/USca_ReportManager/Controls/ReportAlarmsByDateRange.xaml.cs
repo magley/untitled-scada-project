@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using USca_ReportManager.Util;
 
 namespace USca_ReportManager.Controls
 {
@@ -20,9 +13,57 @@ namespace USca_ReportManager.Controls
     /// </summary>
     public partial class ReportAlarmsByDateRange : UserControl
     {
+        public ObservableCollection<AlarmLogDTO> AlarmLogs { get; set; } = new();
+        private AlarmLogService _alarmLogService = new();  // TODO: do a singleton?
+        private DateTime? _startTime = null;
+        private DateTime? _endTime = null;
+
         public ReportAlarmsByDateRange()
         {
             InitializeComponent();
+        }
+
+        private void Calendar_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Mouse.Capture(null);
+            Calendar calendar = (Calendar)sender;
+            try
+            {
+                _startTime = calendar.SelectedDates[0];
+                _endTime = calendar.SelectedDates.Last();
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return;
+            }
+        }
+
+        private async void BtnSearch_Click(object sender, RoutedEventArgs e)
+        {
+            if (_startTime == null || _endTime == null)
+            {
+                MessageBox.Show("Must select a date range!", "Failure", MessageBoxButton.OK);
+                return;
+            }
+            if (_startTime >= _endTime)
+            {
+                MessageBox.Show("Start must come before end!", "Failure", MessageBoxButton.OK);
+                return;
+            }
+            try
+            {
+                var res = await _alarmLogService.GetByDateRange((DateTime) _startTime, (DateTime) _endTime);
+                AlarmLogs.Clear();
+                foreach (var o in res.Logs.OrderByDescending(log => log.Timestamp).OrderByDescending(log => log.Priority))
+                {
+                    AlarmLogs.Add(o);
+                }
+            }
+            catch (NotFoundException)
+            {
+                AlarmLogs.Clear();
+                MessageBox.Show("Alarms not found!", "Failure", MessageBoxButton.OK);
+            }
         }
     }
 }

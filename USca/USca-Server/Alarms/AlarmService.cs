@@ -85,6 +85,16 @@ namespace USca_Server.Alarms
             db.SaveChanges();
         }
 
+        public List<AlarmLog> GetLogsByRange(DateTime startTime, DateTime endTime)
+        {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
+            using (var db = new ServerDbContext())
+            {
+                return db.AlarmLogs
+                    .Where(al => al.Timestamp >= startTime && al.Timestamp <= endTime).ToList();
+            }
+        }
+
         public async Task StartAlarmValuesListener(WebSocket ws)
         {
             List<SocketMessageType> supportedMessageTypes = new()

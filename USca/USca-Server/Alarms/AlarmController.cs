@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using USca_Server.TagLogs.DTO;
 
 namespace USca_Server.Alarms
 {
@@ -23,6 +24,17 @@ namespace USca_Server.Alarms
         public ActionResult<List<ActiveAlarmDTO>> GetActiveAlarms()
         {
             return StatusCode(200, _alarmService.GetActive());
+        }
+
+        [HttpGet("logs/range")]
+        public ActionResult<List<ActiveAlarmDTO>> GetLogsByRange(DateRangeDTO dateRange)
+        {
+            if (dateRange.StartTime >= dateRange.EndTime)
+            {
+                return StatusCode(400);
+            }
+            var logs = _alarmService.GetLogsByRange(dateRange.StartTime, dateRange.EndTime);
+            return StatusCode(200, new AlarmLogsDTO(logs));
         }
 
         [HttpDelete("{alarmId}")]
