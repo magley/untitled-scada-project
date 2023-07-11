@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using USca_ReportManager.Util;
 
 namespace USca_ReportManager.Controls
 {
@@ -20,9 +11,37 @@ namespace USca_ReportManager.Controls
     /// </summary>
     public partial class ReportAlarmsByPriority : UserControl
     {
+        public ObservableCollection<AlarmLogDTO> AlarmLogs { get; set; } = new();
+        private AlarmLogService _alarmLogService = new();  // TODO: do a singleton?
+
         public ReportAlarmsByPriority()
         {
             InitializeComponent();
+            PriorityCombobox.SelectedValue = AlarmPriority.HIGH;
+        }
+
+        private async void BtnSearch_Click(object sender, RoutedEventArgs e)
+        {
+            var val = PriorityCombobox.SelectedValue;
+            if (val == null)
+            {
+                MessageBox.Show("Please select a priority!", "Failure", MessageBoxButton.OK);
+                return;
+            }
+            try
+            {
+                var res = await _alarmLogService.GetByPriority((AlarmPriority) val);
+                AlarmLogs.Clear();
+                foreach (var o in res.Logs.OrderByDescending(log => log.Timestamp))
+                {
+                    AlarmLogs.Add(o);
+                }
+            }
+            catch (NotFoundException)
+            {
+                AlarmLogs.Clear();
+                MessageBox.Show("Alarms not found!", "Failure", MessageBoxButton.OK);
+            }
         }
     }
 }

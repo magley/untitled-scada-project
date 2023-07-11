@@ -37,6 +37,13 @@ namespace USca_Server.Alarms
             return StatusCode(200, new AlarmLogsDTO(logs));
         }
 
+        [HttpGet("logs/priority")]
+        public ActionResult<List<ActiveAlarmDTO>> GetLogsByPriority(AlarmPriorityDTO alarmPriorityDTO)
+        {
+            var logs = _alarmService.GetLogsByPriority(alarmPriorityDTO.Priority);
+            return StatusCode(200, new AlarmLogsDTO(logs));
+        }
+
         [HttpDelete("{alarmId}")]
         public ActionResult DeleteAlarm(int alarmId)
         {

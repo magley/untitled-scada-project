@@ -95,6 +95,16 @@ namespace USca_Server.Alarms
             }
         }
 
+        public List<AlarmLog> GetLogsByPriority(AlarmPriority priority)
+        {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
+            using (var db = new ServerDbContext())
+            {
+                return db.AlarmLogs
+                    .Where(al => al.Priority == priority).ToList();
+            }
+        }
+
         public async Task StartAlarmValuesListener(WebSocket ws)
         {
             List<SocketMessageType> supportedMessageTypes = new()

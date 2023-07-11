@@ -32,5 +32,26 @@ namespace USca_ReportManager.Util
                 throw new NotFoundException();
             }
         }
+
+        public async Task<AlarmLogsDTO> GetByPriority(AlarmPriority priority)
+        {
+            using var cli = new RestClient(new RestClientOptions(URL));
+            var req = new RestRequest($"alarm/logs/priority", Method.Get);
+            req.AddBody(new
+            {
+                priority
+            });
+            RestResponse response = await cli.ExecuteAsync(req);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var li = JsonSerializer.Deserialize<AlarmLogsDTO>(response.Content);
+                return li;
+            }
+            else
+            {
+                throw new NotFoundException();
+            }
+        }
     }
 }
