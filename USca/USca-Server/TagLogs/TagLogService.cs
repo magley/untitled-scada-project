@@ -84,5 +84,17 @@ namespace USca_Server.TagLogs
                     .Select(g => g.OrderByDescending(t => t.Timestamp).First()).ToList();
             }
         }
+
+        public List<TagLog> GetLatestDigitalInputs()
+        {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
+            using (var db = new ServerDbContext())
+            {
+                return db.TagLogs
+                    .Where(t => t.Type == TagType.Digital && t.Mode == TagMode.Input)
+                    .GroupBy(t => t.TagId)
+                    .Select(g => g.OrderByDescending(t => t.Timestamp).First()).ToList();
+            }
+        }
     }
 }

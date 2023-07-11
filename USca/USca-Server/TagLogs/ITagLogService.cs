@@ -10,6 +10,7 @@ namespace USca_Server.TagLogs
         public TagLog? Get(int id);
         public List<TagLog> GetAll();
         public List<TagLog> GetLatestAnalogInputs();
+        public List<TagLog> GetLatestDigitalInputs();
         public List<TagLog> GetAllByTag(int tagId);
     }
 }

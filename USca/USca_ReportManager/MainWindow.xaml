@@ -15,6 +15,9 @@
 			<TabItem Header="Latest AI">
 				<controls:ReportAnalogInputs />
 			</TabItem>
+			<TabItem Header="Latest DI">
+				<controls:ReportDigitalInputs />
+			</TabItem>
 		</TabControl>
 	</Grid>
 </Window>

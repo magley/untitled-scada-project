@@ -51,5 +51,12 @@ namespace USca_Server.TagLogs
             var logs = _tagLogService.GetLatestAnalogInputs();
             return StatusCode(200, new TagLogsDTO(logs));
         }
+
+        [HttpGet("digital/input")]
+        public ActionResult<TagLogByTagIdDTO> GetDigitalInputs()
+        {
+            var logs = _tagLogService.GetLatestDigitalInputs();
+            return StatusCode(200, new TagLogsDTO(logs));
+        }
     }
 }
