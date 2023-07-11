@@ -18,15 +18,6 @@ namespace USca_ReportManager.Controls
         public ReportDigitalInputs()
         {
             InitializeComponent();
-            TbTagLogs.IsVisibleChanged += VisibilityChanged;
-        }
-
-        private void VisibilityChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (TbTagLogs.IsVisible)
-            {
-                Refresh();
-            }
         }
 
         private void BtnRefresh_Click(object sender, RoutedEventArgs e)
