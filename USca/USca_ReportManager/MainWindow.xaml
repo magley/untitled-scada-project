@@ -12,7 +12,8 @@
 			<TabItem Header="By tag ID">
 				<controls:ReportByTagId />
 			</TabItem>
-			<TabItem Header="By something else">
+			<TabItem Header="Latest AI">
+				<controls:ReportAnalogInputs />
 			</TabItem>
 		</TabControl>
 	</Grid>
