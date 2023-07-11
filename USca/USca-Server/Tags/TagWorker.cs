@@ -179,14 +179,14 @@ namespace USca_Server.Tags
                         if (!alarm.IsActive)
                         {
                             alarm.IsActive = true;
-                            AddAlarmLog(db, alarm, measure, logs);
+                            AddAlarmLog(db, alarm, measure, Tag.Unit, logs);
                         }
                     } else
                     {
                         if (alarm.IsActive)
                         {
                             alarm.IsActive = false;
-                            AddAlarmLog(db, alarm, measure, logs);
+                            AddAlarmLog(db, alarm, measure, Tag.Unit, logs);
                         }
                     }
                 }
@@ -223,7 +223,7 @@ namespace USca_Server.Tags
                 }
             }
 
-            private void AddAlarmLog(ServerDbContext db, Alarm alarm, Measure measure, List<AlarmLog> logs)
+            private void AddAlarmLog(ServerDbContext db, Alarm alarm, Measure measure, string unitOfMeasurement, List<AlarmLog> logs)
             {
                 db.Alarms.Update(alarm);
                 AlarmLog log = new()
@@ -238,6 +238,7 @@ namespace USca_Server.Tags
                     Address = Tag.Address,
                     RecordedValue = Tag.Value,
                     Timestamp = measure.Timestamp,
+                    Unit = unitOfMeasurement,
                 };
                 db.AlarmLogs.Add(log);
                 logs.Add(log);
