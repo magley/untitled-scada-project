@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using USca_ReportManager.Util;
@@ -30,7 +31,7 @@ namespace USca_ReportManager.Controls
             {
                 var res = await _tagLogService.GetByTag(id);
                 TagLogs.Clear();
-                foreach (var o in res.Logs)
+                foreach (var o in res.Logs.OrderByDescending(l => l.Value))
                 {
                     TagLogs.Add(o);
                 }

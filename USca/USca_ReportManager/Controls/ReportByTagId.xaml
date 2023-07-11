@@ -44,8 +44,13 @@
 									Binding="{Binding Id}" />
 				<DataGridTextColumn Header="Timestamp"
 									Binding="{Binding Timestamp}" />
+				<DataGridTextColumn Header="Name"
+									Binding="{Binding TagName}" />
 				<DataGridTextColumn Header="Value"
-									Binding="{Binding Value}" />
+									Binding="{Binding Value}"
+                                    SortDirection="Descending" />
+				<DataGridTextColumn Header="Unit"
+									Binding="{Binding Unit}" />
 			</DataGrid.Columns>
 		</DataGrid>
 	</Grid>
