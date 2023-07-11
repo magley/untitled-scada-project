@@ -44,5 +44,30 @@ namespace USca_Server.TagLogs
 
             return StatusCode(200, new TagLogByTagIdDTO(tag, logs));
         }
+
+        [HttpGet("analog/input")]
+        public ActionResult<TagLogByTagIdDTO> GetAnalogInputs()
+        {
+            var logs = _tagLogService.GetLatestAnalogInputs();
+            return StatusCode(200, new TagLogsDTO(logs));
+        }
+
+        [HttpGet("digital/input")]
+        public ActionResult<TagLogByTagIdDTO> GetDigitalInputs()
+        {
+            var logs = _tagLogService.GetLatestDigitalInputs();
+            return StatusCode(200, new TagLogsDTO(logs));
+        }
+
+        [HttpGet("all/range")]
+        public ActionResult<TagLogByTagIdDTO> GetAllByRange(DateRangeDTO dateRange)
+        {
+            if (dateRange.StartTime >= dateRange.EndTime)
+            {
+                return StatusCode(400);
+            }
+            var logs = _tagLogService.GetAllByRange(dateRange.StartTime, dateRange.EndTime);
+            return StatusCode(200, new TagLogsDTO(logs));
+        }
     }
 }

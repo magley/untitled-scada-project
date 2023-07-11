@@ -23,6 +23,7 @@ namespace USca_Server
             builder.Services.AddSingleton(typeof(ITagLogService), typeof(TagLogService));
             builder.Services.AddDbContext<ServerDbContext>();
             builder.Services.AddControllers().AddJsonOptions(options =>options.JsonSerializerOptions.PropertyNamingPolicy = null);
+			_ = TagWorker.Instance;  // TODO: do this more elegantly, so you don't need trending
 
             builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen();

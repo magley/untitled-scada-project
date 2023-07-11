@@ -16,6 +16,7 @@ namespace USca_Server.Alarms
         public int Address { get; set; }
         public DateTime Timestamp { get; set; }
         public double RecordedValue { get; set; }
+        public string? Unit { get; set; }
 
         public static string ActiveStatus(bool status)
         {

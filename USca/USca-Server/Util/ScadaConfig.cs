@@ -4,7 +4,7 @@ namespace USca_Server.Util
     public class ScadaConfig
     {
         public const int DefaultSyncThreadTimerInMs = 1000;
-        public const string DefaultAlarmLogPath = "./Data/alarmConfig.txt";
+        public const string DefaultAlarmLogPath = "./Data/alarmLog.txt";
 
         public int SyncThreadTimerInMs { get; set; } = DefaultSyncThreadTimerInMs;
         public string AlarmLogPath { get; set; } = DefaultAlarmLogPath;

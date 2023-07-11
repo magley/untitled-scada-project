@@ -72,5 +72,39 @@ namespace USca_Server.TagLogs
                 return db.TagLogs.Where(t => t.TagId == tagId).ToList();
             }
         }
+
+        public List<TagLog> GetLatestAnalogInputs()
+        {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
+            using (var db = new ServerDbContext())
+            {
+                return db.TagLogs
+                    .Where(t => t.Type == TagType.Analog && t.Mode == TagMode.Input)
+                    .GroupBy(t => t.TagId)
+                    .Select(g => g.OrderByDescending(t => t.Timestamp).First()).ToList();
+            }
+        }
+
+        public List<TagLog> GetLatestDigitalInputs()
+        {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
+            using (var db = new ServerDbContext())
+            {
+                return db.TagLogs
+                    .Where(t => t.Type == TagType.Digital && t.Mode == TagMode.Input)
+                    .GroupBy(t => t.TagId)
+                    .Select(g => g.OrderByDescending(t => t.Timestamp).First()).ToList();
+            }
+        }
+
+        public List<TagLog> GetAllByRange(DateTime startTime, DateTime endTime)
+        {
+            LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
+            using (var db = new ServerDbContext())
+            {
+                return db.TagLogs
+                    .Where(t => t.Timestamp >= startTime && t.Timestamp <= endTime).ToList();
+            }
+        }
     }
 }
