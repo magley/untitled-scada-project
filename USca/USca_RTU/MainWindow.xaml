@@ -1,0 +1,255 @@
+﻿<Window x:Class="USca_RTU.MainWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:USca_RTU"
+		Background="White"
+		mc:Ignorable="d"
+		Title="USca Remote Terminal Unit (Milk Processing)"
+		Width="960"
+		Height="620">
+
+	<Canvas Width="960"
+			Height="590">
+		<Image Source="Data/schema.png"
+			   Height="590"
+			   Canvas.Left="0"
+			   Canvas.Top="0"
+			   Width="960" />
+
+		<!-- Raw milk tanks -->
+
+		<Label Canvas.Top="54"
+			   Content="{Binding Simulator.Tanks[0].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			   ContentStringFormat="{}{0:N4}ℓ"
+			   d:Content="12.3456"
+			   HorizontalAlignment="Left"
+			   VerticalAlignment="Center" />
+		<Label Canvas.Left="122"
+			   Canvas.Top="54"
+			   Content="{Binding Simulator.Tanks[1].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			   ContentStringFormat="{}{0:N4}ℓ"
+			   d:Content="12.3456"
+			   HorizontalAlignment="Left"
+			   VerticalAlignment="Center" />
+		<Label Canvas.Left="240"
+			   Canvas.Top="54"
+			   Content="{Binding Simulator.Tanks[2].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			   ContentStringFormat="{}{0:N4}ℓ"
+			   d:Content="12.3456"
+			   HorizontalAlignment="Left"
+			   VerticalAlignment="Center" />
+
+		<CheckBox IsHitTestVisible="False"
+				  Focusable="False"
+				  Canvas.Left="57"
+				  Canvas.Top="157"
+				  IsChecked="{Binding Simulator.Valves[0].Open, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+				  Content="{Binding Simulator.Valves[0].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+				  ContentStringFormat="{}{0:N4}ℓ"
+				  HorizontalAlignment="Left"
+				  VerticalAlignment="Top" />
+		<CheckBox IsHitTestVisible="False"
+				  Focusable="False"
+				  Canvas.Left="181"
+				  Canvas.Top="157"
+				  IsChecked="{Binding Simulator.Valves[1].Open, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+				  Content="{Binding Simulator.Valves[1].Value, UpdateSourceTrigger=PropertyChanged}"
+				  ContentStringFormat="{}{0:N4}ℓ"
+				  HorizontalAlignment="Left"
+				  VerticalAlignment="Top" />
+		<CheckBox IsHitTestVisible="False"
+				  Focusable="False"
+				  Canvas.Left="314"
+				  Canvas.Top="157"
+				  IsChecked="{Binding Simulator.Valves[2].Open, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+				  Content="{Binding Simulator.Valves[2].Value, UpdateSourceTrigger=PropertyChanged}"
+				  ContentStringFormat="{}{0:N4}ℓ"
+				  VerticalAlignment="Top" />
+
+		<!-- Milk filter, processed dairy and raw cream -->
+
+		<Label Canvas.Left="128"
+			   Canvas.Top="260"
+			   Content="{Binding Simulator.Tanks[3].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			   ContentStringFormat="{}{0:N4}ℓ"
+			   d:Content="12.3456"
+			   HorizontalAlignment="Left"
+			   VerticalAlignment="Top" />
+		<CheckBox IsHitTestVisible="False"
+				  Focusable="False"
+				  Canvas.Left="181"
+				  Canvas.Top="310"
+				  IsChecked="{Binding Simulator.Valves[3].Open, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+				  Content="{Binding Simulator.Valves[3].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+				  ContentStringFormat="{}{0:N4}ℓ"
+				  HorizontalAlignment="Left"
+				  VerticalAlignment="Top" />
+		<Label Canvas.Left="240"
+			   Canvas.Top="354"
+			   Content="{Binding Simulator.Tanks[4].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			   ContentStringFormat="{}{0:N4}ℓ"
+			   d:Content="12.3456"
+			   HorizontalAlignment="Left"
+			   VerticalAlignment="Top" />
+		<CheckBox IsHitTestVisible="False"
+				  Focusable="False"
+				  Canvas.Left="181"
+				  Canvas.Top="448"
+				  IsChecked="{Binding Simulator.Valves[4].Open, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+				  Content="{Binding Simulator.Valves[4].Value, UpdateSourceTrigger=PropertyChanged}"
+				  ContentStringFormat="{}{0:N4}ℓ"
+				  HorizontalAlignment="Left"
+				  VerticalAlignment="Top" />
+		<Label Canvas.Left="217"
+			   Canvas.Top="524"
+			   Content="{Binding Simulator.Tanks[5].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			   ContentStringFormat="{}{0:N4}ℓ"
+			   d:Content="12.3456"
+			   HorizontalAlignment="Left"
+			   VerticalAlignment="Top" />
+
+		<!-- Compressor -->
+
+		<CheckBox IsHitTestVisible="False"
+				  Focusable="False"
+				  Canvas.Left="430"
+				  Canvas.Top="287"
+				  IsChecked="{Binding Simulator.Valves[5].Open, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+				  Content="{Binding Simulator.Valves[5].Value, UpdateSourceTrigger=PropertyChanged}"
+				  ContentStringFormat="{}{0:N4}ℓ"
+				  HorizontalAlignment="Left"
+				  VerticalAlignment="Top" />
+		<CheckBox IsHitTestVisible="False"
+				  Focusable="False"
+				  Canvas.Left="687"
+				  Canvas.Top="78"
+				  IsChecked="{Binding Simulator.Valves[6].Open, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+				  Content="{Binding Simulator.Valves[6].Value, UpdateSourceTrigger=PropertyChanged}"
+				  ContentStringFormat="{}{0:N4}ℓ"
+				  HorizontalAlignment="Left"
+				  VerticalAlignment="Top" />
+
+		<!-- Post-Compressor -->
+
+		<Label Canvas.Left="634"
+			   Canvas.Top="139"
+			   Content="{Binding Simulator.Tanks[6].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			   ContentStringFormat="{}{0:N4}ℓ"
+			   d:Content="12.3456"
+			   HorizontalAlignment="Left"
+			   VerticalAlignment="Top" />
+		<Label Canvas.Left="740"
+			   Canvas.Top="139"
+			   Content="{Binding Simulator.Tanks[7].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			   ContentStringFormat="{}{0:N4}ℓ"
+			   d:Content="12.3456"
+			   HorizontalAlignment="Left"
+			   VerticalAlignment="Center" />
+		<Label Canvas.Left="700"
+			   Canvas.Top="430"
+			   Content="{Binding Simulator.Tanks[8].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			   ContentStringFormat="{}{0:N4}ℓ"
+			   d:Content="12.3456"
+			   HorizontalAlignment="Left"
+			   VerticalAlignment="Center" />
+		<CheckBox IsHitTestVisible="False"
+				  Focusable="False"
+				  Canvas.Left="811"
+				  Canvas.Top="78"
+				  IsChecked="{Binding Simulator.ExternalValves[5].Open, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+				  Content="{Binding Simulator.ExternalValves[5].Value, UpdateSourceTrigger=PropertyChanged}"
+				  ContentStringFormat="{}{0:N4}ℓ"
+				  HorizontalAlignment="Left"
+				  VerticalAlignment="Center" />
+		<CheckBox IsHitTestVisible="False"
+				  Focusable="False"
+				  Canvas.Left="811"
+				  Canvas.Top="271"
+				  IsChecked="{Binding Simulator.ExternalValves[6].Open, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+				  Content="{Binding Simulator.ExternalValves[6].Value, UpdateSourceTrigger=PropertyChanged}"
+				  ContentStringFormat="{}{0:N4}ℓ"
+				  HorizontalAlignment="Center"
+				  VerticalAlignment="Top" />
+		<CheckBox IsHitTestVisible="False"
+				  Focusable="False"
+				  Canvas.Left="687"
+				  Canvas.Top="271"
+				  IsChecked="{Binding Simulator.ExternalValves[4].Open, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+				  Content="{Binding Simulator.ExternalValves[4].Value, UpdateSourceTrigger=PropertyChanged}"
+				  ContentStringFormat="{}{0:N4}ℓ"
+				  HorizontalAlignment="Left"
+				  VerticalAlignment="Center" />
+
+		<!-- Heat -->
+
+		<Label Canvas.Left="700"
+			   Canvas.Top="412"
+			   Content="{Binding Simulator.Thermometers[0].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			   ContentStringFormat="{}{0:N1}°C"
+			   d:Content="2.1"
+			   HorizontalAlignment="Left"
+			   VerticalAlignment="Center" />
+		<CheckBox IsHitTestVisible="False"
+				  Focusable="False"
+				  Canvas.Left="543"
+				  Canvas.Top="377"
+				  IsChecked="{Binding Simulator.Condensers[0].Open, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+				  Content="{Binding Simulator.Condensers[0].Value, UpdateSourceTrigger=PropertyChanged}"
+				  ContentStringFormat="{}{0:N4}°C"
+				  HorizontalAlignment="Left"
+				  VerticalAlignment="Top" />
+		<CheckBox IsHitTestVisible="False"
+				  Focusable="False"
+				  Canvas.Left="543"
+				  Canvas.Top="471"
+				  IsChecked="{Binding Simulator.Condensers[1].Open, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+				  Content="{Binding Simulator.Condensers[1].Value, UpdateSourceTrigger=PropertyChanged}"
+				  ContentStringFormat="{}{0:N4}°C"
+				  HorizontalAlignment="Center"
+				  VerticalAlignment="Top" />
+		<CheckBox IsHitTestVisible="False"
+				  Focusable="False"
+				  Canvas.Left="842"
+				  Canvas.Top="377"
+				  IsChecked="{Binding Simulator.Condensers[2].Open, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+				  Content="{Binding Simulator.Condensers[2].Value, UpdateSourceTrigger=PropertyChanged}"
+				  ContentStringFormat="{}{0:N4}°C"
+				  HorizontalAlignment="Left"
+				  VerticalAlignment="Top" />
+		<CheckBox IsHitTestVisible="False"
+				  Focusable="False"
+				  Canvas.Left="842"
+				  Canvas.Top="471"
+				  IsChecked="{Binding Simulator.Condensers[3].Open, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+				  Content="{Binding Simulator.Condensers[3].Value, UpdateSourceTrigger=PropertyChanged}"
+				  ContentStringFormat="{}{0:N4}°C"
+				  HorizontalAlignment="Center"
+				  VerticalAlignment="Top" />
+		<Label Canvas.Left="454"
+			   Canvas.Top="489"
+			   Content="{Binding Simulator.HeatSources[0].Value, UpdateSourceTrigger=PropertyChanged}"
+			   ContentStringFormat="{}{0:N4}°C"
+			   d:Content="8.1"
+			   HorizontalAlignment="Left"
+			   VerticalAlignment="Top" />
+
+		<!-- Pressure -->
+
+		<Label Canvas.Left="410"
+			   Canvas.Top="134"
+			   Content="{Binding Simulator.Manometers[0].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			   ContentStringFormat="{}{0:N0} mB"
+			   d:Content="12346"
+			   HorizontalAlignment="Left"
+			   VerticalAlignment="Top" />
+		<Label Canvas.Left="441"
+			   Canvas.Top="203"
+			   Content="{Binding Simulator.Compressors[0].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			   ContentStringFormat="{}{0:N0} mB"
+			   d:Content="12346"
+			   HorizontalAlignment="Left"
+			   VerticalAlignment="Top" />
+	</Canvas>
+</Window>

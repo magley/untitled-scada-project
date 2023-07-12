@@ -1,0 +1,57 @@
+﻿<UserControl x:Class="USca_ReportManager.Controls.ReportByTagId"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:local="clr-namespace:USca_ReportManager.Controls"
+			 DataContext="{Binding RelativeSource={RelativeSource Self}}"
+			 mc:Ignorable="d"
+			 d:DesignHeight="450"
+			 d:DesignWidth="800">
+	<Grid Margin="10">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+
+		<StackPanel Grid.Row="0"
+					Orientation="Horizontal">
+			<TextBox x:Name="TxtTagID"
+					 Width="100"
+					 />
+			<Button x:Name="BtnSearch"
+					Content="Search"
+					Margin="10 0 0 0"
+					Click="BtnSearch_Click" />
+		</StackPanel>
+
+		<StackPanel Grid.Row="1"
+					Orientation="Horizontal">
+			<Label Content="Tag values for tag:" />
+			<Label x:Name="LblTagName"
+				   FontWeight="Bold"
+				   Content="{Binding TagName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+		</StackPanel>
+
+		<DataGrid x:Name="TbTagLogs"
+				  Grid.Row="2"
+				  AutoGenerateColumns="False"
+				  IsReadOnly="True"
+				  ItemsSource="{Binding TagLogs}">
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="ID"
+									Binding="{Binding Id}" />
+				<DataGridTextColumn Header="Timestamp"
+									Binding="{Binding Timestamp}" />
+				<DataGridTextColumn Header="Name"
+									Binding="{Binding TagName}" />
+				<DataGridTextColumn Header="Value"
+									Binding="{Binding Value}"
+                                    SortDirection="Descending" />
+				<DataGridTextColumn Header="Unit"
+									Binding="{Binding Unit}" />
+			</DataGrid.Columns>
+		</DataGrid>
+	</Grid>
+</UserControl>

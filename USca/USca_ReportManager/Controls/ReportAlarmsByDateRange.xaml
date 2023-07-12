@@ -1,0 +1,60 @@
+﻿<UserControl x:Class="USca_ReportManager.Controls.ReportAlarmsByDateRange"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:USca_ReportManager.Controls"
+			 DataContext="{Binding RelativeSource={RelativeSource Self}}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+	<Grid Margin="10">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+
+		<StackPanel Grid.Row="0"
+                    Orientation="Horizontal">
+			<Label Content="Select date range:"
+                   VerticalAlignment="Center" />
+            <Calendar x:Name="RangeCalendar"
+					  HorizontalAlignment="Center"
+                      IsTodayHighlighted="True"
+                      SelectedDatesChanged="Calendar_SelectedDatesChanged"
+                      SelectionMode="SingleRange"
+                      ToolTip="Set start and end date for search" />
+			<Button x:Name="BtnSearch"
+					Content="Search"
+					VerticalAlignment="Center"
+					Margin="20 0 0 0"
+					Click="BtnSearch_Click" />
+		</StackPanel>
+
+		<DataGrid x:Name="TbAlarmLogs"
+				  Grid.Row="1"
+				  AutoGenerateColumns="False"
+				  IsReadOnly="True"
+				  ItemsSource="{Binding AlarmLogs}">
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="AlarmID"
+									Binding="{Binding AlarmId}" />
+				<DataGridTextColumn Header="Timestamp"
+									Binding="{Binding Timestamp}"
+                                    SortDirection="Descending" />
+				<DataGridTextColumn Header="Priority"
+									Binding="{Binding Priority}"
+                                    SortDirection="Descending" />
+				<DataGridTextColumn Header="TagName"
+									Binding="{Binding TagName}" />
+				<DataGridTextColumn Header="RecordedValue"
+									Binding="{Binding RecordedValue}" />
+				<DataGridTextColumn Header="Unit"
+									Binding="{Binding Unit}" />
+				<DataGridTextColumn Header="Threshold"
+									Binding="{Binding Threshold}" />
+				<DataGridTextColumn Header="ThresholdType"
+									Binding="{Binding ThresholdType}" />
+			</DataGrid.Columns>
+		</DataGrid>
+	</Grid>
+</UserControl>

@@ -1,0 +1,26 @@
+﻿<util:MyPage
+    x:Class="USca_DbManager.User.Views.Dashboard"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:alarm="clr-namespace:USca_DbManager.Alarms"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:USca_DbManager.User.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tag="clr-namespace:USca_DbManager.Tags"
+    xmlns:util="clr-namespace:USca_DbManager.Util"
+    Title="Dashboard"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <Grid>
+        <TabControl>
+            <TabItem Header="Tags">
+                <tag:TagsDashboard />
+            </TabItem>
+            <TabItem Header="Alarms">
+                <alarm:AlarmsDashboard />
+            </TabItem>
+        </TabControl>
+    </Grid>
+</util:MyPage>
