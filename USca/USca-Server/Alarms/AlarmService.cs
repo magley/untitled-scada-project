@@ -66,7 +66,9 @@ namespace USca_Server.Alarms
                 ThresholdType = alarmAddDTO.ThresholdType,
                 Priority = alarmAddDTO.Priority,
                 Threshold = alarmAddDTO.Threshold,
-                Tag = db.Tags.Find(alarmAddDTO.TagId) ?? new(), // FIXME: Dumb
+                // FIXME: Throw TagNotFound if Find fails. Someone else might have deleted the tag since
+                //        we passed its ID from DbManager
+                Tag = db.Tags.Find(alarmAddDTO.TagId) ?? new(),
             };
             db.Alarms.Add(alarm);
             db.SaveChanges();

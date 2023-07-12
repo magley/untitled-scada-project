@@ -153,6 +153,7 @@ namespace USca_Server.Tags
                         // This is an ad-hoc fix for this particular concurrency exception.
                         // FIXME: Make TagWorker receive tag and alarm updates through events instead of through polling and use locks
                         // FIXME: Make *all* database updates/deletes concurrently safe
+                        LogHelper.GeneralLog($"[{DateTime.Now}] FIXME: Concurrency hack when updating alarm", ConsoleColor.Red);
                     }
                 }
             }
