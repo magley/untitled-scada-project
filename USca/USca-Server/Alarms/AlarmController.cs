@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using USca_Server.TagLogs.DTO;
+using USca_Server.Tags;
 
 namespace USca_Server.Alarms
 {
@@ -54,14 +55,26 @@ namespace USca_Server.Alarms
         [HttpPost]
         public ActionResult AddAlarm(AlarmAddDTO alarmAddDTO)
         {
-            _alarmService.Add(alarmAddDTO);
+            try
+            {
+                _alarmService.Add(alarmAddDTO);
+            } catch (TagNotFoundException)
+            {
+                return StatusCode(400);
+            }
             return StatusCode(204);
         }
 
         [HttpPut]
         public ActionResult UpdateAlarm(AlarmUpdateDTO alarmUpdateDTO)
         {
-            _alarmService.Update(alarmUpdateDTO);
+            try
+            {
+                _alarmService.Update(alarmUpdateDTO);
+            } catch (TagNotFoundException)
+            {
+                return StatusCode(400);
+            }
             return StatusCode(204);
         }
 

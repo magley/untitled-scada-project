@@ -61,14 +61,13 @@ namespace USca_Server.Alarms
             LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
             using var db = new ServerDbContext();
 
+            var tag = db.Tags.Find(alarmAddDTO.TagId) ?? throw new TagNotFoundException();
             Alarm alarm = new()
             {
                 ThresholdType = alarmAddDTO.ThresholdType,
                 Priority = alarmAddDTO.Priority,
                 Threshold = alarmAddDTO.Threshold,
-                // FIXME: Throw TagNotFound if Find fails. Someone else might have deleted the tag since
-                //        we passed its ID from DbManager
-                Tag = db.Tags.Find(alarmAddDTO.TagId) ?? new(),
+                Tag = tag,
             };
             db.Alarms.Add(alarm);
             db.SaveChanges();
@@ -78,6 +77,7 @@ namespace USca_Server.Alarms
         {
             LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
             using var db = new ServerDbContext();
+            _ = db.Tags.Find(alarmUpdateDTO.TagId) ?? throw new TagNotFoundException();
             var alarm = db.Alarms.Find(alarmUpdateDTO.Id);
             if (alarm == null)
             {
