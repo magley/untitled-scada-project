@@ -141,7 +141,20 @@ namespace USca_Server.Tags
                 {
                     TagWorker.WriteTagLog(Tag, measure.Timestamp);
                     SendData(measure);
-                    CheckAlarms(measure);
+                    try
+                    {
+                        CheckAlarms(measure);
+                    } catch (DbUpdateConcurrencyException)
+                    {
+                        // Because TagWorker doesn't have concurrency safety CheckAlarms can find itself in a situation where it's trying
+                        // to update (activate/deactivate) an alarm that has previously been deleted. This is because TagWorker syncs its
+                        // worker threads (by default) only once a second (potentionally having a stale representation of current state
+                        // of tags and alarms), and also because database updates/deletes aren't synchronized behind locks.
+                        // This is an ad-hoc fix for this particular concurrency exception.
+                        // FIXME: Make TagWorker receive tag and alarm updates through events instead of through polling and use locks
+                        // FIXME: Make *all* database updates/deletes concurrently safe
+                        LogHelper.GeneralLog($"[{DateTime.Now}] FIXME: Concurrency hack when updating alarm", ConsoleColor.Red);
+                    }
                 }
             }
 

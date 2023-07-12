@@ -5,6 +5,10 @@ using USca_Server.Alarms;
 
 namespace USca_Server.Tags
 {
+    public class TagNotFoundException : Exception
+    {
+    }
+
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum TagMode

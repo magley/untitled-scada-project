@@ -61,12 +61,13 @@ namespace USca_Server.Alarms
             LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
             using var db = new ServerDbContext();
 
+            var tag = db.Tags.Find(alarmAddDTO.TagId) ?? throw new TagNotFoundException();
             Alarm alarm = new()
             {
                 ThresholdType = alarmAddDTO.ThresholdType,
                 Priority = alarmAddDTO.Priority,
                 Threshold = alarmAddDTO.Threshold,
-                Tag = db.Tags.Find(alarmAddDTO.TagId) ?? new(), // FIXME: Dumb
+                Tag = tag,
             };
             db.Alarms.Add(alarm);
             db.SaveChanges();
@@ -76,6 +77,7 @@ namespace USca_Server.Alarms
         {
             LogHelper.ServiceLog($"{GetType().Name}.{System.Reflection.MethodBase.GetCurrentMethod()?.Name}");
             using var db = new ServerDbContext();
+            _ = db.Tags.Find(alarmUpdateDTO.TagId) ?? throw new TagNotFoundException();
             var alarm = db.Alarms.Find(alarmUpdateDTO.Id);
             if (alarm == null)
             {
